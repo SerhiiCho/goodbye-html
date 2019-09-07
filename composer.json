@@ -1,0 +1,34 @@
+{
+    "name": "serhii/html-parser",
+    "description": "Simple html parser for parsing html files into a string",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Serhii Cho",
+            "email": "serhiicho@protonmail.com",
+            "homepage": "https://serhii.tk",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Serhii\\HtmlParser\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Serhii\\Tests\\": "tests"
+        },
+        "files": [
+            "tests/helpers.php"
+        ]
+    },
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.3"
+    }
+}
