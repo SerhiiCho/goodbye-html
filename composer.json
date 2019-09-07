@@ -4,6 +4,7 @@
     "homepage": "https://github.com/SerhiiCho/html-parser",
     "keywords": ["parser", "library", "html"],
     "type": "library",
+    "version": "master",
     "license": "MIT",
     "minimum-stability": "dev",
     "authors": [
