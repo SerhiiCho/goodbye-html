@@ -1,6 +1,8 @@
 {
     "name": "serhii/html-parser",
     "description": "Simple html parser for parsing html files into a string",
+    "homepage": "https://github.com/SerhiiCho/html-parser",
+    "keywords": ["parser", "library", "html"],
     "type": "library",
     "license": "MIT",
     "minimum-stability": "dev",
@@ -26,7 +28,7 @@
         ]
     },
     "require": {
-        "php": ">=7.2.0"
+        "php": "^7.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.3"
