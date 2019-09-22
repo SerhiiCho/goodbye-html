@@ -27,7 +27,7 @@ final class Parser
         }
 
         try {
-            $parsed_html = $this->getVariablesFromHtml($this->html_string);
+            $parsed_html = $this->getPhpCodeFromHtml($this->html_string);
             $replacement = $this->replaceVarNamesWithValues($parsed_html->var_names);
 
             return preg_replace($parsed_html->regex_patterns, $replacement, $this->html_string);
@@ -38,18 +38,18 @@ final class Parser
         return $this->errorMessage() . $this->html_string;
     }
 
-    private function getVariablesFromHtml(string $html_context)
+    private function getPhpCodeFromHtml(string $html_context)
     {
-        preg_match_all('/{{[ ]?\$([_a-z0-9]+)?[ ]?}}/', $html_context, $php_code);
+        preg_match_all('/{{ ?\$([_a-z0-9]+)? ?}}/', $html_context, $variables);
 
         $regex_patters = array_map(function ($item) {
             $item = str_replace('$', '\$', $item);
             return "/{$item}/";
-        }, $php_code[0]);
+        }, $variables[0]);
 
         return (object) [
             'regex_patterns' => $regex_patters,
-            'var_names' => $php_code[1]
+            'var_names' => $variables[1]
         ];
     }
 

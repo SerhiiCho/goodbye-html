@@ -29,7 +29,7 @@ class ParserTest extends TestCase
     }
     
     /** @test */
-    public function getVariablesFromHtml_takes_html_and_returns_object_with_var_names_and_regex_patterns(): void
+    public function getPhpCodeFromHtml_takes_html_and_returns_object_with_var_names_and_regex_patterns(): void
     {
         $parser = new Parser(get_path('empty'), []);
         $html = '<h1>{{ $first_var }}</h1><p>Some text</p><span>{{ $nice }}</span>';
@@ -44,7 +44,7 @@ class ParserTest extends TestCase
             ],
         ];
 
-        $result = exec_private_method(Parser::class, 'getVariablesFromHtml', $parser, $html);
+        $result = exec_private_method(Parser::class, 'getPhpCodeFromHtml', $parser, $html);
         $this->assertEquals($expect, $result);
     }
 
