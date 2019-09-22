@@ -26,16 +26,44 @@ final class Parser
             return $this->html_string;
         }
 
-        try {
-            $parsed_html = $this->getPhpCodeFromHtml($this->html_string);
-            $replacement = $this->replaceVarNamesWithValues($parsed_html->var_names);
+        $parsed_ifs = $this->getIfStatementsFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed_ifs['needles'], $parsed_ifs['values'], $this->html_string);
 
-            return preg_replace($parsed_html->regex_patterns, $replacement, $this->html_string);
-        } catch (Exception $e) {
-            //
+        $parsed_variables = $this->getPhpCodeFromHtml($this->html_string);
+        $replacement = $this->replaceVarNamesWithValues($parsed_variables['var_names']);
+
+        return preg_replace($parsed_variables['regex'], $replacement, $this->html_string);
+    }
+
+    private function getIfStatementsFromHtml(string $html_context)
+    {
+        preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
+
+        $if_bodies = [];
+
+        for ($i = 0; $i < count($if_statements[0]); $i++) {
+            // $raw = $if_statements[0][$i];
+            $var_key = $if_statements[1][$i];
+            $inside_if = $if_statements[2][$i];
+
+            if ($this->variables[$var_key]) {
+                // dd(trim(preg_replace('/\n+/', ' ', $raw)));
+                $if_bodies[] = trim($inside_if);
+            }
         }
 
-        return $this->errorMessage() . $this->html_string;
+        $needles = array_map(function ($item) {
+            return $item;
+        }, $if_statements[0]);
+
+        $this->variables = array_filter($this->variables, function ($key) use ($if_statements) {
+            return !in_array($key, $if_statements[1]);
+        }, ARRAY_FILTER_USE_KEY);
+
+        return [
+            'needles' => $needles,
+            'values' => $if_bodies,
+        ];
     }
 
     private function getPhpCodeFromHtml(string $html_context)
@@ -47,8 +75,8 @@ final class Parser
             return "/{$item}/";
         }, $variables[0]);
 
-        return (object) [
-            'regex_patterns' => $regex_patters,
+        return [
+            'regex' => $regex_patters,
             'var_names' => $variables[1]
         ];
     }
@@ -68,10 +96,5 @@ final class Parser
         }
 
         return $var_values;
-    }
-
-    private function errorMessage(): string
-    {
-        return '<h3 class="mb-5">Произошла ошибка при попытке загузить контент</h3><br>';
     }
 }

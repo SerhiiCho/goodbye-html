@@ -29,12 +29,12 @@ class ParserTest extends TestCase
     }
     
     /** @test */
-    public function getPhpCodeFromHtml_takes_html_and_returns_object_with_var_names_and_regex_patterns(): void
+    public function getPhpCodeFromHtml_takes_html_and_returns_array_with_var_names_and_regex_patterns(): void
     {
         $parser = new Parser(get_path('empty'), []);
         $html = '<h1>{{ $first_var }}</h1><p>Some text</p><span>{{ $nice }}</span>';
-        $expect = (object) [
-            'regex_patterns' => [
+        $expect = [
+            'regex' => [
                 '/{{ \$first_var }}/',
                 '/{{ \$nice }}/',
             ],
