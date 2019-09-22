@@ -1,9 +1,7 @@
-## Html Parser
-
-### About
+## About
 This package allows you to write php variables in html files, and then converting it to php string. It can be useful when you need to pass html to JavaScript, like generating a shortcode in WordPress, or printing the output to a screen.
 
-### Example
+## Example
 All you need is to create a new instance of Parser class and pass the path to html file as the first constructor argument, and associative array with variable name as a key and value of the variable as the value of the array.
 
 ```php
@@ -48,7 +46,7 @@ Parsed HTML to a PHP string
 ```
 
 
-### Allowed PHP syntax in html file
+## Allowed PHP syntax in html file
 
 ##### Variable
 ```html
@@ -64,7 +62,7 @@ Parsed HTML to a PHP string
 
 ` Note that this is a very simple parser, it can only convert variables and variables wrapped in if statement.`
 
-### Getting started
+## Getting started
 ```bash
 $ composer require serhii/html-parser
 ```
