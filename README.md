@@ -15,8 +15,33 @@ $parser = new Parser('hello.html', $variables);
 
 echo $parser->parseHtml(); // this will output parsed html
 ```
-Html file with 2 php variables
-![php revival](https://raw.githubusercontent.com/SerhiiCho/html-parser/master/.github/before.png)
 
-PHP string that can be passed to javascript, like generating a shortcode in WordPress
-![php revival](https://raw.githubusercontent.com/SerhiiCho/html-parser/master/.github/after.png)
+Html file with 2 php variables before parsing
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $title }}</title>
+</head>
+<body>
+    {{ $body_text }}
+</body>
+</html>
+```
+
+PHP string that can be passed to JavaScript, like generating a shortcode in WordPress, or printing it to a screen
+```text
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title of the document</title>
+</head>
+<body>
+    Hello, here is the body
+</body>
+</html>
+```
