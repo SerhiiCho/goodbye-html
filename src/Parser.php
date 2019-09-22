@@ -42,12 +42,10 @@ final class Parser
         $if_bodies = [];
 
         for ($i = 0; $i < count($if_statements[0]); $i++) {
-            // $raw = $if_statements[0][$i];
             $var_key = $if_statements[1][$i];
             $inside_if = $if_statements[2][$i];
 
             if ($this->variables[$var_key]) {
-                // dd(trim(preg_replace('/\n+/', ' ', $raw)));
                 $if_bodies[] = trim($inside_if);
             }
         }
