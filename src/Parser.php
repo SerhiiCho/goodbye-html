@@ -90,7 +90,7 @@ final class Parser
                 continue;
             }
 
-            $var_values[] = "{$this->variables[$var_name]}";
+            $var_values[] = $this->variables[$var_name];
         }
 
         return $var_values;
