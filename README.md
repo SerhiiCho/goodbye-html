@@ -5,6 +5,7 @@ This package allows you to write php variables in html files, and then convertin
 
 ### Example
 All you need is to create a new instance of Parser class and pass the path to html file as the first constructor argument, and associative array with variable name as a key and value of the variable as the value of the array.
+
 ```php
 $variables = [
     'title' => 'Title of the document',
@@ -46,7 +47,24 @@ Parsed HTML to a PHP string
 </html>
 ```
 
+
+### Allowed PHP syntax in html file
+
+##### Variable
+```html
+<div>{{ $variable }}</div>
+```
+
+##### Variable in if statements
+```html
+{{ if $is_true }}
+    <h1>This will be visible</h1>
+{{ end }}
+```
+
+` Note that this is a very simple parser, it can only convert variables and variables wrapped in if statement.`
+
 ### Getting started
 ```bash
-$ composer require serhii/html-parser dev-master
+$ composer require serhii/html-parser
 ```
