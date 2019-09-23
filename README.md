@@ -59,8 +59,10 @@ Parsed HTML to a PHP string
 {{ if $is_true }}
     <h1>This will be visible</h1>
 {{ end }}
+```
 
-<h1 class="{{ if $is_true }} container {{ end }}">
+```html
+<h1 class="{{if $is_true}}container{{end}}">
     This package is awesome
 </h1>
 ```
