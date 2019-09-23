@@ -47,4 +47,22 @@ class IfStatementsTest extends TestCase
             ["<div></div>\nContent\n    Content\n<div></div>", 'var-in-if-2-lines', true, 'Content'],
         ];
     }
+
+    /**
+     * @dataProvider DataProvider_can_parse_if_statement_when_it_is_inline
+     * @test
+     */
+    public function can_parse_if_statement_when_it_is_inline($expect, $file_name, $bool): void
+    {
+        $parser = new Parser(get_path("if/$file_name"), compact('bool'));
+        $this->assertEquals($expect, $parser->parseHtml());
+    }
+
+    public function DataProvider_can_parse_if_statement_when_it_is_inline(): array
+    {
+        return [
+            ['<p class="my-class">Some text</p>', 'inline-statement-in-arg', true],
+            ['<p class="">Some text</p>', 'inline-statement-in-arg', false],
+        ];
+    }
 }
