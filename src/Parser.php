@@ -6,7 +6,9 @@ use Exception;
 
 final class Parser
 {
-    /** @var string What to parse */
+    /**
+     * @var string What to parse
+     */
     private $html_string;
 
     /**
@@ -26,16 +28,36 @@ final class Parser
             return $this->html_string;
         }
 
-        $parsed_ifs = $this->getIfStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed_ifs['needles'], $parsed_ifs['values'], $this->html_string);
+        return $this
+            ->replaceIfStatements()
+            ->replaceVariables()
+            ->done();
+    }
 
+    private function done(): string
+    {
+        return $this->html_string;
+    }
+
+    private function replaceVariables(): self
+    {
         $parsed_variables = $this->getPhpCodeFromHtml($this->html_string);
         $replacement = $this->replaceVarNamesWithValues($parsed_variables['var_names']);
 
-        return preg_replace($parsed_variables['regex'], $replacement, $this->html_string);
+        $this->html_string = preg_replace($parsed_variables['regex'], $replacement, $this->html_string);
+
+        return $this;
     }
 
-    private function getIfStatementsFromHtml(string $html_context)
+    private function replaceIfStatements(): self
+    {
+        $parsed_ifs = $this->getIfStatementsFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed_ifs['needles'], $parsed_ifs['values'], $this->html_string);
+
+        return $this;
+    }
+
+    private function getIfStatementsFromHtml(string $html_context): array
     {
         preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
 
@@ -64,7 +86,7 @@ final class Parser
         ];
     }
 
-    private function getPhpCodeFromHtml(string $html_context)
+    private function getPhpCodeFromHtml(string $html_context): array
     {
         preg_match_all('/{{ ?\$([_a-z0-9]+)? ?}}/', $html_context, $variables);
 
