@@ -61,29 +61,33 @@ final class Parser
     {
         preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
 
-        $if_bodies = [];
+        [$raw, $var_names, $if_contents] = $if_statements;
 
-        for ($i = 0; $i < count($if_statements[0]); $i++) {
-            $var_key = $if_statements[1][$i];
-            $inside_if = $if_statements[2][$i];
+        $result = [];
 
-            if ($this->variables[$var_key]) {
-                $if_bodies[] = trim($inside_if);
+        for ($i = 0; $i < count($raw); $i++) {
+            if ($this->variables[$var_names[$i]]) {
+                $result[] = trim($if_contents[$i]);
             }
         }
 
         $needles = array_map(function ($item) {
             return $item;
-        }, $if_statements[0]);
+        }, $raw);
 
-        $this->variables = array_filter($this->variables, function ($key) use ($if_statements) {
-            return !in_array($key, $if_statements[1]);
-        }, ARRAY_FILTER_USE_KEY);
+        $this->removeUsedVariables($var_names);
 
         return [
             'needles' => $needles,
-            'values' => $if_bodies,
+            'values' => $result,
         ];
+    }
+
+    private function removeUsedVariables(array $used_vars): void
+    {
+        $this->variables = array_filter($this->variables, function ($key) use ($used_vars) {
+            return !in_array($key, $used_vars);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     private function getPhpCodeFromHtml(string $html_context): array
