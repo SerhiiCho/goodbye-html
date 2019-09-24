@@ -1,5 +1,5 @@
 {
-    "name": "serhii/html-parser",
+    "name": "serhii/goodbye-html",
     "description": "Simple html parser for parsing html files into a string",
     "homepage": "https://github.com/SerhiiCho/html-parser",
     "keywords": ["parser", "library", "html"],
