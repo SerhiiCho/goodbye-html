@@ -14,7 +14,6 @@ class IfStatementsTest extends TestCase
     public function can_parse_if_statement($expect, $file_name, $boolean): void
     {
         $parser = new Parser(get_path("if/$file_name"), compact('boolean'));
-
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -34,7 +33,6 @@ class IfStatementsTest extends TestCase
     public function can_parse_if_statement_when_has_another_variable_inside($expect, $file_name, $boolean, $content): void
     {
         $parser = new Parser(get_path("if/$file_name"), compact('boolean', 'content'));
-
         $this->assertEquals($expect, $parser->parseHtml());
     }
 

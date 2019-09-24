@@ -38,7 +38,7 @@ final class Parser
      * Takes html and replaces all embedded variables with values
      *
      * @return string Parsed html with replaced php variables
-     * @throws \Exception Throws exception if variable in html doesn't have value
+     * @throws \Exception Throws exception if variable is in html but doesn't have value
      */
     public function parseHtml(): string
     {
@@ -46,50 +46,74 @@ final class Parser
             return $this->html_string;
         }
 
-        $this->replaceIfStatements()
-            ->replaceVariables();
+        $this->removeUsedVariables($this->replaceIfStatements());
+        $this->removeUsedVariables($this->replaceVariables());
 
         return $this->html_string;
     }
 
     private function thereAreNoVariables(): bool
     {
-        return !is_array($this->variables);
+        return !is_array($this->variables) || count($this->variables) === 0;
     }
 
-    private function replaceVariables(): self
+    private function replaceVariables(): array
     {
         $parsed = $this->getVariablesFromHtml($this->html_string);
         $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
 
-        return $this;
+        $this->removeUsedVariables($parsed['var_names']);
+
+        return $parsed['var_names'];
     }
 
-    private function replaceIfStatements(): self
+    private function replaceIfStatements(): array
     {
         $parsed = $this->getIfStatementsFromHtml($this->html_string);
         $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
 
-        return $this;
+        $this->removeUsedVariables($parsed['var_names']);
+
+        return $parsed['var_names'];
     }
 
     private function getIfStatementsFromHtml(string $html_context): array
     {
-        preg_match_all($this->regex->match_if_statements, $html_context, $if_statements);
+        preg_match_all($this->regex->match_if_statements, $html_context, $matches);
 
-        [$raw, $var_names, $if_contents] = $if_statements;
+        [$raw, $var_names, $contents] = $matches;
 
         $replacements = [];
 
         for ($i = 0; $i < count($raw); $i++) {
             if ($this->variables[$var_names[$i]]) {
-                $replacements[] = trim($if_contents[$i]);
+                $replacements[] = trim($contents[$i]);
             }
         }
 
-        $this->removeUsedVariables($var_names);
+        return compact('raw', 'replacements', 'var_names');
+    }
 
-        return compact('raw', 'replacements');
+    private function getVariablesFromHtml(string $html_context): array
+    {
+        preg_match_all($this->regex->match_variables, $html_context, $matches);
+
+        [$raw, $var_names] = $matches;
+
+        $replacements = [];
+
+        for ($i = 0; $i < count($raw); $i++) {
+            $var_key = $var_names[$i];
+
+            if (!in_array($var_key, array_keys($this->variables))) {
+                throw new Exception("Undefined variable \${$var_key}");
+                continue;
+            }
+
+            $replacements[] = $this->variables[$var_key];
+        }
+
+        return compact('raw', 'replacements', 'var_names');
     }
 
     private function removeUsedVariables(array $used_vars): void
@@ -97,33 +121,5 @@ final class Parser
         $this->variables = array_filter($this->variables, function ($key) use ($used_vars) {
             return !in_array($key, $used_vars);
         }, ARRAY_FILTER_USE_KEY);
-    }
-
-    private function getVariablesFromHtml(string $html_context): array
-    {
-        preg_match_all($this->regex->match_variables, $html_context, $variables);
-
-        [$raw, $var_names] = $variables;
-
-        $replacements = $this->replaceVarNamesWithValues($var_names);
-
-        return compact('raw', 'replacements');
-    }
-
-    private function replaceVarNamesWithValues(array $var_names): array
-    {
-        $var_values = [];
-        $var_keys = array_keys($this->variables);
-
-        foreach ($var_names as $var_name) {
-            if (!in_array($var_name, $var_keys)) {
-                throw new Exception("Undefined variable \${$var_name}");
-                continue;
-            }
-
-            $var_values[] = $this->variables[$var_name];
-        }
-
-        return $var_values;
     }
 }
