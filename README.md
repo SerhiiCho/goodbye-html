@@ -1,4 +1,10 @@
-# {{ Goodbye HTML parser }}
+<h2 align="center">Goodbye HTML parser</h2>
+
+<p align="center">
+    <a href="https://travis-ci.org/serhii/goodbye-html"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+    <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/v/stable.svg" alt="Latest Stable Version"></a>
+</p>
 
 ## About
 Very simple package for separating php code from html. It allows you to pass php **variables** in html files, and then receiving php string with clean HTML. It was mostly created for WordPress plugins and themes development. In cases if you need to create a shortcode, and want to keep HTML separate from PHP file, this package is a perfect solution.
