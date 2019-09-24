@@ -12,47 +12,57 @@ final class Parser
     private $html_string;
 
     /**
-     * @var array|null Key value pairs ['var_name_to_replace' => 'replace to what']
+     * @var array|null $variables Associative array ['var_name' => 'will be inserted']
      */
     private $variables;
 
+    /**
+     * Parser constructor.
+     *
+     * @param string $file_path Absolute or relative path to an html file
+     * @param array|null $variables Associative array ['var_name' => 'will be inserted']
+     */
     public function __construct(string $file_path, ?array $variables = null)
     {
         $this->html_string = file_get_contents($file_path);
         $this->variables = $variables;
     }
 
+    /**
+     * Takes html and replaces all embedded variables with values
+     *
+     * @return string Parsed html with replaced php variables
+     * @throws \Exception Throws exception if variable in html doesn't have value
+     */
     public function parseHtml(): string
     {
-        if (!is_array($this->variables)) {
+        if ($this->thereAreNoVariables()) {
             return $this->html_string;
         }
 
-        return $this
-            ->replaceIfStatements()
-            ->replaceVariables()
-            ->done();
+        $this->replaceIfStatements()
+            ->replaceVariables();
+
+        return $this->html_string;
     }
 
-    private function done(): string
+    private function thereAreNoVariables(): bool
     {
-        return $this->html_string;
+        return !is_array($this->variables);
     }
 
     private function replaceVariables(): self
     {
-        $parsed_variables = $this->getPhpCodeFromHtml($this->html_string);
-        $replacement = $this->replaceVarNamesWithValues($parsed_variables['var_names']);
-
-        $this->html_string = preg_replace($parsed_variables['regex'], $replacement, $this->html_string);
+        $parsed = $this->getPhpCodeFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
 
         return $this;
     }
 
     private function replaceIfStatements(): self
     {
-        $parsed_ifs = $this->getIfStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed_ifs['raw_statements'], $parsed_ifs['replacements'], $this->html_string);
+        $parsed = $this->getIfStatementsFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
 
         return $this;
     }
@@ -61,11 +71,11 @@ final class Parser
     {
         preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
 
-        [$raw_statements, $var_names, $if_contents] = $if_statements;
+        [$raw, $var_names, $if_contents] = $if_statements;
 
         $replacements = [];
 
-        for ($i = 0; $i < count($raw_statements); $i++) {
+        for ($i = 0; $i < count($raw); $i++) {
             if ($this->variables[$var_names[$i]]) {
                 $replacements[] = trim($if_contents[$i]);
             }
@@ -73,7 +83,7 @@ final class Parser
 
         $this->removeUsedVariables($var_names);
 
-        return compact('raw_statements', 'replacements');
+        return compact('raw', 'replacements');
     }
 
     private function removeUsedVariables(array $used_vars): void
@@ -87,15 +97,11 @@ final class Parser
     {
         preg_match_all('/{{ ?\$([_a-z0-9]+)? ?}}/', $html_context, $variables);
 
-        $regex_patters = array_map(function ($item) {
-            $item = str_replace('$', '\$', $item);
-            return "/{$item}/";
-        }, $variables[0]);
+        [$raw, $var_names] = $variables;
 
-        return [
-            'regex' => $regex_patters,
-            'var_names' => $variables[1]
-        ];
+        $replacements = $this->replaceVarNamesWithValues($var_names);
+
+        return compact('raw', 'replacements');
     }
 
     private function replaceVarNamesWithValues(array $var_names): array
