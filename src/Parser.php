@@ -17,6 +17,11 @@ final class Parser
     private $variables;
 
     /**
+     * @var object Regex patterns
+     */
+    private $regex;
+
+    /**
      * Parser constructor.
      *
      * @param string $file_path Absolute or relative path to an html file
@@ -26,6 +31,7 @@ final class Parser
     {
         $this->html_string = file_get_contents($file_path);
         $this->variables = $variables;
+        $this->regex = require __DIR__ . '/regex.php';
     }
 
     /**
@@ -53,7 +59,7 @@ final class Parser
 
     private function replaceVariables(): self
     {
-        $parsed = $this->getPhpCodeFromHtml($this->html_string);
+        $parsed = $this->getVariablesFromHtml($this->html_string);
         $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
 
         return $this;
@@ -69,7 +75,7 @@ final class Parser
 
     private function getIfStatementsFromHtml(string $html_context): array
     {
-        preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
+        preg_match_all($this->regex->match_if_statements, $html_context, $if_statements);
 
         [$raw, $var_names, $if_contents] = $if_statements;
 
@@ -93,9 +99,9 @@ final class Parser
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    private function getPhpCodeFromHtml(string $html_context): array
+    private function getVariablesFromHtml(string $html_context): array
     {
-        preg_match_all('/{{ ?\$([_a-z0-9]+)? ?}}/', $html_context, $variables);
+        preg_match_all($this->regex->match_variables, $html_context, $variables);
 
         [$raw, $var_names] = $variables;
 
