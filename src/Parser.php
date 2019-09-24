@@ -52,7 +52,7 @@ final class Parser
     private function replaceIfStatements(): self
     {
         $parsed_ifs = $this->getIfStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed_ifs['needles'], $parsed_ifs['values'], $this->html_string);
+        $this->html_string = str_replace($parsed_ifs['raw_statements'], $parsed_ifs['replacements'], $this->html_string);
 
         return $this;
     }
@@ -61,26 +61,19 @@ final class Parser
     {
         preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
 
-        [$raw, $var_names, $if_contents] = $if_statements;
+        [$raw_statements, $var_names, $if_contents] = $if_statements;
 
-        $result = [];
+        $replacements = [];
 
-        for ($i = 0; $i < count($raw); $i++) {
+        for ($i = 0; $i < count($raw_statements); $i++) {
             if ($this->variables[$var_names[$i]]) {
-                $result[] = trim($if_contents[$i]);
+                $replacements[] = trim($if_contents[$i]);
             }
         }
 
-        $needles = array_map(function ($item) {
-            return $item;
-        }, $raw);
-
         $this->removeUsedVariables($var_names);
 
-        return [
-            'needles' => $needles,
-            'values' => $result,
-        ];
+        return compact('raw_statements', 'replacements');
     }
 
     private function removeUsedVariables(array $used_vars): void
