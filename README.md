@@ -1,13 +1,14 @@
-<h2 align="center">Goodbye HTML parser</h2>
+<h2 align="center">Goodbye HTML</h2>
 
 <p align="center">
     <a href="https://travis-ci.org/serhii/goodbye-html"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
     <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/v/stable.svg" alt="Latest Stable Version"></a>
+    <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/v/stable.svg" alt="Latest Stable Version"></a>
 </p>
 
-## About
 Very simple package for separating php code from html. It allows you to pass php **variables** in html files, and then receiving php string with clean HTML. It was mostly created for WordPress plugins and themes development. In cases if you need to create a shortcode, and want to keep HTML separate from PHP file, this package is a perfect solution.
+
+This package is not parsing HTML files like other templating engines, all it does is just taking your values from associative array that you pass to constructor, and replacing all embedded variables with those values. For if statements you can pass only 1 variable.
 
 ## Example
 All you need is to create a new instance of Parser class and pass the path to html file as the first constructor argument, and associative array with variable name as a key and value of the variable as the value of the array.
