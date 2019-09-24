@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Serhii\HtmlParser;
+namespace Serhii\GoodbyeHtml;
 
 use Exception;
 

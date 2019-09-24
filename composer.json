@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Serhii\\HtmlParser\\": "src"
+            "Serhii\\GoodbyeHtml\\": "src"
         }
     },
     "autoload-dev": {

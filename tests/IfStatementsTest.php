@@ -3,7 +3,7 @@
 namespace Serhii\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Serhii\HtmlParser\Parser;
+use Serhii\GoodbyeHtml\Parser;
 
 class IfStatementsTest extends TestCase
 {
