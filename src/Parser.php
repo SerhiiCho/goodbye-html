@@ -12,109 +12,114 @@ final class Parser
     private $html_string;
 
     /**
-     * @var array|null Key value pairs ['var_name_to_replace' => 'replace to what']
+     * @var array|null $variables Associative array ['var_name' => 'will be inserted']
      */
     private $variables;
 
+    /**
+     * @var object Regex patterns
+     */
+    private $regex;
+
+    /**
+     * Parser constructor.
+     *
+     * @param string $file_path Absolute or relative path to an html file
+     * @param array|null $variables Associative array ['var_name' => 'will be inserted']
+     */
     public function __construct(string $file_path, ?array $variables = null)
     {
         $this->html_string = file_get_contents($file_path);
         $this->variables = $variables;
+        $this->regex = require __DIR__ . '/regex.php';
     }
 
+    /**
+     * Takes html and replaces all embedded variables with values
+     *
+     * @return string Parsed html with replaced php variables
+     * @throws \Exception Throws exception if variable is in html but doesn't have value
+     */
     public function parseHtml(): string
     {
-        if (!is_array($this->variables)) {
+        if ($this->thereAreNoVariables()) {
             return $this->html_string;
         }
 
-        return $this
-            ->replaceIfStatements()
-            ->replaceVariables()
-            ->done();
-    }
+        $this->removeUsedVariables($this->replaceIfStatements());
+        $this->removeUsedVariables($this->replaceVariables());
 
-    private function done(): string
-    {
         return $this->html_string;
     }
 
-    private function replaceVariables(): self
+    private function thereAreNoVariables(): bool
     {
-        $parsed_variables = $this->getPhpCodeFromHtml($this->html_string);
-        $replacement = $this->replaceVarNamesWithValues($parsed_variables['var_names']);
-
-        $this->html_string = preg_replace($parsed_variables['regex'], $replacement, $this->html_string);
-
-        return $this;
+        return !is_array($this->variables) || count($this->variables) === 0;
     }
 
-    private function replaceIfStatements(): self
+    private function replaceVariables(): array
     {
-        $parsed_ifs = $this->getIfStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed_ifs['needles'], $parsed_ifs['values'], $this->html_string);
+        $parsed = $this->getVariablesFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
 
-        return $this;
+        $this->removeUsedVariables($parsed['var_names']);
+
+        return $parsed['var_names'];
+    }
+
+    private function replaceIfStatements(): array
+    {
+        $parsed = $this->getIfStatementsFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
+
+        $this->removeUsedVariables($parsed['var_names']);
+
+        return $parsed['var_names'];
     }
 
     private function getIfStatementsFromHtml(string $html_context): array
     {
-        preg_match_all('/{{ ?if ?\$([_A-z0-9]+) ?}}([\s\S]+?){{ ?end ?}}/', $html_context, $if_statements);
+        preg_match_all($this->regex->match_if_statements, $html_context, $matches);
 
-        $if_bodies = [];
+        [$raw, $var_names, $contents] = $matches;
 
-        for ($i = 0; $i < count($if_statements[0]); $i++) {
-            $var_key = $if_statements[1][$i];
-            $inside_if = $if_statements[2][$i];
+        $replacements = [];
 
-            if ($this->variables[$var_key]) {
-                $if_bodies[] = trim($inside_if);
+        for ($i = 0; $i < count($raw); $i++) {
+            if ($this->variables[$var_names[$i]]) {
+                $replacements[] = trim($contents[$i]);
             }
         }
 
-        $needles = array_map(function ($item) {
-            return $item;
-        }, $if_statements[0]);
-
-        $this->variables = array_filter($this->variables, function ($key) use ($if_statements) {
-            return !in_array($key, $if_statements[1]);
-        }, ARRAY_FILTER_USE_KEY);
-
-        return [
-            'needles' => $needles,
-            'values' => $if_bodies,
-        ];
+        return compact('raw', 'replacements', 'var_names');
     }
 
-    private function getPhpCodeFromHtml(string $html_context): array
+    private function getVariablesFromHtml(string $html_context): array
     {
-        preg_match_all('/{{ ?\$([_a-z0-9]+)? ?}}/', $html_context, $variables);
+        preg_match_all($this->regex->match_variables, $html_context, $matches);
 
-        $regex_patters = array_map(function ($item) {
-            $item = str_replace('$', '\$', $item);
-            return "/{$item}/";
-        }, $variables[0]);
+        [$raw, $var_names] = $matches;
 
-        return [
-            'regex' => $regex_patters,
-            'var_names' => $variables[1]
-        ];
-    }
+        $replacements = [];
 
-    private function replaceVarNamesWithValues(array $var_names): array
-    {
-        $var_values = [];
-        $var_keys = array_keys($this->variables);
+        for ($i = 0; $i < count($raw); $i++) {
+            $var_key = $var_names[$i];
 
-        foreach ($var_names as $var_name) {
-            if (!in_array($var_name, $var_keys)) {
-                throw new Exception("Undefined variable \${$var_name}");
+            if (!in_array($var_key, array_keys($this->variables))) {
+                throw new Exception("Undefined variable \${$var_key}");
                 continue;
             }
 
-            $var_values[] = $this->variables[$var_name];
+            $replacements[] = $this->variables[$var_key];
         }
 
-        return $var_values;
+        return compact('raw', 'replacements', 'var_names');
+    }
+
+    private function removeUsedVariables(array $used_vars): void
+    {
+        $this->variables = array_filter($this->variables, function ($key) use ($used_vars) {
+            return !in_array($key, $used_vars);
+        }, ARRAY_FILTER_USE_KEY);
     }
 }
