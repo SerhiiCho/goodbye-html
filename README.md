@@ -1,6 +1,7 @@
 <h2 align="center">Goodbye HTML</h2>
 
 <p align="center">
+    <a href="https://actions-badge.atrox.dev/SerhiiCho/goodbye-html/goto"><img alt="Build Status" src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FSerhiiCho%2Fgoodbye-html%2Fbadge&style=flat" /></a>
     <a href="https://travis-ci.org/serhii/goodbye-html"><img src="https://travis-ci.org/SerhiiCho/goodbye-html.svg?branch=master" alt="build:passed"></a>
     <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/d/total.svg" alt="Total Downloads"></a>
     <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/v/stable.svg" alt="Latest Stable Version"></a>
