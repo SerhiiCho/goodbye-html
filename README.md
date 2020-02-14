@@ -75,6 +75,15 @@ Parsed HTML to a PHP string
 </h1>
 ```
 
+##### If / else statements
+```html
+{{ if $is_true }}
+    <h1>This will be visible if true</h1>
+{{ else }}
+    <h1>This will be visible if not true</h1>
+{{ end }}
+```
+
 ## Getting started
 ```bash
 $ composer require serhii/goodbye-html
