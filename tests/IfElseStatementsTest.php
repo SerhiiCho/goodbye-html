@@ -27,41 +27,41 @@ class IfElseStatementsTest extends TestCase
         ];
     }
 
-    // /**
-    //  * @dataProvider DataProvider_for_can_parse_if_statement_when_has_another_variable_inside
-    //  * @test
-    //  */
-    // public function can_parse_if_statement_when_has_another_variable_inside($expect, $file_name, $boolean, $content): void
-    // {
-    //     $parser = new Parser(get_path("if/$file_name"), compact('boolean', 'content'));
-    //     $this->assertEquals($expect, $parser->parseHtml());
-    // }
+    /**
+     * @dataProvider DataProvider_for_can_parse_if_statement_when_has_another_variable_inside
+     * @test
+     */
+    public function can_parse_if_statement_when_has_another_variable_inside($expect, $file_name, $boolean, $content, $content2): void
+    {
+        $parser = new Parser(get_path("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
+        $this->assertEquals($expect, $parser->parseHtml());
+    }
 
-    // public function DataProvider_for_can_parse_if_statement_when_has_another_variable_inside(): array
-    // {
-    //     return [
-    //         ["<div></div>\n\n<div></div>", 'var-in-if', false, 'Some text is here'],
-    //         ["<div></div>\nSome text is here\n<div></div>", 'var-in-if', true, 'Some text is here'],
-    //         ["<div></div>\n\n<div></div>", 'var-in-if-2-lines', false, 'Content'],
-    //         ["<div></div>\nContent\n    Content\n<div></div>", 'var-in-if-2-lines', true, 'Content'],
-    //     ];
-    // }
+    public function DataProvider_for_can_parse_if_statement_when_has_another_variable_inside(): array
+    {
+        return [
+            ["<div></div>\nSome text is here\n<div></div>", 'var-in-if', true, 'Some text is here', 'Another text'],
+            ["<div></div>\nAnother text\n<div></div>", 'var-in-if', false, 'Some text is here', 'Another text'],
+            ["<div></div>\nContent\n    Content\n<div></div>", 'var-in-if-2-lines', true, 'Content', 'Other'],
+            ["<div></div>\nOther\n    Other\n<div></div>", 'var-in-if-2-lines', false, 'Content', 'Other'],
+        ];
+    }
 
-    // /**
-    //  * @dataProvider DataProvider_can_parse_if_statement_when_it_is_inline
-    //  * @test
-    //  */
-    // public function can_parse_if_statement_when_it_is_inline($expect, $file_name, $bool): void
-    // {
-    //     $parser = new Parser(get_path("if/$file_name"), compact('bool'));
-    //     $this->assertEquals($expect, $parser->parseHtml());
-    // }
+    /**
+     * @dataProvider DataProvider_can_parse_if_statement_when_it_is_inline
+     * @test
+     */
+    public function can_parse_if_statement_when_it_is_inline($expect, $file_name, $bool): void
+    {
+        $parser = new Parser(get_path("ifelse/$file_name"), compact('bool'));
+        $this->assertEquals($expect, $parser->parseHtml());
+    }
 
-    // public function DataProvider_can_parse_if_statement_when_it_is_inline(): array
-    // {
-    //     return [
-    //         ['<p class="my-class">Some text</p>', 'inline-statement-in-arg', true],
-    //         ['<p class="">Some text</p>', 'inline-statement-in-arg', false],
-    //     ];
-    // }
+    public function DataProvider_can_parse_if_statement_when_it_is_inline(): array
+    {
+        return [
+            ['<p class="my-class">Some text</p>', 'inline-statement-in-arg', true],
+            ['<p class="another-class">Some text</p>', 'inline-statement-in-arg', false],
+        ];
+    }
 }
