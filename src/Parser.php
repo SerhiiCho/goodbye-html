@@ -46,6 +46,7 @@ final class Parser
             return $this->html_string;
         }
 
+        $this->removeUsedVariables($this->replaceIfElseStatements());
         $this->removeUsedVariables($this->replaceIfStatements());
         $this->removeUsedVariables($this->replaceVariables());
 
@@ -67,6 +68,16 @@ final class Parser
         return $parsed['var_names'];
     }
 
+    private function replaceIfElseStatements(): array
+    {
+        $parsed = $this->getIfElseStatementsFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
+
+        $this->removeUsedVariables($parsed['var_names']);
+
+        return $parsed['var_names'];
+    }
+
     private function replaceIfStatements(): array
     {
         $parsed = $this->getIfStatementsFromHtml($this->html_string);
@@ -75,6 +86,27 @@ final class Parser
         $this->removeUsedVariables($parsed['var_names']);
 
         return $parsed['var_names'];
+    }
+
+    private function getIfElseStatementsFromHtml(string $html_context): array
+    {
+        preg_match_all($this->regex->match_if_else_statements, $html_context, $matches);
+
+        [$raw, $var_names, $true_block, $false_block] = $matches;
+
+        $replacements = [];
+
+        for ($i = 0; $i < count($raw); $i++) {
+            if ($this->variables[$var_names[$i]] === true) {
+                $replacements[] = trim($true_block[$i]);
+            }
+
+            if ($this->variables[$var_names[$i]] === false) {
+                $replacements[] = trim($false_block[$i]);
+            }
+        }
+
+        return compact('raw', 'replacements', 'var_names');
     }
 
     private function getIfStatementsFromHtml(string $html_context): array
