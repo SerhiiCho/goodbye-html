@@ -139,7 +139,6 @@ final class Parser
 
             if (!in_array($var_key, array_keys($this->variables))) {
                 throw new Exception("Undefined variable \${$var_key}");
-                continue;
             }
 
             $replacements[] = $this->variables[$var_key];
