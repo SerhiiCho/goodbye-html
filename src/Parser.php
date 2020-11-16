@@ -58,6 +58,10 @@ final class Parser
         return !is_array($this->variables) || count($this->variables) === 0;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     private function replaceVariables(): array
     {
         $parsed = $this->getVariablesFromHtml($this->html_string);
@@ -126,6 +130,12 @@ final class Parser
         return compact('raw', 'replacements', 'var_names');
     }
 
+    /**
+     * @param string $html_context
+     *
+     * @return array
+     * @throws \Exception
+     */
     private function getVariablesFromHtml(string $html_context): array
     {
         preg_match_all($this->regex->match_variables, $html_context, $matches);
