@@ -46,6 +46,7 @@ final class Parser
             return $this->html_string;
         }
 
+        $this->removeUsedVariables($this->replaceTernaryStatements());
         $this->removeUsedVariables($this->replaceIfElseStatements());
         $this->removeUsedVariables($this->replaceIfStatements());
         $this->removeUsedVariables($this->replaceVariables());
@@ -82,6 +83,16 @@ final class Parser
         return $parsed['var_names'];
     }
 
+    private function replaceTernaryStatements(): array
+    {
+        $parsed = $this->getTernaryStatementsFromHtml($this->html_string);
+        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
+
+        $this->removeUsedVariables($parsed['var_names']);
+
+        return $parsed['var_names'];
+    }
+
     private function replaceIfStatements(): array
     {
         $parsed = $this->getIfStatementsFromHtml($this->html_string);
@@ -92,25 +103,32 @@ final class Parser
         return $parsed['var_names'];
     }
 
+    /**
+     * @param string $html_context
+     *
+     * @return array[]
+     */
     private function getIfElseStatementsFromHtml(string $html_context): array
     {
         preg_match_all($this->regex->match_if_else_statements, $html_context, $matches);
 
         [$raw, $var_names, $true_block, $false_block] = $matches;
 
-        $replacements = [];
+        return $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
+    }
 
-        for ($i = 0; $i < count($raw); $i++) {
-            if ($this->variables[$var_names[$i]] === true) {
-                $replacements[] = trim($true_block[$i]);
-            }
+    /**
+     * @param string $html_context
+     *
+     * @return array[]
+     */
+    private function getTernaryStatementsFromHtml(string $html_context): array
+    {
+        preg_match_all($this->regex->match_ternary_statements, $html_context, $matches);
 
-            if ($this->variables[$var_names[$i]] === false) {
-                $replacements[] = trim($false_block[$i]);
-            }
-        }
+        [$raw, $var_names,, $true_block,,, $false_block] = $matches;
 
-        return compact('raw', 'replacements', 'var_names');
+        return $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
     }
 
     private function getIfStatementsFromHtml(string $html_context): array
@@ -162,5 +180,30 @@ final class Parser
         $this->variables = array_filter($this->variables, function ($key) use ($used_vars) {
             return !in_array($key, $used_vars);
         }, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * @param $raw
+     * @param $var_names
+     * @param $true_block
+     * @param $false_block
+     *
+     * @return array[]
+     */
+    private function getVarNamesWithRaw($raw, $var_names, $true_block, $false_block): array
+    {
+        $replacements = [];
+
+        for ($i = 0; $i < count($raw); $i++) {
+            if ($this->variables[$var_names[$i]] === true) {
+                $replacements[] = trim($true_block[$i]);
+            }
+
+            if ($this->variables[$var_names[$i]] === false) {
+                $replacements[] = trim($false_block[$i]);
+            }
+        }
+
+        return compact('raw', 'replacements', 'var_names');
     }
 }
