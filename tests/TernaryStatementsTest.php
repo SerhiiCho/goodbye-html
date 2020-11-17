@@ -31,6 +31,12 @@ class TernaryStatementsTest extends TestCase
             ["<h1>Do not print this</h1>", '1-line-content', false],
             ["<h1>Print this</h1>", '1-line-content-double-quotes', true],
             ["<h1>Do not print this</h1>", '1-line-content-double-quotes', false],
+            ["<section class=\"some\">\n    <h1>Hello word</h1>\n</section>", '2-lines-content', true],
+            ["<section class=\"some\">\n    <h1>Smile</h1>\n</section>", '2-lines-content', false],
+            ["<section class=\"container\">\n    Hi\n</section>", 'inside-class-attr', true],
+            ["<section class=\"\">\n    Hi\n</section>", 'inside-class-attr', false],
+            ["<h1>It's me here</h1>", 'can-use-single-quote', true],
+            ["<h1>It's not me here</h1>", 'can-use-single-quote', false],
         ];
     }
 }
