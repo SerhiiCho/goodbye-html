@@ -42,10 +42,10 @@ final class Parser
             return $this->html_string;
         }
 
-        $this->getTernaryStatementsFromHtml($this->html_string);
-        $this->getIfElseStatementsFromHtml($this->html_string);
-        $this->getIfStatementsFromHtml($this->html_string);
-        $this->getVariablesFromHtml($this->html_string);
+        $this->replaceTernaryStatementsFromHtml($this->html_string);
+        $this->replaceIfElseStatementsFromHtml($this->html_string);
+        $this->replaceIfStatementsFromHtml($this->html_string);
+        $this->replaceVariablesFromHtml($this->html_string);
 
         return $this->html_string;
     }
@@ -67,7 +67,7 @@ final class Parser
     /**
      * @param string $html_context
      */
-    private function getIfElseStatementsFromHtml(string $html_context): void
+    private function replaceIfElseStatementsFromHtml(string $html_context): void
     {
         preg_match_all(Regex::IF_ELSE_STATEMENTS, $html_context, $matches);
 
@@ -79,7 +79,7 @@ final class Parser
     /**
      * @param string $html_context
      */
-    private function getTernaryStatementsFromHtml(string $html_context): void
+    private function replaceTernaryStatementsFromHtml(string $html_context): void
     {
         preg_match_all(Regex::TERNARY_STATEMENTS, $html_context, $matches);
 
@@ -88,7 +88,7 @@ final class Parser
         $this->replaceStatements($this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block));
     }
 
-    private function getIfStatementsFromHtml(string $html_context): void
+    private function replaceIfStatementsFromHtml(string $html_context): void
     {
         preg_match_all(Regex::IF_STATEMENTS, $html_context, $matches);
 
@@ -110,7 +110,7 @@ final class Parser
      *
      * @throws \Exception
      */
-    private function getVariablesFromHtml(string $html_context): void
+    private function replaceVariablesFromHtml(string $html_context): void
     {
         preg_match_all(Regex::VARIABLES, $html_context, $matches);
 
