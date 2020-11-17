@@ -37,6 +37,8 @@ class TernaryStatementsTest extends TestCase
             ["<section class=\"\">\n    Hi\n</section>", 'inside-class-attr', false],
             ["<h1>It's me here</h1>", 'can-use-single-quote', true],
             ["<h1>It's not me here</h1>", 'can-use-single-quote', false],
+            ['<h1>He said: "I am".</h1>', 'can-use-double-quote', true],
+            ['<h1>She said: "Stay here!".</h1>', 'can-use-double-quote', false],
         ];
     }
 }
