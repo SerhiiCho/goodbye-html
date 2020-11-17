@@ -62,9 +62,9 @@ Parsed HTML to a PHP string
 ```php
 use Serhii\GoodbyeHtml\Parser;
 
-add_shortcode('my_shortcode', 'my_shortcode');
+add_shortcode('my_shortcode', 'shortcode_callback');
 
-function my_shortcode() {
+function shortcode_callback() {
     $parser = new Parser('shortcodes/main.html', [
         'title' => 'Title of the document',
         '$uses_php_3_years' => true,
