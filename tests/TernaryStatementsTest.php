@@ -76,4 +76,22 @@ class TernaryStatementsTest extends TestCase
             ["<h1>Not var</h1>", 'left-var-inside', false, 'Some text is here', ''],
         ];
     }
+
+    /** @test */
+    public function can_parse_file_with_4_variables(): void
+    {
+        $vars = [
+            'cat' => 'Cat',
+            'dog' => 'Dog',
+            'show_cat' => true,
+            'show_footer' => false,
+            'show_styles' => true,
+            'show_title' => true,
+        ];
+
+        $parser = new Parser(self::getPath('ternary/multiple-variables'), $vars);
+        $expect = file_get_contents(self::getPath('ternary/parsed/multiple-variables'));
+
+        $this->assertEquals($expect, $parser->parseHtml());
+    }
 }
