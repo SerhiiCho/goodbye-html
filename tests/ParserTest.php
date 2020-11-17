@@ -15,7 +15,7 @@ class ParserTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Undefined variable $nice');
 
-        $parser = new Parser(self::getPath('2-vars'), ['first_var' => 'Text here']);
+        $parser = new Parser(self::getPath('vars/2-vars'), ['first_var' => 'Text here']);
         $parser->parseHtml();
     }
 }
