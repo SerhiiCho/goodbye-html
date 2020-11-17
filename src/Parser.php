@@ -43,9 +43,10 @@ final class Parser
             return $this->html_content;
         }
 
-        $this->replaceTernaryStatementsFromHtml();
         $this->replaceIfElseStatementsFromHtml();
         $this->replaceIfStatementsFromHtml();
+        $this->replaceTernaryStatementsFromHtml();
+        $this->replaceTernaryVariablesFromHtml();
         $this->replaceVariablesFromHtml();
 
         return $this->html_content;
@@ -65,6 +66,26 @@ final class Parser
         $this->removeUsedVariables($parsed['var_names']);
     }
 
+    private function replaceTernaryVariablesFromHtml(): void
+    {
+        preg_match_all(Regex::TERNARY_VARIABLES, $this->html_content, $matches);
+
+        [$raw, $var_names, $true_block,,,,,$false_block] = $matches;
+
+        $with_raw = $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
+
+        $new_replacements = [];
+
+        foreach ($with_raw['replacements'] as $key => $item) {
+            $first_symbol = $item[0] ?? null;
+            $new_replacements[$key] = $first_symbol === '$' ? "{{ $item }}" : trim($item, "'\"");
+        }
+
+        $with_raw['replacements'] = $new_replacements;
+
+        $this->replaceStatements($with_raw);
+    }
+
     private function replaceIfElseStatementsFromHtml(): void
     {
         preg_match_all(Regex::IF_ELSE_STATEMENTS, $this->html_content, $matches);
@@ -78,7 +99,7 @@ final class Parser
     {
         preg_match_all(Regex::TERNARY_STATEMENTS, $this->html_content, $matches);
 
-        [$raw, $var_names,, $true_block,,, $false_block] = $matches;
+        [$raw, $var_names,,, $true_block,,, $false_block] = $matches;
 
         $this->replaceStatements($this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block));
     }
@@ -114,7 +135,7 @@ final class Parser
         for ($i = 0; $i < count($raw); $i++) {
             $var_key = $var_names[$i];
 
-            if (!in_array($var_key, array_keys($this->variables))) {
+            if ( ! in_array($var_key, array_keys($this->variables))) {
                 throw new Exception("Undefined variable \${$var_key}");
             }
 
