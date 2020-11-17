@@ -42,10 +42,10 @@ final class Parser
             return $this->html_string;
         }
 
-        $this->removeUsedVariables($this->replaceTernaryStatements());
-        $this->removeUsedVariables($this->replaceIfElseStatements());
-        $this->removeUsedVariables($this->replaceIfStatements());
-        $this->removeUsedVariables($this->replaceVariables());
+        $this->replaceTernaryStatements();
+        $this->replaceIfElseStatements();
+        $this->replaceIfStatements();
+        $this->replaceVariables();
 
         return $this->html_string;
     }
