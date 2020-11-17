@@ -78,7 +78,7 @@ class TernaryStatementsTest extends TestCase
     }
 
     /** @test */
-    public function can_parse_file_with_4_variables(): void
+    public function can_parse_file_with_multiple_variables(): void
     {
         $vars = [
             'cat' => 'Cat',
