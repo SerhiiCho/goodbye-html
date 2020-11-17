@@ -17,7 +17,7 @@ All you need is to create a new instance of Parser class and pass the path to ht
 ```php
 $variables = [
     'title' => 'Title of the document',
-    'is_true' => true,
+    '$uses_php_3_years' => true,
     'show_container' => false,
 ];
 
@@ -35,8 +35,8 @@ HTML file content with 2 php variables before parsing it
     <title>{{ $title }}</title>
 </head>
 <body class="{{ $show_container ? 'container' : '' }}">
-    {{ if $is_true }}
-        <h1>Some text is here</h1>
+    {{ if $uses_php_3_years }}
+        <h1>I'm not a pro but it's only a matter of time</h1>
     {{ end }}
 </body>
 </html>
@@ -51,7 +51,7 @@ Parsed HTML to a PHP string
     <title>Title of the document</title>
 </head>
 <body class="">
-    <h1>Some text is here</h1>
+    <h1>I'm not a pro but it's only a matter of time</h1>
 </body>
 </html>
 ```
@@ -62,7 +62,7 @@ Parsed HTML to a PHP string
 
 ```html
 <!-- Inside html tags -->
-<div>{{ $my_var }}</div>
+<div>{{ $guest_name }}</div>
 ```
 
 ```html
@@ -70,20 +70,36 @@ Parsed HTML to a PHP string
 <h2 class="{{ $styles }}">The title of the page</h2>
 ```
 
-#### Variable in if statements
+#### If statements
 
 ```html
 <!-- Block syntax -->
 <section>
-    {{ if $is_true }}
-        <h1>This will be visible</h1>
+    {{ if $show_title }}
+        <h1>PHP is awesome programming language</h1>
     {{ end }}
 </section>
 ```
 
 ```html
 <!-- Inline syntax -->
-<h1 class="{{if $is_true}}container{{end}}">
+<h1 class="{{if $show_container}}container{{end}}">
+    This package is cool
+</h1>
+```
+
+```html
+<!-- Variable inside block syntax -->
+<section>
+    {{ if $drinks_lots_of_water }}
+        <h1>{{ $water_benefits }}</h1>
+    {{ end }}
+</section>
+```
+
+```html
+<!-- Variable inside inline syntax -->
+<h1 class="{{if $is_smoking}}{{ $harm_description }}{{end}}">
     This package is cool
 </h1>
 ```
@@ -93,10 +109,10 @@ Parsed HTML to a PHP string
 ```html
 <!-- Block syntax -->
 <section>
-    {{ if $is_true }}
-        <h1>This will be visible if true</h1>
+    {{ if $likes_bread }}
+        <h1>I like bread</h1>
     {{ else }}
-        <h1>This will be visible if false</h1>
+        <h1>I don't really like bread</h1>
     {{ end }}
 </section>
 ```
@@ -105,6 +121,24 @@ Parsed HTML to a PHP string
 <!-- Inline syntax -->
 <section>
     <h1>{{ if $is_true }}This will be visible if true{{ else }}This will be visible if false {{ end }}</h1>
+</section>
+```
+
+```html
+<!-- Variable inside block syntax -->
+<section>
+    {{ if $animal }}
+        <h1>{{ $tiger_var }}</h1>
+    {{ else }}
+        <h1>{{ $fish_var }}</h1>
+    {{ end }}
+</section>
+```
+
+```html
+<!-- Variable inside inline syntax -->
+<section>
+    <h1>{{ if $is_cat }}{{ $cat_var }}{{ else }}{{ $dog_var }}{{ end }}</h1>
 </section>
 ```
 
