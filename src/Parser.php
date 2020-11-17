@@ -9,12 +9,13 @@ use Exception;
 final class Parser
 {
     /**
-     * @var string What to parse
+     * @var string The content that is being parsed.
      */
-    private $html_string;
+    private $html_content;
 
     /**
-     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted']
+     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted'] of variable name
+     * and content that it holds.
      */
     private $variables;
 
@@ -26,7 +27,7 @@ final class Parser
      */
     public function __construct(string $file_path, ?array $variables = null)
     {
-        $this->html_string = file_get_contents($file_path);
+        $this->html_content = file_get_contents($file_path);
         $this->variables = $variables;
     }
 
@@ -39,15 +40,15 @@ final class Parser
     public function parseHtml(): string
     {
         if ($this->thereAreNoVariables()) {
-            return $this->html_string;
+            return $this->html_content;
         }
 
-        $this->replaceTernaryStatementsFromHtml($this->html_string);
-        $this->replaceIfElseStatementsFromHtml($this->html_string);
-        $this->replaceIfStatementsFromHtml($this->html_string);
-        $this->replaceVariablesFromHtml($this->html_string);
+        $this->replaceTernaryStatementsFromHtml();
+        $this->replaceIfElseStatementsFromHtml();
+        $this->replaceIfStatementsFromHtml();
+        $this->replaceVariablesFromHtml();
 
-        return $this->html_string;
+        return $this->html_content;
     }
 
     private function thereAreNoVariables(): bool
@@ -60,37 +61,31 @@ final class Parser
      */
     private function replaceStatements(array $parsed): void
     {
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
+        $this->html_content = str_replace($parsed['raw'], $parsed['replacements'], $this->html_content);
         $this->removeUsedVariables($parsed['var_names']);
     }
 
-    /**
-     * @param string $html_context
-     */
-    private function replaceIfElseStatementsFromHtml(string $html_context): void
+    private function replaceIfElseStatementsFromHtml(): void
     {
-        preg_match_all(Regex::IF_ELSE_STATEMENTS, $html_context, $matches);
+        preg_match_all(Regex::IF_ELSE_STATEMENTS, $this->html_content, $matches);
 
         [$raw, $var_names, $true_block, $false_block] = $matches;
 
         $this->replaceStatements($this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block));
     }
 
-    /**
-     * @param string $html_context
-     */
-    private function replaceTernaryStatementsFromHtml(string $html_context): void
+    private function replaceTernaryStatementsFromHtml(): void
     {
-        preg_match_all(Regex::TERNARY_STATEMENTS, $html_context, $matches);
+        preg_match_all(Regex::TERNARY_STATEMENTS, $this->html_content, $matches);
 
         [$raw, $var_names,, $true_block,,, $false_block] = $matches;
 
         $this->replaceStatements($this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block));
     }
 
-    private function replaceIfStatementsFromHtml(string $html_context): void
+    private function replaceIfStatementsFromHtml(): void
     {
-        preg_match_all(Regex::IF_STATEMENTS, $html_context, $matches);
+        preg_match_all(Regex::IF_STATEMENTS, $this->html_content, $matches);
 
         [$raw, $var_names, $contents] = $matches;
 
@@ -106,13 +101,11 @@ final class Parser
     }
 
     /**
-     * @param string $html_context
-     *
      * @throws \Exception
      */
-    private function replaceVariablesFromHtml(string $html_context): void
+    private function replaceVariablesFromHtml(): void
     {
-        preg_match_all(Regex::VARIABLES, $html_context, $matches);
+        preg_match_all(Regex::VARIABLES, $this->html_content, $matches);
 
         [$raw, $var_names] = $matches;
 
