@@ -120,7 +120,7 @@ Parsed HTML to a PHP string
 ```html
 <!-- Inline syntax -->
 <section>
-    <h1>{{ if $is_true }}This will be visible if true{{ else }}This will be visible if false {{ end }}</h1>
+    <h1>{{ if $late }}It's late{{ else }}It's not late{{ end }}</h1>
 </section>
 ```
 
@@ -146,7 +146,7 @@ Parsed HTML to a PHP string
 
 ```html
 <!-- Inside html attributes -->
-<section class="{{ $is_true ? 'container' : '' }}">
+<section class="{{ $wrap ? 'container' : '' }}">
     <h1>Title</h1>
 </section>
 ```
@@ -154,7 +154,7 @@ Parsed HTML to a PHP string
 ```html
 <!-- With strings -->
 <section class="container">
-    {{ $is_true ? '<h1>Title</h1>' : '<h2>Secondary</h2>' }}
+    {{ $show_main_title ? '<h1>Main title</h1>' : '<h2>Secondary</h2>' }}
 </section>
 ```
 
