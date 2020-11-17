@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{$show_title?'Title':''}}</title>
+</head>
+<body>
+    <div class="container">
+        <section>
+            <h2 data-style="{{ $show_styles ? 'font-size: 14px; font-weight: bold;' : '' }}">{{ $show_cat ? $cat : $dog }}</h2>
+        </section>
+    </div>
+    <div>{{ $show_footer ? "<footer>Footer</footer>" : "" }}</div>
+</body>
+</html>

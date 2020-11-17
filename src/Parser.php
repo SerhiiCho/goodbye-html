@@ -1,37 +1,42 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml;
 
-use Exception;
+use Serhii\GoodbyeHtml\Syntax\ReplacesIf;
+use Serhii\GoodbyeHtml\Syntax\ReplacesIfElse;
+use Serhii\GoodbyeHtml\Syntax\ReplacesTernary;
+use Serhii\GoodbyeHtml\Syntax\ReplacesVariables;
 
 final class Parser
 {
-    /**
-     * @var string What to parse
-     */
-    private $html_string;
+    use ReplacesIfElse;
+    use ReplacesIf;
+    use ReplacesTernary;
+    use ReplacesVariables;
 
     /**
-     * @var array|null $variables Associative array ['var_name' => 'will be inserted']
+     * @var string The content that is being parsed.
+     */
+    private $html_content;
+
+    /**
+     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted'] of variable name
+     * and content that it holds.
      */
     private $variables;
-
-    /**
-     * @var object Regex patterns
-     */
-    private $regex;
 
     /**
      * Parser constructor.
      *
      * @param string $file_path Absolute or relative path to an html file
-     * @param array|null $variables Associative array ['var_name' => 'will be inserted']
+     * @param string[]|null $variables Associative array ['var_name' => 'will be inserted']
      */
     public function __construct(string $file_path, ?array $variables = null)
     {
-        $this->html_string = file_get_contents($file_path);
+        $this->html_content = file_get_contents($file_path);
         $this->variables = $variables;
-        $this->regex = require __DIR__ . '/regex.php';
     }
 
     /**
@@ -43,14 +48,15 @@ final class Parser
     public function parseHtml(): string
     {
         if ($this->thereAreNoVariables()) {
-            return $this->html_string;
+            return $this->html_content;
         }
 
-        $this->removeUsedVariables($this->replaceIfElseStatements());
-        $this->removeUsedVariables($this->replaceIfStatements());
-        $this->removeUsedVariables($this->replaceVariables());
+        $this->replaceIfElseStatementsFromHtml();
+        $this->replaceIfStatementsFromHtml();
+        $this->replaceTernaryStatementsFromHtml();
+        $this->replaceVariablesFromHtml();
 
-        return $this->html_string;
+        return $this->html_content;
     }
 
     private function thereAreNoVariables(): bool
@@ -58,42 +64,28 @@ final class Parser
         return !is_array($this->variables) || count($this->variables) === 0;
     }
 
-    private function replaceVariables(): array
+    /**
+     * @param array $parsed
+     */
+    private function replaceStatements(array $parsed): void
     {
-        $parsed = $this->getVariablesFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
+        $this->html_content = str_replace($parsed['raw'], $parsed['replacements'], $this->html_content);
 
-        $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
+        $this->variables = array_filter($this->variables, function ($var_name) use ($parsed) {
+            return !in_array($var_name, ['var_names']);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
-    private function replaceIfElseStatements(): array
+    /**
+     * @param $raw
+     * @param $var_names
+     * @param $true_block
+     * @param $false_block
+     *
+     * @return array[]
+     */
+    private function getVarNamesWithRaw($raw, $var_names, $true_block, $false_block): array
     {
-        $parsed = $this->getIfElseStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
-
-        $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
-    }
-
-    private function replaceIfStatements(): array
-    {
-        $parsed = $this->getIfStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
-
-        $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
-    }
-
-    private function getIfElseStatementsFromHtml(string $html_context): array
-    {
-        preg_match_all($this->regex->match_if_else_statements, $html_context, $matches);
-
-        [$raw, $var_names, $true_block, $false_block] = $matches;
-
         $replacements = [];
 
         for ($i = 0; $i < count($raw); $i++) {
@@ -107,51 +99,5 @@ final class Parser
         }
 
         return compact('raw', 'replacements', 'var_names');
-    }
-
-    private function getIfStatementsFromHtml(string $html_context): array
-    {
-        preg_match_all($this->regex->match_if_statements, $html_context, $matches);
-
-        [$raw, $var_names, $contents] = $matches;
-
-        $replacements = [];
-
-        for ($i = 0; $i < count($raw); $i++) {
-            if ($this->variables[$var_names[$i]]) {
-                $replacements[] = trim($contents[$i]);
-            }
-        }
-
-        return compact('raw', 'replacements', 'var_names');
-    }
-
-    private function getVariablesFromHtml(string $html_context): array
-    {
-        preg_match_all($this->regex->match_variables, $html_context, $matches);
-
-        [$raw, $var_names] = $matches;
-
-        $replacements = [];
-
-        for ($i = 0; $i < count($raw); $i++) {
-            $var_key = $var_names[$i];
-
-            if (!in_array($var_key, array_keys($this->variables))) {
-                throw new Exception("Undefined variable \${$var_key}");
-                continue;
-            }
-
-            $replacements[] = $this->variables[$var_key];
-        }
-
-        return compact('raw', 'replacements', 'var_names');
-    }
-
-    private function removeUsedVariables(array $used_vars): void
-    {
-        $this->variables = array_filter($this->variables, function ($key) use ($used_vars) {
-            return !in_array($key, $used_vars);
-        }, ARRAY_FILTER_USE_KEY);
     }
 }

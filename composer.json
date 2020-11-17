@@ -10,7 +10,7 @@
         {
             "name": "Serhii Cho",
             "email": "serhiicho@protonmail.com",
-            "homepage": "https://serhii.tk",
+            "homepage": "https://serhii.io",
             "role": "Developer"
         }
     ],
@@ -22,10 +22,7 @@
     "autoload-dev": {
         "psr-4": {
             "Serhii\\Tests\\": "tests"
-        },
-        "files": [
-            "tests/helpers.php"
-        ]
+        }
     },
     "require": {
         "php": "^7.1"

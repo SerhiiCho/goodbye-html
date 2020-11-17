@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Serhii\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Serhii\GoodbyeHtml\Parser;
 
 class IfElseStatementsTest extends TestCase
@@ -10,10 +11,16 @@ class IfElseStatementsTest extends TestCase
     /**
      * @dataProvider DataProvider_for_can_parse_if_statement
      * @test
+     *
+     * @param string $expect
+     * @param string $file_name
+     * @param bool $boolean
+     *
+     * @throws \Exception
      */
-    public function can_parse_if_else_statement($expect, $file_name, $boolean): void
+    public function can_parse_if_else_statement(string $expect, string $file_name, bool $boolean): void
     {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('boolean'));
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('boolean'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -30,10 +37,23 @@ class IfElseStatementsTest extends TestCase
     /**
      * @dataProvider DataProvider_for_can_parse_if_statement_when_has_another_variable_inside
      * @test
+     *
+     * @param string $expect
+     * @param string $file_name
+     * @param bool $boolean
+     * @param string $content
+     * @param string $content2
+     *
+     * @throws \Exception
      */
-    public function can_parse_if_statement_when_has_another_variable_inside($expect, $file_name, $boolean, $content, $content2): void
-    {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
+    public function can_parse_if_statement_when_has_another_variable_inside(
+        string $expect,
+        string $file_name,
+        bool $boolean,
+        string $content,
+        string $content2
+    ): void {
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -50,10 +70,16 @@ class IfElseStatementsTest extends TestCase
     /**
      * @dataProvider DataProvider_can_parse_if_statement_when_it_is_inline
      * @test
+     *
+     * @param string $expect
+     * @param string $file_name
+     * @param bool $bool
+     *
+     * @throws \Exception
      */
-    public function can_parse_if_statement_when_it_is_inline($expect, $file_name, $bool): void
+    public function can_parse_if_statement_when_it_is_inline(string $expect, string $file_name, bool $bool): void
     {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('bool'));
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('bool'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -63,5 +89,24 @@ class IfElseStatementsTest extends TestCase
             ['<p class="my-class">Some text</p>', 'inline-statement-in-arg', true],
             ['<p class="another-class">Some text</p>', 'inline-statement-in-arg', false],
         ];
+    }
+
+    /** @test */
+    public function can_parse_file_with_multiple_statements(): void
+    {
+        $vars = [
+            'her_name' => 'Anna',
+            'show_her_name' => true,
+            'my_name' => 'Serhii',
+            'show_my_name' => false,
+            'show_class' => true,
+            'my_class' => 'container',
+            'lang' => 'en',
+        ];
+
+        $parser = new Parser(self::getPath('ifelse/multiple-statements'), $vars);
+        $expect = file_get_contents(self::getPath('ifelse/parsed/multiple-statements'));
+
+        $this->assertEquals($expect, $parser->parseHtml());
     }
 }
