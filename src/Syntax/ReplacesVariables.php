@@ -23,7 +23,7 @@ trait ReplacesVariables
         for ($i = 0; $i < count($raw); $i++) {
             $var_key = $var_names[$i];
 
-            if ( ! in_array($var_key, array_keys($this->variables))) {
+            if (!in_array($var_key, array_keys($this->variables))) {
                 throw new Exception("Undefined variable \${$var_key}");
             }
 

@@ -16,14 +16,9 @@ trait ReplacesTernary
 
         $with_raw = $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
 
-        $new_replacements = [];
-
-        foreach ($with_raw['replacements'] as $key => $item) {
-            $first_symbol = $item[0] ?? null;
-            $new_replacements[$key] = $first_symbol === '$' ? "{{ $item }}" : trim($item, "'\"");
-        }
-
-        $with_raw['replacements'] = $new_replacements;
+        $with_raw['replacements'] = array_map(function ($item) {
+            return ($item[0] ?? null) === '$' ? "{{ $item }}" : trim($item, "'\"");
+        }, $with_raw['replacements']);
 
         $this->replaceStatements($with_raw);
     }
