@@ -14,7 +14,7 @@ final class Parser
     private $html_string;
 
     /**
-     * @var array|null $variables Associative array ['var_name' => 'will be inserted']
+     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted']
      */
     private $variables;
 
@@ -22,7 +22,7 @@ final class Parser
      * Parser constructor.
      *
      * @param string $file_path Absolute or relative path to an html file
-     * @param array|null $variables Associative array ['var_name' => 'will be inserted']
+     * @param string[]|null $variables Associative array ['var_name' => 'will be inserted']
      */
     public function __construct(string $file_path, ?array $variables = null)
     {
@@ -56,7 +56,7 @@ final class Parser
     }
 
     /**
-     * @return array
+     * @return string[]
      * @throws \Exception
      */
     private function replaceVariables(): array
@@ -69,6 +69,9 @@ final class Parser
         return $parsed['var_names'];
     }
 
+    /**
+     * @return string[]
+     */
     private function replaceIfElseStatements(): array
     {
         $parsed = $this->getIfElseStatementsFromHtml($this->html_string);
@@ -79,6 +82,9 @@ final class Parser
         return $parsed['var_names'];
     }
 
+    /**
+     * @return string[]
+     */
     private function replaceTernaryStatements(): array
     {
         $parsed = $this->getTernaryStatementsFromHtml($this->html_string);
