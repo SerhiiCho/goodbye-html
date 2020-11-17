@@ -70,15 +70,10 @@ final class Parser
     private function replaceStatements(array $parsed): void
     {
         $this->html_content = str_replace($parsed['raw'], $parsed['replacements'], $this->html_content);
-        $this->removeUsedVariables($parsed['var_names']);
-    }
-
-    private function removeUsedVariables(array $used_vars): void
-    {
         $filtered = [];
 
         foreach ($this->variables as $key => $item) {
-            if (!in_array($key, $used_vars)) {
+            if (!in_array($key, $parsed['var_names'])) {
                 $filtered[$key] = $item;
             }
         }
