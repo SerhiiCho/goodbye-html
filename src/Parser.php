@@ -70,7 +70,7 @@ final class Parser
     {
         preg_match_all(Regex::TERNARY_VARIABLES, $this->html_content, $matches);
 
-        [$raw, $var_names, $true_block,,,,,$false_block] = $matches;
+        [$raw, $var_names, $true_block,,,,$false_block] = $matches;
 
         $with_raw = $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
 

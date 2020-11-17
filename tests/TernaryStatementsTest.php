@@ -72,6 +72,8 @@ class TernaryStatementsTest extends TestCase
             ["<h1>Another text</h1>", 'var-inside', false, 'Some text is here', 'Another text'],
             ["<h1>Not var</h1>", 'right-var-inside', true, 'Some text is here', ''],
             ["<h1>Some text is here</h1>", 'right-var-inside', false, 'Some text is here', ''],
+            ["<h1>Some text is here</h1>", 'left-var-inside', true, 'Some text is here', ''],
+            ["<h1>Not var</h1>", 'left-var-inside', false, 'Some text is here', ''],
         ];
     }
 }
