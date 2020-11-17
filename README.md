@@ -24,7 +24,8 @@ $variables = [
 
 $parser = new Parser('hello.html', $variables);
 
-echo $parser->parseHtml(); // this will output HTML
+// this will parsed content of hello.html file
+echo $parser->parseHtml();
 ```
 
 HTML file content with 2 php variables before parsing it
@@ -61,14 +62,16 @@ Parsed HTML to a PHP string
 ```php
 use Serhii\GoodbyeHtml\Parser;
 
-add_shortcode('my_shortcode', function () {
+add_shortcode('my_shortcode', 'my_shortcode');
+
+function my_shortcode() {
     $parser = new Parser('shortcodes/main.html', [
         'title' => 'Title of the document',
         '$uses_php_3_years' => true,
         'show_container' => false,
     ]);
     return $parser->parseHtml();
-});
+}
 ```
 
 ## All the available syntax in html/text file
