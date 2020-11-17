@@ -34,4 +34,26 @@ class VariablesTest extends TestCase
             ['<h1>{ $first_var }</h1><p>Some text</p><span>{ $nice }</span>', '2-vars-1-brace-on-sides', ['first_var' => 'ME', 'nice' => 'you']],
         ];
     }
+
+    /** @test */
+    public function can_parse_file_with_multiple_variables(): void
+    {
+        $vars = [
+            'title' => 'Home page',
+            'class' => 'x-container',
+            'headline' => <<<TEXT
+Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+Ab ad aperiam, architecto, consectetur cum doloremque doloribus ea
+eius in magni modi molestias nisi odio pariatur placeat voluptatibus
+voluptatum. Ab commodi deleniti ea, est ipsam magnam molestiae non quos tempore unde?
+TEXT,
+            'footer' => '<footer><ul><li>First</li><li>Second</li></ul></footer>',
+            'lang' => 'en',
+        ];
+
+        $parser = new Parser(self::getPath('vars/5-vars'), $vars);
+        $expect = file_get_contents(self::getPath('vars/parsed/5-vars'));
+
+        $this->assertEquals($expect, $parser->parseHtml());
+    }
 }
