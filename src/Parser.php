@@ -42,10 +42,10 @@ final class Parser
             return $this->html_string;
         }
 
-        $this->replaceTernaryStatements();
-        $this->replaceIfElseStatements();
-        $this->replaceIfStatements();
-        $this->replaceVariables();
+        $this->getTernaryStatementsFromHtml($this->html_string);
+        $this->getIfElseStatementsFromHtml($this->html_string);
+        $this->getIfStatementsFromHtml($this->html_string);
+        $this->getVariablesFromHtml($this->html_string);
 
         return $this->html_string;
     }
@@ -56,84 +56,39 @@ final class Parser
     }
 
     /**
-     * @return string[]
-     * @throws \Exception
+     * @param array $parsed
      */
-    private function replaceVariables(): array
+    private function replaceStatements(array $parsed): void
     {
-        $parsed = $this->getVariablesFromHtml($this->html_string);
         $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
-
         $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
-    }
-
-    /**
-     * @return string[]
-     */
-    private function replaceIfElseStatements(): array
-    {
-        $parsed = $this->getIfElseStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
-
-        $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
-    }
-
-    /**
-     * @return string[]
-     */
-    private function replaceTernaryStatements(): array
-    {
-        $parsed = $this->getTernaryStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
-
-        $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
-    }
-
-    private function replaceIfStatements(): array
-    {
-        $parsed = $this->getIfStatementsFromHtml($this->html_string);
-        $this->html_string = str_replace($parsed['raw'], $parsed['replacements'], $this->html_string);
-
-        $this->removeUsedVariables($parsed['var_names']);
-
-        return $parsed['var_names'];
     }
 
     /**
      * @param string $html_context
-     *
-     * @return array[]
      */
-    private function getIfElseStatementsFromHtml(string $html_context): array
+    private function getIfElseStatementsFromHtml(string $html_context): void
     {
         preg_match_all(Regex::IF_ELSE_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names, $true_block, $false_block] = $matches;
 
-        return $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
+        $this->replaceStatements($this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block));
     }
 
     /**
      * @param string $html_context
-     *
-     * @return array[]
      */
-    private function getTernaryStatementsFromHtml(string $html_context): array
+    private function getTernaryStatementsFromHtml(string $html_context): void
     {
         preg_match_all(Regex::TERNARY_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names,, $true_block,,, $false_block] = $matches;
 
-        return $this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block);
+        $this->replaceStatements($this->getVarNamesWithRaw($raw, $var_names, $true_block, $false_block));
     }
 
-    private function getIfStatementsFromHtml(string $html_context): array
+    private function getIfStatementsFromHtml(string $html_context): void
     {
         preg_match_all(Regex::IF_STATEMENTS, $html_context, $matches);
 
@@ -147,16 +102,15 @@ final class Parser
             }
         }
 
-        return compact('raw', 'replacements', 'var_names');
+        $this->replaceStatements(compact('raw', 'replacements', 'var_names'));
     }
 
     /**
      * @param string $html_context
      *
-     * @return array
      * @throws \Exception
      */
-    private function getVariablesFromHtml(string $html_context): array
+    private function getVariablesFromHtml(string $html_context): void
     {
         preg_match_all(Regex::VARIABLES, $html_context, $matches);
 
@@ -174,14 +128,20 @@ final class Parser
             $replacements[] = $this->variables[$var_key];
         }
 
-        return compact('raw', 'replacements', 'var_names');
+        $this->replaceStatements(compact('raw', 'replacements', 'var_names'));
     }
 
     private function removeUsedVariables(array $used_vars): void
     {
-        $this->variables = array_filter($this->variables, function ($key) use ($used_vars) {
-            return !in_array($key, $used_vars);
-        }, ARRAY_FILTER_USE_KEY);
+        $filtered = [];
+
+        foreach ($this->variables as $key => $item) {
+            if (!in_array($key, $used_vars)) {
+                $filtered[$key] = $item;
+            }
+        }
+
+        $this->variables = $filtered;
     }
 
     /**
