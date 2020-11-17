@@ -106,7 +106,7 @@ final class Parser
      */
     private function getIfElseStatementsFromHtml(string $html_context): array
     {
-        preg_match_all(Regex::MATCH_IF_ELSE_STATEMENTS, $html_context, $matches);
+        preg_match_all(Regex::IF_ELSE_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names, $true_block, $false_block] = $matches;
 
@@ -120,7 +120,7 @@ final class Parser
      */
     private function getTernaryStatementsFromHtml(string $html_context): array
     {
-        preg_match_all(Regex::MATCH_TERNARY_STATEMENTS, $html_context, $matches);
+        preg_match_all(Regex::TERNARY_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names,, $true_block,,, $false_block] = $matches;
 
@@ -129,7 +129,7 @@ final class Parser
 
     private function getIfStatementsFromHtml(string $html_context): array
     {
-        preg_match_all(Regex::MATCH_IF_STATEMENTS, $html_context, $matches);
+        preg_match_all(Regex::IF_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names, $contents] = $matches;
 
@@ -152,7 +152,7 @@ final class Parser
      */
     private function getVariablesFromHtml(string $html_context): array
     {
-        preg_match_all(Regex::MATCH_VARIABLES, $html_context, $matches);
+        preg_match_all(Regex::VARIABLES, $html_context, $matches);
 
         [$raw, $var_names] = $matches;
 
