@@ -8,65 +8,30 @@ use Serhii\GoodbyeHtml\Parser;
 
 class VariablesTest extends TestCase
 {
-    /** @test */
-    public function replaces_all_php_variables_with_values(): void
+    /**
+     * @dataProvider DataProvider_for_can_parse_variables
+     * @test
+     *
+     * @param string $expect
+     * @param string $file_name
+     * @param array $vars
+     *
+     * @throws \Exception
+     */
+    public function can_parse_variables(string $expect, string $file_name, array $vars): void
     {
-        $expect = "<h1>Text for first variable</h1>\n<p>Some text</p><span>For nice variable</span>";
-
-        $parser = new Parser(self::getPath('2-vars'), [
-            'first_var' => 'Text for first variable',
-            'nice' => 'For nice variable'
-        ]);
-
+        $parser = new Parser(self::getPath("vars/$file_name"), $vars);
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
-    /** @test */
-    public function replaces_all_php_variables_with_values_even_if_no_space_before_and_after_vars(): void
+    public function DataProvider_for_can_parse_variables(): array
     {
-        $expect = "<h1>Text for first variable</h1>\n<p>Some text</p><span>For nice variable</span>";
-
-        $parser = new Parser(self::getPath('2-vars-no-space'), [
-            'first_var' => 'Text for first variable',
-            'nice' => 'For nice variable'
-        ]);
-
-        $this->assertEquals($expect, $parser->parseHtml());
-    }
-
-    /** @test */
-    public function is_not_replacing_variables_without_mustache_braces(): void
-    {
-        $parser = new Parser(self::getPath('2-vars-no-mustache'));
-        $html = file_get_contents(self::getPath('2-vars-no-mustache'));
-
-        $this->assertEquals($html, $parser->parseHtml());
-    }
-
-    /** @test */
-    public function is_not_replacing_variables_without_dollar_signs(): void
-    {
-        $parser = new Parser(self::getPath('2-vars-no-dollars'));
-        $html = file_get_contents(self::getPath('2-vars-no-dollars'));
-
-        $this->assertEquals($html, $parser->parseHtml());
-    }
-
-    /** @test */
-    public function is_not_replacing_variables_with_single_mustache_brace_on_both_sides(): void
-    {
-        $parser = new Parser(self::getPath('2-vars-on-brace-on-sides'));
-        $html = file_get_contents(self::getPath('2-vars-on-brace-on-sides'));
-
-        $this->assertEquals($html, $parser->parseHtml());
-    }
-
-    /** @test */
-    public function is_not_replacing_variables_without_mustache_braces_on_one_side_of_the_var(): void
-    {
-        $parser = new Parser(self::getPath('2-vars-on-brace-on-side'));
-        $html = file_get_contents(self::getPath('2-vars-on-brace-on-side'));
-
-        $this->assertEquals($html, $parser->parseHtml());
+        return [
+            ["<h1>Hi</h1>\n<p>Some text</p><span>OK</span>", '2-vars', ['first_var' => 'Hi', 'nice' => 'OK']],
+            ["<h1>{{ first_var }}</h1>\n<p>Some text</p><span>{{ nice }}</span>", '2-vars-no-dollars', ['first_var' => 'Hi', 'nice' => 'OK']],
+            ["<h1>\$first_var</h1>\n<p>Some text</p>\n<span>\$nice</span>", '2-vars-no-mustache', ['first_var' => 'Hi', 'nice' => 'OK']],
+            ["<h1>ME</h1>\n<p>Some text</p>\n<span>you</span>", '2-vars-no-space', ['first_var' => 'ME', 'nice' => 'you']],
+            ['<h1>{ $first_var }</h1><p>Some text</p><span>{ $nice }</span>', '2-vars-1-brace-on-sides', ['first_var' => 'ME', 'nice' => 'you']],
+        ];
     }
 }
