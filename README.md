@@ -7,14 +7,15 @@
     <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/v/stable.svg" alt="Latest Stable Version"></a>
 </p>
 
-A very simple package for separating php code from HTML or any other text file. It allows you to pass php **variables** in files, and then you've got a string with the content of your file with replaced variables. It was mostly created for WordPress plugins and themes development. In cases if you need to create a shortcode, and you want to keep your HTML separate from PHP file, this package is a perfect solution.
+A very simple package for separating php logic from HTML or any other text. It allows you to insert **variables**, **if/else statements** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
 
-PLEASE NOTE! This package is not parsing HTML files like other templating engines, all it does is just taking your values from an associative array that you pass to constructor, and replacing all embedded variables with those values. You cannot use || or && operators or any other php syntax. The syntax of the parser has nothing to do with php.
+PLEASE NOTE! This package is not parsing files like other templating engines, all it does is just taking key/value pairs that you provide as an associative array, and replacing all embedded variables and statements with those values. You cannot use || or && operators or any other PHP syntax. The syntax of the parser has nothing to do with PHP.
 
-## Example
-All you need is to create a new instance of Parser class and pass the path to html file as the first constructor argument, and associative array with the variable name as a key and value of the variable as the value of the array.
+## Usage
 
 ```php
+use Serhii\GoodbyeHtml\Parser;
+
 $variables = [
     'title' => 'Title of the document',
     '$uses_php_3_years' => true,
@@ -54,6 +55,20 @@ Parsed HTML to a PHP string
     <h1>I'm not a pro but it's only a matter of time</h1>
 </body>
 </html>
+```
+## Same example but for WordPress shortcode
+
+```php
+use Serhii\GoodbyeHtml\Parser;
+
+add_shortcode('my_shortcode', function () {
+    $parser = new Parser('shortcodes/main.html', [
+        'title' => 'Title of the document',
+        '$uses_php_3_years' => true,
+        'show_container' => false,
+    ]);
+    return $parser->parseHtml();
+});
 ```
 
 ## All the available syntax in html/text file
