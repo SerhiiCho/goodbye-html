@@ -65,4 +65,23 @@ class IfElseStatementsTest extends TestCase
             ['<p class="another-class">Some text</p>', 'inline-statement-in-arg', false],
         ];
     }
+
+    /** @test */
+    public function can_parse_file_with_multiple_statements(): void
+    {
+        $vars = [
+            'her_name' => 'Anna',
+            'show_her_name' => true,
+            'my_name' => 'Serhii',
+            'show_my_name' => false,
+            'show_class' => true,
+            'my_class' => 'container',
+            'lang' => 'en',
+        ];
+
+        $parser = new Parser(self::getPath('ifelse/multiple-statements'), $vars);
+        $expect = file_get_contents(self::getPath('ifelse/parsed/multiple-statements'));
+
+        $this->assertEquals($expect, $parser->parseHtml());
+    }
 }
