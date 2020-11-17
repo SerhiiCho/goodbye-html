@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Serhii\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Serhii\GoodbyeHtml\Parser;
 
 class TernaryStatementsTest extends TestCase
@@ -21,7 +20,7 @@ class TernaryStatementsTest extends TestCase
      */
     public function can_parse_ternary_statement(string $expect, string $file_name, bool $boolean): void
     {
-        $parser = new Parser(get_path("ternary/$file_name"), compact('boolean'));
+        $parser = new Parser(self::getPath("ternary/$file_name"), compact('boolean'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -41,7 +40,7 @@ class TernaryStatementsTest extends TestCase
      */
     public function can_parse_if_statement_when_has_another_variable_inside($expect, $file_name, $boolean, $content, $content2): void
     {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 

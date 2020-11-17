@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Serhii\Tests;
 
 use Exception;
-use PHPUnit\Framework\TestCase;
 use Serhii\GoodbyeHtml\Parser;
 
 class ParserTest extends TestCase
@@ -14,7 +15,7 @@ class ParserTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Undefined variable $nice');
 
-        $parser = new Parser(get_path('2-vars'), ['first_var' => 'Text here']);
+        $parser = new Parser(self::getPath('2-vars'), ['first_var' => 'Text here']);
         $parser->parseHtml();
     }
 }

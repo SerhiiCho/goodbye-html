@@ -22,10 +22,7 @@
     "autoload-dev": {
         "psr-4": {
             "Serhii\\Tests\\": "tests"
-        },
-        "files": [
-            "tests/helpers.php"
-        ]
+        }
     },
     "require": {
         "php": "^7.1"

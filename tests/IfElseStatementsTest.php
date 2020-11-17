@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Serhii\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Serhii\GoodbyeHtml\Parser;
 
 class IfElseStatementsTest extends TestCase
@@ -13,7 +14,7 @@ class IfElseStatementsTest extends TestCase
      */
     public function can_parse_if_else_statement($expect, $file_name, $boolean): void
     {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('boolean'));
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('boolean'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -33,7 +34,7 @@ class IfElseStatementsTest extends TestCase
      */
     public function can_parse_if_statement_when_has_another_variable_inside($expect, $file_name, $boolean, $content, $content2): void
     {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('boolean', 'content', 'content2'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -53,7 +54,7 @@ class IfElseStatementsTest extends TestCase
      */
     public function can_parse_if_statement_when_it_is_inline($expect, $file_name, $bool): void
     {
-        $parser = new Parser(get_path("ifelse/$file_name"), compact('bool'));
+        $parser = new Parser(self::getPath("ifelse/$file_name"), compact('bool'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
