@@ -43,7 +43,7 @@ HTML file content with 2 php variables before parsing it
 ```
 
 Parsed HTML to a PHP string
-```text
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
