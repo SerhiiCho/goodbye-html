@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml;
 
@@ -17,11 +19,6 @@ final class Parser
     private $variables;
 
     /**
-     * @var object Regex patterns
-     */
-    private $regex;
-
-    /**
      * Parser constructor.
      *
      * @param string $file_path Absolute or relative path to an html file
@@ -31,7 +28,6 @@ final class Parser
     {
         $this->html_string = file_get_contents($file_path);
         $this->variables = $variables;
-        $this->regex = require __DIR__ . '/regex.php';
     }
 
     /**
@@ -110,7 +106,7 @@ final class Parser
      */
     private function getIfElseStatementsFromHtml(string $html_context): array
     {
-        preg_match_all($this->regex->match_if_else_statements, $html_context, $matches);
+        preg_match_all(Regex::MATCH_IF_ELSE_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names, $true_block, $false_block] = $matches;
 
@@ -124,7 +120,7 @@ final class Parser
      */
     private function getTernaryStatementsFromHtml(string $html_context): array
     {
-        preg_match_all($this->regex->match_ternary_statements, $html_context, $matches);
+        preg_match_all(Regex::MATCH_TERNARY_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names,, $true_block,,, $false_block] = $matches;
 
@@ -133,7 +129,7 @@ final class Parser
 
     private function getIfStatementsFromHtml(string $html_context): array
     {
-        preg_match_all($this->regex->match_if_statements, $html_context, $matches);
+        preg_match_all(Regex::MATCH_IF_STATEMENTS, $html_context, $matches);
 
         [$raw, $var_names, $contents] = $matches;
 
@@ -156,7 +152,7 @@ final class Parser
      */
     private function getVariablesFromHtml(string $html_context): array
     {
-        preg_match_all($this->regex->match_variables, $html_context, $matches);
+        preg_match_all(Regex::MATCH_VARIABLES, $html_context, $matches);
 
         [$raw, $var_names] = $matches;
 
