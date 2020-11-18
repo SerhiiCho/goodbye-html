@@ -15,13 +15,12 @@ trait ReplacesLoops
         [$raw,, $loop_froms, $loop_tos, $contents] = $matches;
 
         $replacements = [];
-        // todo: replace vars in loop args before looping
 
         for ($i = 0; $i < count($raw); $i++) {
             $content = '';
 
             for ($j = (int) $loop_froms[$i]; $j <= (int) $loop_tos[$i]; $j++) {
-                $content .= $contents[$i];
+                $content .= preg_replace(Regex::INDEX_VARIABLE, $j, $contents[$i]);
             }
 
             $replacements[] = $content;
