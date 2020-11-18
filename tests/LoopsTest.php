@@ -18,7 +18,7 @@ class LoopsTest extends TestCase
      */
     public function can_loop_from_number_to_number(string $file_name): void
     {
-        $parser = new Parser(self::getPath("loop/$file_name"), []);
+        $parser = new Parser(self::getPath("loop/not-parsed/$file_name"), []);
         $expect = file_get_contents(self::getPath("loop/parsed/$file_name"));
 
         $this->assertEquals($expect, $parser->parseHtml(), "Strings not equal in file: $file_name");
@@ -26,6 +26,6 @@ class LoopsTest extends TestCase
 
     public function Provider_for_can_loop_from_number_to_number(): array
     {
-        return $this->getFileNames('/files/loop/*.html');
+        return $this->getFileNames('/files/loop/not-parsed/*');
     }
 }
