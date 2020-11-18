@@ -10,9 +10,13 @@ trait ReplacesLoops
 {
     private function replaceLoopsFromHtml(): void
     {
-        preg_match_all(Regex::LOOP, $this->html_content, $matches);
+        preg_match_all(Regex::INLINE_LOOP, $this->html_content, $inline_matches);
+        preg_match_all(Regex::BLOCK_LOOP, $this->html_content, $block_matches);
 
-        [$raw,, $loop_froms, $loop_tos, $contents] = $matches;
+        $raw = $inline_matches[0] + $block_matches[0];
+        $loop_froms = $inline_matches[1] + $block_matches[2];
+        $loop_tos = $inline_matches[2] + $block_matches[3];
+        $contents = $inline_matches[3] + $block_matches[4];
 
         $replacements = [];
 
