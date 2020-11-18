@@ -11,21 +11,21 @@ class LoopsTest extends TestCase
     /**
      * @dataProvider Provider_for_can_loop_from_number_to_number
      * @test
-     * @param int $from
-     * @param int $to
+     *
+     * @param string $file_name
      *
      * @throws \Exception
      */
-    public function can_loop_from_number_to_number(int $from, int $to): void
+    public function can_loop_from_number_to_number(string $file_name): void
     {
-        $parser = new Parser(self::getPath("loop/from-$from-to-$to"), []);
-        $expect = file_get_contents(self::getPath("loop/parsed/from-$from-to-$to"));
+        $parser = new Parser(self::getPath("loop/$file_name"), []);
+        $expect = file_get_contents(self::getPath("loop/parsed/$file_name"));
 
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
     public function Provider_for_can_loop_from_number_to_number(): array
     {
-        return [[0, 10], [1, 17], [0, 5], [10, 20]];
+        return $this->getFileNames('/files/loop/*.html');
     }
 }
