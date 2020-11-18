@@ -20,7 +20,7 @@ trait ReplacesLoops
         for ($i = 0; $i < count($raw); $i++) {
             $content = '';
 
-            for ($j = (int) $loop_froms[$i]; $j < (int) $loop_tos[$i]; $j++) {
+            for ($j = (int) $loop_froms[$i]; $j <= (int) $loop_tos[$i]; $j++) {
                 $content .= $contents[$i];
             }
 
