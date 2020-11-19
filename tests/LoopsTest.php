@@ -50,6 +50,8 @@ class LoopsTest extends TestCase
         return [
             ["<span>1</span>\n<span>2</span>\n<span>3</span>\n", 'with-2-vars', 1, 3],
             ["<span>1</span>\n<span>2</span>\n", 'with-first-var', 1, null],
+            ["<span>0</span>\n<span>1</span>\n<span>2</span>\n<span>3</span>\n", 'with-second-var', null, 3],
+            ["<section>\n<span>1</span>\n<span>2</span>\n</section>\n<div>\n<h2></h2>\n<h2></h2>\n</div>", 'with-2-loops', 1, 2],
         ];
     }
 
