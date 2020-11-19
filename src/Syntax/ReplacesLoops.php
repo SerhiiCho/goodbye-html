@@ -19,7 +19,7 @@ trait ReplacesLoops
         preg_match_all(Regex::INLINE_LOOP, $this->html_content, $inline_matches);
         preg_match_all(Regex::BLOCK_LOOP, $this->html_content, $block_matches);
 
-        $raw = $inline_matches[0] + $block_matches[0];
+        $raw = $inline_matches[0] + $block_matches[1];
         $loop_froms = $inline_matches[1] + $block_matches[2];
         $loop_tos = $inline_matches[2] + $block_matches[3];
         $contents = $inline_matches[3] + $block_matches[4];
