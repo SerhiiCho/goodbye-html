@@ -8,7 +8,7 @@
 
 A very simple package for separating php logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
 
-PLEASE NOTE! This package is not parsing files like other templating engines, all it does is just taking key/value pairs that you provide as an associative array, and replacing all embedded variables and statements with those values. You cannot use || or && operators or any other PHP syntax. The syntax of the parser has nothing to do with PHP. Also it doesn't support nested loops and statements.
+PLEASE NOTE! This package is not parsing files like other templating engines, all it does is just taking key/value pairs that you provide as an associative array, and replacing all embedded variables and statements with those values. You cannot use || or && operators or any other PHP syntax. The syntax of the parser has nothing to do with PHP. Also, parser doesn't support nested loops and statements, only variables can be nested inside loops and statements.
 
 ## Usage
 
