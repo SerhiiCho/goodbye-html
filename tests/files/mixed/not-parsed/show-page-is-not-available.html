@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ $show_title ? $title : $no_title }}</title>
+</head>
+<body>
+    {{ if $has_access }}
+    <h1>Some nice title</h1>
+    <p>Awesome paragraph</p>
+    {{ else }}
+    {{ $message }}
+    {{ end }}
+</body>
+</html>
