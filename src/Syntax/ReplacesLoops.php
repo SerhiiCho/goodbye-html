@@ -16,13 +16,13 @@ trait ReplacesLoops
     {
         $this->replaceArgumentVariables();
 
-        preg_match_all(Regex::INLINE_LOOP, $this->html_content, $inline_matches);
-        preg_match_all(Regex::BLOCK_LOOP, $this->html_content, $block_matches);
+        preg_match_all(Regex::INLINE_LOOP, $this->html_content, $inline);
+        preg_match_all(Regex::BLOCK_LOOP, $this->html_content, $block);
 
-        $raw = array_merge($inline_matches[0], $block_matches[0]);
-        $loop_froms = array_merge($inline_matches[1], $block_matches[2]);
-        $loop_tos = array_merge($inline_matches[2], $block_matches[3]);
-        $contents = array_merge($inline_matches[3], $block_matches[4]);
+        $raw = array_merge($inline[0], $block[0]);
+        $loop_froms = array_merge($inline[1], $block[2]);
+        $loop_tos = array_merge($inline[2], $block[3]);
+        $contents = array_merge($inline[3], $block[4]);
 
         $replacements = [];
 

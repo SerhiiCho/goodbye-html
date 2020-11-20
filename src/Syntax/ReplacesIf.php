@@ -10,12 +10,12 @@ trait ReplacesIf
 {
     private function replaceIfStatementsFromHtml(): void
     {
-        preg_match_all(Regex::BLOCK_IF_STATEMENTS, $this->html_content, $block_matches);
-        preg_match_all(Regex::INLINE_IF_STATEMENTS, $this->html_content, $inline_matches);
+        preg_match_all(Regex::BLOCK_IF_STATEMENTS, $this->html_content, $block);
+        preg_match_all(Regex::INLINE_IF_STATEMENTS, $this->html_content, $inline);
 
-        $raw = array_merge($inline_matches[0], $block_matches[0]);
-        $var_names = array_merge($inline_matches[1], $block_matches[2]);
-        $contents = array_merge($inline_matches[2], $block_matches[3]);
+        $raw = array_merge($inline[0], $block[0]);
+        $var_names = array_merge($inline[1], $block[2]);
+        $contents = array_merge($inline[2], $block[3]);
 
         $replacements = [];
 
