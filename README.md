@@ -68,7 +68,7 @@ Parsed HTML to a PHP string
         </ul>
     </nav>
 
-    <h1>I'm not a pro but it's only a matter of time</h1>
+        <h1>I'm not a pro but it's only a matter of time</h1>
 </body>
 </html>
 ```
