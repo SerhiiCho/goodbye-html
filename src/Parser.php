@@ -97,11 +97,11 @@ final class Parser
 
         for ($i = 0; $i < count($raw); $i++) {
             if ($this->variables[$var_names[$i]] === true) {
-                $replacements[] = trim($true_block[$i]);
+                $replacements[] = $true_block[$i];
             }
 
             if ($this->variables[$var_names[$i]] === false) {
-                $replacements[] = trim($false_block[$i]);
+                $replacements[] = $false_block[$i];
             }
         }
 
