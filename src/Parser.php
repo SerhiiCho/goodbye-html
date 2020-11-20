@@ -7,6 +7,7 @@ namespace Serhii\GoodbyeHtml;
 use Serhii\GoodbyeHtml\Syntax\ReplacesIf;
 use Serhii\GoodbyeHtml\Syntax\ReplacesIfElse;
 use Serhii\GoodbyeHtml\Syntax\ReplacesTernary;
+use Serhii\GoodbyeHtml\Syntax\ReplacesLoops;
 use Serhii\GoodbyeHtml\Syntax\ReplacesVariables;
 
 final class Parser
@@ -14,6 +15,7 @@ final class Parser
     use ReplacesIfElse;
     use ReplacesIf;
     use ReplacesTernary;
+    use ReplacesLoops;
     use ReplacesVariables;
 
     /**
@@ -47,21 +49,22 @@ final class Parser
      */
     public function parseHtml(): string
     {
-        if ($this->thereAreNoVariables()) {
-            return $this->html_content;
-        }
+        $this->replaceLoopsFromHtml();
 
-        $this->replaceIfElseStatementsFromHtml();
-        $this->replaceIfStatementsFromHtml();
-        $this->replaceTernaryStatementsFromHtml();
-        $this->replaceVariablesFromHtml();
+        if ($this->hasVariables()) {
+            // Order of method calls matters
+            $this->replaceIfElseStatementsFromHtml();
+            $this->replaceIfStatementsFromHtml();
+            $this->replaceTernaryStatementsFromHtml();
+            $this->replaceVariablesFromHtml();
+        }
 
         return $this->html_content;
     }
 
-    private function thereAreNoVariables(): bool
+    private function hasVariables(): bool
     {
-        return !is_array($this->variables) || count($this->variables) === 0;
+        return is_array($this->variables) && !empty($this->variables);
     }
 
     /**
@@ -71,8 +74,12 @@ final class Parser
     {
         $this->html_content = str_replace($parsed['raw'], $parsed['replacements'], $this->html_content);
 
+        if (!isset($parsed['var_names']) || empty($parsed['var_names'])) {
+            return;
+        }
+
         $this->variables = array_filter($this->variables, function ($var_name) use ($parsed) {
-            return !in_array($var_name, ['var_names']);
+            return !in_array($var_name, $parsed['var_names']);
         }, ARRAY_FILTER_USE_KEY);
     }
 
@@ -90,11 +97,11 @@ final class Parser
 
         for ($i = 0; $i < count($raw); $i++) {
             if ($this->variables[$var_names[$i]] === true) {
-                $replacements[] = trim($true_block[$i]);
+                $replacements[] = $true_block[$i];
             }
 
             if ($this->variables[$var_names[$i]] === false) {
-                $replacements[] = trim($false_block[$i]);
+                $replacements[] = $false_block[$i];
             }
         }
 

@@ -60,10 +60,10 @@ class IfElseStatementsTest extends TestCase
     public function DataProvider_for_can_parse_if_statement_when_has_another_variable_inside(): array
     {
         return [
-            ["<div></div>\nSome text is here\n<div></div>", 'var-in-if', true, 'Some text is here', 'Another text'],
-            ["<div></div>\nAnother text\n<div></div>", 'var-in-if', false, 'Some text is here', 'Another text'],
-            ["<div></div>\nContent\n    Content\n<div></div>", 'var-in-if-2-lines', true, 'Content', 'Other'],
-            ["<div></div>\nOther\n    Other\n<div></div>", 'var-in-if-2-lines', false, 'Content', 'Other'],
+            ["<div></div>\n    Some text is here\n<div></div>", 'var-in-if', true, 'Some text is here', 'Another text'],
+            ["<div></div>\n    Another text\n<div></div>", 'var-in-if', false, 'Some text is here', 'Another text'],
+            ["<div></div>\n    Content\n    Content\n<div></div>", 'var-in-if-2-lines', true, 'Content', 'Other'],
+            ["<div></div>\n    Other\n    Other\n<div></div>", 'var-in-if-2-lines', false, 'Content', 'Other'],
         ];
     }
 
