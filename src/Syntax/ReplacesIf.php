@@ -17,9 +17,7 @@ trait ReplacesIf
         $replacements = [];
 
         for ($i = 0; $i < count($raw); $i++) {
-            if ($this->variables[$var_names[$i]]) {
-                $replacements[] = trim($contents[$i]);
-            }
+            $replacements[] = $this->variables[$var_names[$i]] ? trim($contents[$i]) : '';
         }
 
         $this->replaceStatements(compact('raw', 'replacements', 'var_names'));
