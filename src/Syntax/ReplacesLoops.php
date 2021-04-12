@@ -74,7 +74,7 @@ trait ReplacesLoops
         }
 
         if ($raw[0] === '$') {
-            $this->html_content = str_replace($raw, $val, $this->html_content);
+            $this->html_content = str_replace($raw, (string) $val, $this->html_content);
         }
     }
 }
