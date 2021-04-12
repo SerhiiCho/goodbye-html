@@ -26,11 +26,11 @@ trait ReplacesLoops
 
         $replacements = [];
 
-        for ($i = 0; $i < count($raw); $i++) {
+        for ($i = 0, $count = count($raw); $i < $count; $i++) {
             $content = '';
 
             for ($j = (int) $loop_froms[$i]; $j <= (int) $loop_tos[$i]; $j++) {
-                $content .= preg_replace(Regex::INDEX_VARIABLE, $j, $contents[$i]);
+                $content .= preg_replace(Regex::INDEX_VARIABLE, (string) $j, $contents[$i]);
             }
 
             $replacements[] = $content;
@@ -69,7 +69,7 @@ trait ReplacesLoops
     {
         $val = is_null($val) ? null : (int) $val;
 
-        if (is_null($val) && $raw[0] === '$') {
+        if ($raw[0] === '$' && is_null($val)) {
             throw new Exception("Undefined variable $raw");
         }
 

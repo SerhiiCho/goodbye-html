@@ -13,7 +13,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function getFileNames(string $blob): array
     {
-        return array_map(function ($name) {
+        return array_map(static function ($name) {
             $sections = explode('/', $name);
             return [str_replace('.html', '', end($sections))];
         }, glob(__DIR__ . $blob));
