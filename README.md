@@ -1,4 +1,5 @@
 <p align="center">
+    <a href="https://github.com/SerhiiCho/goodbye-html/actions/workflows/php.yml"><img src="https://github.com/SerhiiCho/goodbye-html/actions/workflows/php.yml/badge.svg" alt="Goodbye HTML"></a>
     <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/d/total.svg" alt="Total Downloads"></a>
     <a href="https://packagist.org/packages/serhii/goodbye-html"><img src="https://poser.pugx.org/serhii/goodbye-html/v/stable.svg" alt="Latest Stable Version"></a>
     <a href="https://github.com/SerhiiCho/goodbye-html/blob/master/LICENSE.md"><img alt="GitHub" src="https://img.shields.io/github/license/SerhiiCho/goodbye-html"></a>
