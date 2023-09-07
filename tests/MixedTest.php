@@ -8,7 +8,7 @@ use Serhii\GoodbyeHtml\Parser;
 
 class MixedTest extends TestCase
 {
-    public function test_for_mixed_bootstrap_footer(): void
+    public function testForMixedBootstrapFooter(): void
     {
         $parser = new Parser(self::getPath("mixed/not-parsed/bootstrap-footer"), [
             'title' => 'Here is the title of the page',
@@ -33,7 +33,7 @@ class MixedTest extends TestCase
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
-    public function test_for_mixed_page(): void
+    public function testForMixedPage(): void
     {
         $parser = new Parser(self::getPath("mixed/not-parsed/show-page-is-not-available"), [
             'title' => 'Here is the title of the page',

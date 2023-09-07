@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace Serhii\Tests;
 
 use Serhii\GoodbyeHtml\Parser;
+use Exception;
 
 class TernaryStatementsTest extends TestCase
 {
     /**
      * @dataProvider DataProvider_for_can_parse_if_statement
-     * @test
+     *
      *
      * @param string $expect
      * @param string $file_name
      * @param bool $boolean
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function can_parse_ternary_statement(string $expect, string $file_name, bool $boolean): void
+    public function testCanParseTernaryStatement(string $expect, string $file_name, bool $boolean): void
     {
-        $parser = new Parser(self::getPath("ternary/$file_name"), compact('boolean'));
+        $parser = new Parser(self::getPath("ternary/{$file_name}"), compact('boolean'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -44,7 +45,7 @@ class TernaryStatementsTest extends TestCase
 
     /**
      * @dataProvider DataProvider_for_can_parse_ternary_when_has_another_variables_inside
-     * @test
+     *
      *
      * @param string $expect
      * @param string $file_name
@@ -52,16 +53,16 @@ class TernaryStatementsTest extends TestCase
      * @param string $content
      * @param string $content2
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function can_parse_ternary_when_has_another_variables_inside(
+    public function testCanParseTernaryWhenHasAnotherVariablesInside(
         string $expect,
         string $file_name,
         bool $boolean,
         string $content,
         string $content2
     ): void {
-        $parser = new Parser(self::getPath("ternary/$file_name"), compact('boolean', 'content', 'content2'));
+        $parser = new Parser(self::getPath("ternary/{$file_name}"), compact('boolean', 'content', 'content2'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -77,8 +78,8 @@ class TernaryStatementsTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function can_parse_file_with_multiple_variables(): void
+
+    public function testCanParseFileWithMultipleVariables(): void
     {
         $vars = [
             'cat' => 'Cat',
