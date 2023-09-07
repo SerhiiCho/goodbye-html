@@ -9,6 +9,7 @@ use Serhii\GoodbyeHtml\Syntax\ReplacesIfElse;
 use Serhii\GoodbyeHtml\Syntax\ReplacesTernary;
 use Serhii\GoodbyeHtml\Syntax\ReplacesLoops;
 use Serhii\GoodbyeHtml\Syntax\ReplacesVariables;
+use Exception;
 
 final class Parser
 {
@@ -45,7 +46,7 @@ final class Parser
      * Takes html and replaces all embedded variables with values
      *
      * @return string Parsed html with replaced php variables
-     * @throws \Exception Throws exception if variable is in html but doesn't have value
+     * @throws Exception Throws exception if variable is in html but doesn't have value
      */
     public function parseHtml(): string
     {

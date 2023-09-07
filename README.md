@@ -9,6 +9,15 @@ A very simple package for separating php logic from HTML or any other text. It a
 
 PLEASE NOTE! This package is not parsing files like other templating engines, all it does is just taking key/value pairs that you provide as an associative array, and replacing all embedded variables and statements with those values. You cannot use || or && operators or any other PHP syntax. The syntax of the parser has nothing to do with PHP. Also, parser doesn't support nested loops and statements, only variables can be nested inside loops and statements.
 
+## Supported PHP versions
+- ✅ 7.1
+- ✅ 7.2
+- ✅ 7.3
+- ✅ 7.4
+- ✅ 8.0
+- ✅ 8.1
+- ✅ 8.2
+
 ## Usage
 
 ```php

@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace Serhii\Tests;
 
 use Serhii\GoodbyeHtml\Parser;
+use Exception;
 
 class LoopsTest extends TestCase
 {
     /**
      * @dataProvider Provider_for_can_loop_from_number_to_number
-     * @test
+     *
      *
      * @param string $file_name
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function can_loop_with_numbers_as_parameters(string $file_name): void
+    public function testCanLoopWithNumbersAsParameters(string $file_name): void
     {
-        $parser = new Parser(self::getPath("loop/not-parsed/$file_name"), []);
-        $expect = file_get_contents(self::getPath("loop/parsed/$file_name"));
+        $parser = new Parser(self::getPath("loop/not-parsed/{$file_name}"), []);
+        $expect = file_get_contents(self::getPath("loop/parsed/{$file_name}"));
 
-        $this->assertEquals($expect, $parser->parseHtml(), "Strings not equal in file: $file_name");
+        $this->assertEquals($expect, $parser->parseHtml(), "Strings not equal in file: {$file_name}");
     }
 
     public function Provider_for_can_loop_from_number_to_number(): array
@@ -31,17 +32,17 @@ class LoopsTest extends TestCase
 
     /**
      * @dataProvider Provider_for_can_loop_with_variables_as_parameters
-     * @test
+     *
      * @param string $expect
      * @param string $file_name
      * @param int|null $num1
      * @param int|null $num2
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function can_loop_with_variables_as_parameters(string $expect, string $file_name, ?int $num1, ?int $num2): void
+    public function testCanLoopWithVariablesAsParameters(string $expect, string $file_name, ?int $num1, ?int $num2): void
     {
-        $parser = new Parser(self::getPath("loop/with-vars/$file_name"), compact('num1', 'num2'));
+        $parser = new Parser(self::getPath("loop/with-vars/{$file_name}"), compact('num1', 'num2'));
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -55,8 +56,8 @@ class LoopsTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function replaceArgumentVariables_throws_exception_if_second_loop_argument_is_not_provided(): void
+
+    public function testReplaceArgumentVariablesThrowsExceptionIfSecondLoopArgumentIsNotProvided(): void
     {
         $this->expectExceptionMessage('Undefined variable $num2');
 
@@ -64,8 +65,8 @@ class LoopsTest extends TestCase
         $parser->parseHtml();
     }
 
-    /** @test */
-    public function replaceArgumentVariables_throws_exception_if_first_loop_argument_is_not_provided(): void
+
+    public function testReplaceArgumentVariablesThrowsExceptionIfFirstLoopArgumentIsNotProvided(): void
     {
         $this->expectExceptionMessage('Undefined variable $num1');
 

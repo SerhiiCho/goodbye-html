@@ -8,8 +8,7 @@ use Serhii\GoodbyeHtml\Parser;
 
 class ParserTest extends TestCase
 {
-    /** @test */
-    public function parseHtml_method_throws_exception_if_variable_name_is_not_provided(): void
+    public function testParseHtmlMethodThrowsExceptionIfVariableNameIsNotProvided(): void
     {
         $this->expectExceptionMessage('Undefined variable $nice');
 

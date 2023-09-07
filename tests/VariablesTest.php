@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace Serhii\Tests;
 
 use Serhii\GoodbyeHtml\Parser;
+use Exception;
 
 class VariablesTest extends TestCase
 {
     /**
      * @dataProvider DataProvider_for_can_parse_variables
-     * @test
+     *
      *
      * @param string $expect
      * @param string $file_name
      * @param array $vars
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function can_parse_variables(string $expect, string $file_name, array $vars): void
+    public function testCanParseVariables(string $expect, string $file_name, array $vars): void
     {
-        $parser = new Parser(self::getPath("vars/$file_name"), $vars);
+        $parser = new Parser(self::getPath("vars/{$file_name}"), $vars);
         $this->assertEquals($expect, $parser->parseHtml());
     }
 
@@ -35,8 +36,8 @@ class VariablesTest extends TestCase
         ];
     }
 
-    /** @test */
-    public function can_parse_file_with_multiple_variables(): void
+
+    public function testCanParseFileWithMultipleVariables(): void
     {
         $vars = [
             'title' => 'Home page',
