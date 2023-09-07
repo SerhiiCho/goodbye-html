@@ -10,7 +10,7 @@ use Serhii\GoodbyeHtml\Regex;
 trait ReplacesLoops
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function replaceLoopsFromHtml(): void
     {
@@ -40,7 +40,7 @@ trait ReplacesLoops
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function replaceArgumentVariables(): void
     {
@@ -63,14 +63,14 @@ trait ReplacesLoops
      * @param string $raw
      * @param mixed $val
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function replaceVariable(string $raw, $val): void
     {
-        $val = is_null($val) ? null : (int) $val;
+        $val = null === $val ? null : (int) $val;
 
-        if ($raw[0] === '$' && is_null($val)) {
-            throw new Exception("Undefined variable $raw");
+        if ($raw[0] === '$' && null === $val) {
+            throw new Exception("Undefined variable {$raw}");
         }
 
         if ($raw[0] === '$') {

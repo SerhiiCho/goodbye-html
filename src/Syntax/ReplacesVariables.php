@@ -10,7 +10,7 @@ use Serhii\GoodbyeHtml\Regex;
 trait ReplacesVariables
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function replaceVariablesFromHtml(): void
     {
