@@ -13,7 +13,7 @@ class LexerTest extends TestCase
     public function testLexer(): void
     {
         $input = <<<HTML
-        <div>
+        <div class="{{ \$show ? 'container' : '' }}">
         <h1 {{ \$classes }}>{{ \$heading }}</h1>
         <ul>
         {{ loop 1, 3 }}
@@ -27,7 +27,18 @@ class LexerTest extends TestCase
         HTML;
 
         $tests = [
-            new Token(TokenType::HTML, "<div>\n<h1 "),
+            new Token(TokenType::HTML, "<div class=\""),
+
+            // Coalescing operator
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "show"),
+            new Token(TokenType::QUESTION_MARK, "?"),
+            new Token(TokenType::STRING, "container"),
+            new Token(TokenType::COLON, ":"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
+            // End coalescing operator
+
+            new Token(TokenType::HTML, "\">\n<h1 "),
             new Token(TokenType::LEFT_BRACES, "{{"),
             new Token(TokenType::VARIABLE, "classes"),
             new Token(TokenType::RIGHT_BRACES, "}}"),
@@ -36,6 +47,8 @@ class LexerTest extends TestCase
             new Token(TokenType::VARIABLE, "heading"),
             new Token(TokenType::RIGHT_BRACES, "}}"),
             new Token(TokenType::HTML, "</h1>\n<ul>\n"),
+
+            // Loop statement
             new Token(TokenType::LEFT_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "loop"),
             new Token(TokenType::INTEGER, "1"),
@@ -50,7 +63,11 @@ class LexerTest extends TestCase
             new Token(TokenType::LEFT_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "end"),
             new Token(TokenType::RIGHT_BRACES, "}}"),
+            // End loop statement
+
             new Token(TokenType::HTML, "</ul>\n"),
+
+            // If statement
             new Token(TokenType::LEFT_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "if"),
             new Token(TokenType::VARIABLE, "isOld"),
@@ -59,9 +76,9 @@ class LexerTest extends TestCase
             new Token(TokenType::LEFT_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "end"),
             new Token(TokenType::RIGHT_BRACES, "}}"),
+            // End if statement
+
             new Token(TokenType::HTML, "</div>"),
-
-
             new Token(TokenType::EOF, ''),
         ];
 

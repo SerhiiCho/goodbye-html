@@ -11,9 +11,12 @@ enum TokenType: string
     case ILLEGAL = 'ILLEGAL';
     case HTML = 'HTML';
     case INTEGER = 'INTEGER';
-    case COMMA = ',';
     case IDENTIFIER = 'IDENTIFIER';
+    case STRING = "STRING";
 
+    case COMMA = ',';
+    case QUESTION_MARK = '?';
+    case COLON = ':';
     case LEFT_BRACES = '{{';
     case RIGHT_BRACES = '}}';
 }
