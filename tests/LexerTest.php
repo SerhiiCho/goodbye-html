@@ -24,6 +24,11 @@ class LexerTest extends TestCase
         <h1>I'm not a pro but it's only a matter of time</h1>
         {{ end }}
         </div>
+        {{ if \$likes_bread }}
+            <h1>I like bread</h1>
+        {{ else }}
+            <h1>I don't really like bread</h1>
+        {{ end }}
         HTML;
 
         $tests = [
@@ -79,7 +84,23 @@ class LexerTest extends TestCase
             new Token(TokenType::CLOSING_BRACES, "}}"),
             // End if statement
 
-            new Token(TokenType::HTML, "</div>"),
+            new Token(TokenType::HTML, "</div>\n"),
+
+            // If / Else statement
+            new Token(TokenType::OPENING_BRACES, '{{'),
+            new Token(TokenType::IDENTIFIER, "if"),
+            new Token(TokenType::VARIABLE, "likes_bread"),
+            new Token(TokenType::CLOSING_BRACES, '}}'),
+            new Token(TokenType::HTML, "<h1>I like bread</h1>\n"),
+            new Token(TokenType::OPENING_BRACES, '{{'),
+            new Token(TokenType::IDENTIFIER, "else"),
+            new Token(TokenType::CLOSING_BRACES, '}}'),
+            new Token(TokenType::HTML, "<h1>I don't really like bread</h1>\n"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::IDENTIFIER, "end"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            // End If / Else statement
+
             new Token(TokenType::EOF, 'EOF'),
         ];
 
