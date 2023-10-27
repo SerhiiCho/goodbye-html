@@ -17,6 +17,6 @@ enum TokenType: string
     case COMMA = ',';
     case QUESTION_MARK = '?';
     case COLON = ':';
-    case LEFT_BRACES = '{{';
-    case RIGHT_BRACES = '}}';
+    case OPENING_BRACES = '{{';
+    case CLOSING_BRACES = '}}';
 }

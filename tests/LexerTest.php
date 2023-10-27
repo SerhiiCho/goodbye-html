@@ -30,52 +30,52 @@ class LexerTest extends TestCase
             new Token(TokenType::HTML, "<div class=\""),
 
             // Coalescing operator
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::VARIABLE, "show"),
             new Token(TokenType::QUESTION_MARK, "?"),
             new Token(TokenType::STRING, "container"),
             new Token(TokenType::COLON, ":"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             // End coalescing operator
 
             new Token(TokenType::HTML, "\">\n<h1 "),
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::VARIABLE, "classes"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, ">"),
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::VARIABLE, "heading"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "</h1>\n<ul>\n"),
 
             // Loop statement
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "loop"),
             new Token(TokenType::INTEGER, "1"),
             new Token(TokenType::COMMA, ","),
             new Token(TokenType::INTEGER, "3"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "<li>"),
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::VARIABLE, "index"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "</li>\n"),
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "end"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             // End loop statement
 
             new Token(TokenType::HTML, "</ul>\n"),
 
             // If statement
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "if"),
             new Token(TokenType::VARIABLE, "isOld"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "<h1>I'm not a pro but it's only a matter of time</h1>\n"),
-            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "end"),
-            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
             // End if statement
 
             new Token(TokenType::HTML, "</div>"),
