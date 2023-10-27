@@ -14,12 +14,16 @@ class LexerTest extends TestCase
     {
         $input = '
         <div>
-            <h1>{{ $name }}</h1>
+            <h1 {{ $classes }}>{{ $name }}</h1>
         </div>
         ';
 
         $tests = [
-            new Token(TokenType::HTML, '<div><h1>'),
+            new Token(TokenType::HTML, '<div><h1 '),
+            new Token(TokenType::LEFT_BRACES, '{{'),
+            new Token(TokenType::VARIABLE, 'classes'),
+            new Token(TokenType::RIGHT_BRACES, '}}'),
+            new Token(TokenType::HTML, '>'),
             new Token(TokenType::LEFT_BRACES, '{{'),
             new Token(TokenType::VARIABLE, 'name'),
             new Token(TokenType::RIGHT_BRACES, '}}'),

@@ -29,11 +29,9 @@ final class Lexer
 
         if ($this->char === '{' && $this->peekChar() === '{') {
             $this->advanceChar();
-            $this->isHtml = false;
             $token = new Token(TokenType::LEFT_BRACES, '{{');
         } elseif ($this->char === '}' && $this->peekChar() === '}') {
             $this->advanceChar();
-            $this->isHtml = true;
             $token = new Token(TokenType::RIGHT_BRACES, '}}');
         } elseif (!$this->isHtml && $this->char === '$' && $this->isLetter($this->peekChar())) {
             $this->advanceChar();
@@ -44,6 +42,12 @@ final class Lexer
             $token = new Token(TokenType::HTML, $this->readHtml());
         } else {
             $token = new Token(TokenType::ILLEGAL, $this->char);
+        }
+
+        if ($token?->type === TokenType::RIGHT_BRACES) {
+            $this->isHtml = true;
+        } elseif ($token?->type === TokenType::LEFT_BRACES) {
+            $this->isHtml = false;
         }
 
         $this->advanceChar();
