@@ -12,6 +12,10 @@ enum TokenType: string
     case HTML = 'HTML';
     case INTEGER = 'INTEGER';
     case IDENTIFIER = 'IDENTIFIER';
+    case IF = 'IF';
+    case ELSE = 'ELSE';
+    case END = 'END';
+    case LOOP = 'LOOP';
     case STRING = "STRING";
 
     case COMMA = ',';
@@ -19,4 +23,16 @@ enum TokenType: string
     case COLON = ':';
     case OPENING_BRACES = '{{';
     case CLOSING_BRACES = '}}';
+
+    private const KEYWORDS = [
+        'if' => self::IF,
+        'else' => self::ELSE,
+        'end' => self::END,
+        'loop' => self::LOOP,
+    ];
+
+    public static function lookupIdentifier(string $identifier): self
+    {
+        return self::KEYWORDS[$identifier] ?? self::IDENTIFIER;
+    }
 }
