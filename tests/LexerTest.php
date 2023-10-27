@@ -13,14 +13,14 @@ class LexerTest extends TestCase
     public function testLexer(): void
     {
         $input = <<<HTML
-        <div class="{{ \$show ? 'container' : '' }}">
+        <div class="{{ \$show20 ? 'container' : '' }}">
         <h1 {{ \$classes }}>{{ \$heading }}</h1>
         <ul>
         {{ loop 1, 3 }}
         <li>{{ \$index }}</li>
         {{ end }}
         </ul>
-        {{ if \$isOld }}
+        {{ if \$is_old }}
         <h1>I'm not a pro but it's only a matter of time</h1>
         {{ end }}
         </div>
@@ -31,7 +31,7 @@ class LexerTest extends TestCase
 
             // Coalescing operator
             new Token(TokenType::OPENING_BRACES, "{{"),
-            new Token(TokenType::VARIABLE, "show"),
+            new Token(TokenType::VARIABLE, "show20"),
             new Token(TokenType::QUESTION_MARK, "?"),
             new Token(TokenType::STRING, "container"),
             new Token(TokenType::COLON, ":"),
@@ -71,7 +71,7 @@ class LexerTest extends TestCase
             // If statement
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IDENTIFIER, "if"),
-            new Token(TokenType::VARIABLE, "isOld"),
+            new Token(TokenType::VARIABLE, "is_old"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "<h1>I'm not a pro but it's only a matter of time</h1>\n"),
             new Token(TokenType::OPENING_BRACES, "{{"),

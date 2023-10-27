@@ -91,7 +91,7 @@ final class Lexer
 
     private function isLetter(string $letter): bool
     {
-        return preg_match('/[a-zA-Z]/', $letter) === 1;
+        return preg_match('/[_a-zA-Z]/', $letter) === 1;
     }
 
     private function isNumber(string $number): bool
@@ -103,7 +103,7 @@ final class Lexer
     {
         $position = $this->position;
 
-        while ($this->isLetter($this->char)) {
+        while ($this->isLetter($this->char) || $this->isNumber($this->char)) {
             $this->advanceChar();
         }
 
