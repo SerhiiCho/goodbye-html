@@ -10,6 +10,9 @@ enum TokenType: string
     case VARIABLE = 'VARIABLE';
     case ILLEGAL = 'ILLEGAL';
     case HTML = 'HTML';
+    case INTEGER = 'INTEGER';
+    case COMMA = ',';
+    case IDENTIFIER = 'IDENTIFIER';
 
     case LEFT_BRACES = '{{';
     case RIGHT_BRACES = '}}';

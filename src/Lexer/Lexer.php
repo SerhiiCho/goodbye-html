@@ -36,6 +36,12 @@ final class Lexer
         } elseif (!$this->isHtml && $this->char === '$' && $this->isLetter($this->peekChar())) {
             $this->advanceChar();
             return new Token(TokenType::VARIABLE, $this->readIdentifier());
+        } elseif ($this->char === ',') {
+            $token = new Token(TokenType::COMMA, $this->char);
+        } elseif ($this->isLetter($this->char)) {
+            return new Token(TokenType::IDENTIFIER, $this->readIdentifier());
+        } elseif ($this->isNumber($this->char)) {
+            return new Token(TokenType::INTEGER, $this->readNumber());
         } elseif ($this->char === '') {
             $token = new Token(TokenType::EOF, $this->char);
         } elseif ($this->isHtml) {
@@ -81,11 +87,27 @@ final class Lexer
         return preg_match('/[a-zA-Z]/', $letter) === 1;
     }
 
+    private function isNumber(string $number): bool
+    {
+        return preg_match('/[0-9]/', $number) === 1;
+    }
+
     private function readIdentifier(): string
     {
         $position = $this->position;
 
         while ($this->isLetter($this->char)) {
+            $this->advanceChar();
+        }
+
+        return substr($this->input, $position, $this->position - $position);
+    }
+
+    private function readNumber(): string
+    {
+        $position = $this->position;
+
+        while ($this->isNumber($this->char)) {
             $this->advanceChar();
         }
 
@@ -101,9 +123,7 @@ final class Lexer
                 break;
             }
 
-            if (!$this->isWhitespace()) {
-                $result .= $this->char;
-            }
+            $result .= $this->char;
 
             $this->advanceChar();
         }
