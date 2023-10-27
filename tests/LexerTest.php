@@ -20,34 +20,48 @@ class LexerTest extends TestCase
         <li>{{ \$index }}</li>
         {{ end }}
         </ul>
+        {{ if \$isOld }}
+        <h1>I'm not a pro but it's only a matter of time</h1>
+        {{ end }}
         </div>
         HTML;
 
         $tests = [
             new Token(TokenType::HTML, "<div>\n<h1 "),
-            new Token(TokenType::LEFT_BRACES, '{{'),
-            new Token(TokenType::VARIABLE, 'classes'),
-            new Token(TokenType::RIGHT_BRACES, '}}'),
-            new Token(TokenType::HTML, '>'),
-            new Token(TokenType::LEFT_BRACES, '{{'),
-            new Token(TokenType::VARIABLE, 'heading'),
-            new Token(TokenType::RIGHT_BRACES, '}}'),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "classes"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::HTML, ">"),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "heading"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
             new Token(TokenType::HTML, "</h1>\n<ul>\n"),
-            new Token(TokenType::LEFT_BRACES, '{{'),
-            new Token(TokenType::IDENTIFIER, 'loop'),
-            new Token(TokenType::INTEGER, '1'),
-            new Token(TokenType::COMMA, ','),
-            new Token(TokenType::INTEGER, '3'),
-            new Token(TokenType::RIGHT_BRACES, '}}'),
-            new Token(TokenType::HTML, '<li>'),
-            new Token(TokenType::LEFT_BRACES, '{{'),
-            new Token(TokenType::VARIABLE, 'index'),
-            new Token(TokenType::RIGHT_BRACES, '}}'),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::IDENTIFIER, "loop"),
+            new Token(TokenType::INTEGER, "1"),
+            new Token(TokenType::COMMA, ","),
+            new Token(TokenType::INTEGER, "3"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::HTML, "<li>"),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "index"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
             new Token(TokenType::HTML, "</li>\n"),
-            new Token(TokenType::LEFT_BRACES, '{{'),
-            new Token(TokenType::IDENTIFIER, 'end'),
-            new Token(TokenType::RIGHT_BRACES, '}}'),
-            new Token(TokenType::HTML, "</ul>\n</div>"),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::IDENTIFIER, "end"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::HTML, "</ul>\n"),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::IDENTIFIER, "if"),
+            new Token(TokenType::VARIABLE, "isOld"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::HTML, "<h1>I'm not a pro but it's only a matter of time</h1>\n"),
+            new Token(TokenType::LEFT_BRACES, "{{"),
+            new Token(TokenType::IDENTIFIER, "end"),
+            new Token(TokenType::RIGHT_BRACES, "}}"),
+            new Token(TokenType::HTML, "</div>"),
+
+
             new Token(TokenType::EOF, ''),
         ];
 
