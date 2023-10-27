@@ -12,7 +12,7 @@ final class Lexer
     private readonly string $input;
     private int $position = 0;
     private int $nextPosition = 0;
-    private string $char = '';
+    private string|int $char = '';
     private bool $isHtml = true;
 
     public function __construct(string $input)
@@ -27,7 +27,9 @@ final class Lexer
 
         $this->skipWhitespace();
 
-        if ($this->char === '{' && $this->peekChar() === '{') {
+        if ($this->char === 0) {
+            $token = new Token(TokenType::EOF, 'EOF');
+        } elseif ($this->char === '{' && $this->peekChar() === '{') {
             $this->advanceChar();
             $token = new Token(TokenType::OPENING_BRACES, '{{');
         } elseif ($this->char === '}' && $this->peekChar() === '}') {
@@ -38,12 +40,17 @@ final class Lexer
             return new Token(TokenType::VARIABLE, $this->readIdentifier());
         } elseif ($this->char === ',') {
             $token = new Token(TokenType::COMMA, $this->char);
+        } elseif ($this->char === '?') {
+            $token = new Token(TokenType::QUESTION_MARK, $this->char);
+        } elseif ($this->char === ':') {
+            $token = new Token(TokenType::COLON, $this->char);
+        } elseif ($this->char === "'") {
+            $this->advanceChar();
+            $token = new Token(TokenType::STRING, $this->readString());
         } elseif ($this->isLetter($this->char)) {
             return new Token(TokenType::IDENTIFIER, $this->readIdentifier());
         } elseif ($this->isNumber($this->char)) {
             return new Token(TokenType::INTEGER, $this->readNumber());
-        } elseif ($this->char === '') {
-            $token = new Token(TokenType::EOF, $this->char);
         } elseif ($this->isHtml) {
             $token = new Token(TokenType::HTML, $this->readHtml());
         } else {
@@ -64,7 +71,7 @@ final class Lexer
     private function advanceChar(): void
     {
         if ($this->nextPosition >= strlen($this->input)) {
-            $this->char = '';
+            $this->char = 0;
         } else {
             $this->char = $this->input[$this->nextPosition];
         }
@@ -73,10 +80,10 @@ final class Lexer
         $this->nextPosition += 1;
     }
 
-    private function peekChar(): string
+    private function peekChar(): string|int
     {
         if ($this->nextPosition >= strlen($this->input)) {
-            return '';
+            return 0;
         }
 
         return $this->input[$this->nextPosition];
@@ -119,7 +126,7 @@ final class Lexer
         $result = '';
 
         while ($this->isHtml && ($this->char !== '{' && $this->peekChar() !== '{')) {
-            if ($this->char === '') {
+            if ($this->char === 0) {
                 break;
             }
 
@@ -128,7 +135,9 @@ final class Lexer
             $this->advanceChar();
         }
 
-        $result .= $this->char;
+        if ($this->char !== 0) {
+            $result .= $this->char;
+        }
 
         return $result;
     }
@@ -143,5 +152,20 @@ final class Lexer
         while ($this->isWhitespace()) {
             $this->advanceChar();
         }
+    }
+
+    private function readString(): string
+    {
+        if ($this->char === "'") {
+            return '';
+        }
+
+        $position = $this->position;
+
+        while ($this->char !== "'") {
+            $this->advanceChar();
+        }
+
+        return substr($this->input, $position, $this->position - $position);
     }
 }

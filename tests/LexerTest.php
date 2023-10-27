@@ -35,6 +35,7 @@ class LexerTest extends TestCase
             new Token(TokenType::QUESTION_MARK, "?"),
             new Token(TokenType::STRING, "container"),
             new Token(TokenType::COLON, ":"),
+            new Token(TokenType::STRING, ""),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             // End coalescing operator
 
@@ -79,15 +80,15 @@ class LexerTest extends TestCase
             // End if statement
 
             new Token(TokenType::HTML, "</div>"),
-            new Token(TokenType::EOF, ''),
+            new Token(TokenType::EOF, 'EOF'),
         ];
 
         $lexer = new Lexer($input);
 
         foreach ($tests as $test) {
             $token = $lexer->nextToken();
-            $this->assertEquals($test->literal, $token->literal);
             $this->assertEquals($test->type, $token->type);
+            $this->assertEquals($test->literal, $token->literal, "Test for token type: {$token->type->value}");
         }
     }
 }
