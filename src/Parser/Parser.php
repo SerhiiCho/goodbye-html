@@ -7,6 +7,7 @@ namespace Serhii\GoodbyeHtml\Parser;
 use Closure;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\Statement;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
@@ -14,23 +15,22 @@ use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
-final readonly class Parser
+final class Parser
 {
     private Token $curToken;
     private Token $peekToken;
-    private array $prefixParseFns;
-    private array $infixParseFns;
+    private array $prefixParseFns = [];
+    private array $infixParseFns = [];
 
     /**
      * @var string[]
      */
-    private array $errors;
+    private array $errors = [];
 
     public function __construct(private Lexer $lexer)
     {
-        $this->errors = [];
-        $this->prefixParseFns = [];
-        $this->infixParseFns = [];
+        $this->curToken = Token::illegal('');
+        $this->peekToken = Token::illegal('');
 
         $this->nextToken();
         $this->nextToken();
@@ -46,7 +46,7 @@ final readonly class Parser
         while (!$this->curTokenIs(TokenType::EOF)) {
             $stmt = $this->parseStatement();
 
-            if ($stmt !== null) {
+            if ($stmt) {
                 $statements[] = $stmt;
             }
 
@@ -54,6 +54,14 @@ final readonly class Parser
         }
 
         return new Program($statements);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function errors(): array
+    {
+        return $this->errors;
     }
 
     private function nextToken(): void
@@ -75,12 +83,21 @@ final readonly class Parser
     private function parseStatement(): Statement|null
     {
         return match($this->curToken->type) {
-            default => $this->parseExpressionStatement(),
+            TokenType::HTML => $this->parseHtmlStatement(),
+            TokenType::OPENING_BRACES => $this->parseExpressionStatement(),
+            default => null,
         };
+    }
+
+    private function parseHtmlStatement(): HtmlStatement
+    {
+        return new HtmlStatement($this->curToken);
     }
 
     private function parseExpressionStatement(): ExpressionStatement
     {
+        $this->nextToken();
+
         $expr = $this->parseExpression();
         $result = new ExpressionStatement($this->curToken, $expr);
 
@@ -95,14 +112,26 @@ final readonly class Parser
     {
         $prefix = $this->prefixParseFns[$this->curToken->type->value] ?? null;
 
-        if ($prefix === null) {
-            // todo: error
+        if (!$prefix) {
+            $this->errors[] = "no prefix parse function for {$this->curToken->type->value} found";
             return null;
         }
 
         $leftExp = $prefix();
 
-        // todo: here
+        while (!$this->peekTokenIs(TokenType::CLOSING_BRACES)) {
+            $infix = $this->infixParseFns[$this->peekToken->type->value] ?? null;
+
+            if ($infix === null) {
+                return $leftExp;
+            }
+
+            $this->nextToken();
+
+            $leftExp = $infix($leftExp);
+        }
+
+        return $leftExp;
     }
 
     private function curTokenIs(TokenType $token): bool
@@ -121,5 +150,21 @@ final readonly class Parser
             $this->curToken,
             $this->curToken->literal,
         );
+    }
+
+    private function expectPeek(TokenType $token): bool
+    {
+        if ($this->peekTokenIs($token)) {
+            $this->nextToken();
+            return true;
+        }
+
+        $this->errors[] = sprintf(
+            "expected next token to be %s, got %s instead",
+            $token->value,
+            $this->peekToken->type->value,
+        );
+
+        return false;
     }
 }

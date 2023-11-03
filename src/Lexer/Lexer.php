@@ -56,7 +56,7 @@ final class Lexer
         } elseif ($this->isHtml) {
             $token = new Token(TokenType::HTML, $this->readHtml());
         } else {
-            $token = new Token(TokenType::ILLEGAL, $this->char);
+            $token = Token::illegal($this->char);
         }
 
         if ($token?->type === TokenType::CLOSING_BRACES) {

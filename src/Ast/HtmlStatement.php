@@ -6,9 +6,9 @@ namespace Serhii\GoodbyeHtml\Ast;
 
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class VariableExpression implements Expression
+readonly class HtmlStatement implements Statement
 {
-    public function __construct(public Token $token, public string $value)
+    public function __construct(public Token $token)
     {
     }
 
@@ -19,6 +19,6 @@ readonly class VariableExpression implements Expression
 
     public function string(): string
     {
-        return '$' . $this->value;
+        return $this->token->literal;
     }
 }

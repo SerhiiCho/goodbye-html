@@ -19,15 +19,29 @@ class ParserTest extends TestCase
 
         $program = $parser->parseProgram();
 
-        // todo: check for parser errors
+        $this->checkForErrors($parser);
 
-        $this->assertCount(1, $program->statements, 'Program must contain 1 statement');
+        $this->assertCount(3, $program->statements, 'Program must contain 3 statements');
 
-        /** @var VariableExpression $stmt */
-        $stmt = $program->statements[0];
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[1];
 
-        $this->assertSame('userName', $stmt->value, "Variable must have value 'userName', got: '{$stmt->value}'");
-        $this->assertSame('userName', $stmt->tokenLiteral(), "Variable must have token literal 'userName', got: '{$stmt->tokenLiteral()}'");
-        $this->assertSame('$userName', $stmt->string(), "Variable must have string representation '\$userName', got: '{$stmt->string()}'");
+        /** @var VariableExpression $var */
+        $var = $stmt->expression;
+
+        $this->assertSame('userName', $var->value, "Variable must have value 'userName', got: '{$var->value}'");
+        $this->assertSame('userName', $var->tokenLiteral(), "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'");
+        $this->assertSame('$userName', $var->string(), "Variable must have string representation '\$userName', got: '{$var->string()}'");
+    }
+
+    private function checkForErrors(Parser $parser): void
+    {
+        $errors = $parser->errors();
+
+        if (count($errors) === 0) {
+            return;
+        }
+
+        $this->fail(implode("\n", $errors));
     }
 }
