@@ -103,7 +103,8 @@ class ParserTest extends TestCase
         /** @var IfExpression */
         $if = $stmt->expression;
 
-        $this->testVariable($if->condition, 'uses_php');
+        self::testVariable($if->condition, 'uses_php');
+
         $this->assertCount(2, $if->consequence->statements, 'Consequence must contain 2 statements');
         $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
         $this->assertInstanceOf(ExpressionStatement::class, $if->consequence->statements[1]);
@@ -115,13 +116,7 @@ class ParserTest extends TestCase
         $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
         $this->assertSame('guy', $if->consequence->statements[0]->string());
 
-        $this->testVariable($if->condition, 'male');
-    }
-
-    public function testVariable($var, string $val): void
-    {
-        $this->assertInstanceOf(VariableExpression::class, $var);
-        $this->assertSame($val, $var->value);
+        self::testVariable($if->condition, 'male');
     }
 
     public function testParsingElseStatement(): void
@@ -164,5 +159,11 @@ class ParserTest extends TestCase
         }
 
         $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
+    }
+
+    private static function testVariable($var, string $val): void
+    {
+        self::assertInstanceOf(VariableExpression::class, $var);
+        self::assertSame($val, $var->value);
     }
 }
