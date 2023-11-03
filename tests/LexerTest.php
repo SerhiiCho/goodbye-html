@@ -34,6 +34,10 @@ class LexerTest extends TestCase
         {{ end }}
 
         <h1>{{ if \$is_cat }}{{ \$cat_var }}{{ else }}{{ \$dog_var }}{{ end }}</h1>
+
+        {{ if \$uses_php }}
+            You are a cool {{ if \$male }}guy{{ end }}
+        {{ end }}
         HTML;
 
         $tests = [
@@ -126,8 +130,27 @@ class LexerTest extends TestCase
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::END, "end"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, "</h1>"),
+            new Token(TokenType::HTML, "</h1>\n\n"),
             // End inline If / Else / End statement
+
+            // Nested If statement
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::IF, 'if'),
+            new Token(TokenType::VARIABLE, 'uses_php'),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, 'You are a cool '),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::IF, 'if'),
+            new Token(TokenType::VARIABLE, 'male'),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, 'guy'),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::END, "end"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::END, "end"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            // End nested If statement
 
             new Token(TokenType::EOF, 'EOF'),
         ];

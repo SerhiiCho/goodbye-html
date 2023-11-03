@@ -47,7 +47,7 @@ final class Lexer
         } elseif ($this->char === "'") {
             $this->advanceChar();
             $token = new Token(TokenType::STRING, $this->readString());
-        } elseif ($this->isLetter($this->char)) {
+        } elseif ($this->isLetter($this->char) && !$this->isHtml) {
             $ident = $this->readIdentifier();
             $type = TokenType::lookupIdentifier($ident);
             return new Token($type, $ident);
