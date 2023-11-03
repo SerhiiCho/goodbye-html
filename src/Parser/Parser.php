@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\Parser;
 
 use Closure;
+use Serhii\GoodbyeHtml\Ast\BlockStatement;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
@@ -166,23 +167,15 @@ final class Parser
 
         $this->nextToken();
 
-        $consequence = [];
+        $consequence = $this->parseBlockStatement();
+        $alternative = null;
 
-        while (true) {
-            if (
-                $this->curTokenIs(TokenType::OPENING_BRACES) &&
-                ($this->peekTokenIs(TokenType::END) || $this->peekTokenIs(TokenType::ELSE))
-            ) {
-                $this->nextToken();
-                break;
-            }
-
-            $consequence[] = $this->parseStatement();
-
+        if ($this->peekTokenIs(TokenType::ELSE)) {
             $this->nextToken();
-        }
 
-        $alternative = [];
+            dd($this->curToken);
+            $alternative = $this->parseBlockStatement();
+        }
 
         return new IfExpression(
             $this->curToken,
@@ -190,6 +183,29 @@ final class Parser
             $consequence,
             $alternative,
         );
+    }
+
+    private function parseBlockStatement(): BlockStatement
+    {
+        $statements = [];
+        $token = $this->curToken;
+
+        while (
+            !$this->curTokenIs(TokenType::OPENING_BRACES) && (
+                !$this->curTokenIs(TokenType::ELSE) ||
+                !$this->curTokenIs(TokenType::END)
+            )
+        ) {
+            $stmt = $this->parseStatement();
+
+            if ($stmt) {
+                $statements[] = $stmt;
+            }
+
+            $this->nextToken();
+        }
+
+        return new BlockStatement($token, $statements);
     }
 
     private function expectPeek(TokenType $token): bool

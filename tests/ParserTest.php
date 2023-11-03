@@ -75,9 +75,37 @@ class ParserTest extends TestCase
         /** @var IfExpression */
         $if = $stmt->expression;
 
-        $this->assertSame("<h1>I'm not a pro but it's only a matter of time</h1>\n", $if->consequence[0]->string());
+        $this->assertSame("<h1>I'm not a pro but it's only a matter of time</h1>\n", $if->consequence->string());
         $this->assertSame('$uses_php', $if->condition->string());
-        $this->assertEmpty($if->alternative);
+        $this->assertNull($if->alternative);
+    }
+
+    public function testParsingElseStatement(): void
+    {
+        $input = <<<HTML
+        {{ if \$underAge }}
+            <span>You are too young to be here</span>
+        {{ else }}
+            <span>You can drink beer</span>
+        {{ end }}
+        HTML;
+
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[0];
+
+        /** @var IfExpression */
+        $if = $stmt->expression;
+
+        $this->assertSame("<span>You are too young to be here</span>\n", $if->consequence[0]->string());
+        $this->assertSame('$underAge', $if->condition->string());
+        $this->assertEmpty("<span>You can drink beer</span>\n", $if->alternative[0]->string());
     }
 
     /**

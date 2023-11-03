@@ -8,15 +8,11 @@ use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class IfExpression implements Expression
 {
-    /**
-     * @param Statement[] $consequence
-     * @param Statement[] $alternative
-     */
     public function __construct(
         public Token $token,
         public Expression $condition,
-        public array $consequence,
-        public array $alternative,
+        public BlockStatement $consequence,
+        public ?BlockStatement $alternative,
     ) {
     }
 
@@ -29,16 +25,16 @@ readonly class IfExpression implements Expression
     {
         $result = sprintf("{{ if %s }}\n", $this->condition->string());
 
-        foreach ($this->consequence as $stmt) {
+        foreach ($this->consequence->statements as $stmt) {
             $result .= $stmt->string();
         }
 
-        if (count($this->alternative) > 0) {
+        if ($this->alternative) {
             $result .= "{{ else }}\n";
-        }
 
-        foreach ($this->alternative as $stmt) {
-            $result .= $stmt->string();
+            foreach ($this->alternative->statements as $stmt) {
+                $result .= $stmt->string();
+            }
         }
 
         return "{$result}{{ end }}\n";
