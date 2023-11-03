@@ -80,6 +80,28 @@ class ParserTest extends TestCase
         $this->assertNull($if->alternative);
     }
 
+    public function testParsingNestedIfStatement(): void
+    {
+        $input = <<<HTML
+        {{ if \$uses_php }}
+            You are a cool {{ if \$male }}guy{{ end }}
+        {{ end }}
+        HTML;
+
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[0];
+
+        /** @var IfExpression */
+        $if = $stmt->expression;
+    }
+
     public function testParsingElseStatement(): void
     {
         $input = <<<HTML
@@ -115,12 +137,10 @@ class ParserTest extends TestCase
     {
         $errors = $parser->errors();
 
-        $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
-
-        if (count($errors) === 0) {
-            return;
+        if (!empty($errors)) {
+            $this->fail(implode("\n", $errors));
         }
 
-        $this->fail(implode("\n", $errors));
+        $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
     }
 }
