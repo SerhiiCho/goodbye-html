@@ -103,9 +103,9 @@ class ParserTest extends TestCase
         /** @var IfExpression */
         $if = $stmt->expression;
 
-        $this->assertSame("<span>You are too young to be here</span>\n", $if->consequence[0]->string());
+        $this->assertSame("<span>You are too young to be here</span>\n", $if->consequence->string());
         $this->assertSame('$underAge', $if->condition->string());
-        $this->assertEmpty("<span>You can drink beer</span>\n", $if->alternative[0]->string());
+        $this->assertSame("<span>You can drink beer</span>\n", $if->alternative->string());
     }
 
     /**

@@ -157,7 +157,7 @@ final class Parser
 
     private function parseIfExpression(): Expression|null
     {
-        $this->nextToken();
+        $this->nextToken(); // skip "{{"
 
         $condition = $this->parseExpression();
 
@@ -165,15 +165,16 @@ final class Parser
             return null;
         }
 
-        $this->nextToken();
+        $this->nextToken(); // skip "}}"
 
         $consequence = $this->parseBlockStatement();
         $alternative = null;
 
         if ($this->peekTokenIs(TokenType::ELSE)) {
-            $this->nextToken();
+            $this->nextToken(); // skip "{{"
+            $this->nextToken(); // skip "else"
+            $this->nextToken(); // skip "}}"
 
-            dd($this->curToken);
             $alternative = $this->parseBlockStatement();
         }
 
