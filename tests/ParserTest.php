@@ -30,7 +30,7 @@ class ParserTest extends TestCase
         /** @var VariableExpression $var */
         $var = $stmt->expression;
 
-        $this->assertSame('userName', $var->value, "Variable must have value 'userName', got: '{$var->value}'");
+        self::testVariable($var, 'userName');
         $this->assertSame('userName', $var->tokenLiteral(), "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'");
         $this->assertSame('$userName', $var->string(), "Variable must have string representation '\$userName', got: '{$var->string()}'");
     }
@@ -142,8 +142,9 @@ class ParserTest extends TestCase
         /** @var IfExpression */
         $if = $stmt->expression;
 
+        self::testVariable($if->condition, 'underAge');
+
         $this->assertSame("<span>You are too young to be here</span>\n", $if->consequence->string());
-        $this->assertSame('$underAge', $if->condition->string());
         $this->assertSame("<span>You can drink beer</span>\n", $if->alternative->string());
     }
 
@@ -164,6 +165,6 @@ class ParserTest extends TestCase
     private static function testVariable($var, string $val): void
     {
         self::assertInstanceOf(VariableExpression::class, $var);
-        self::assertSame($val, $var->value);
+        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
     }
 }
