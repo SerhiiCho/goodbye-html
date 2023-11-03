@@ -14,7 +14,7 @@ enum TokenType: string
     case IDENTIFIER = 'IDENTIFIER';
     case IF = 'IF';
     case ELSE = 'ELSE';
-    case END = 'END';
+    case END = '{{ end }}';
     case LOOP = 'LOOP';
     case STRING = "STRING";
 

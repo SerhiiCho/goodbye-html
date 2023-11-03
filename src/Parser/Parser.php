@@ -8,6 +8,7 @@ use Closure;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\Statement;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
@@ -36,6 +37,7 @@ final class Parser
         $this->nextToken();
 
         $this->registerPrefix(TokenType::VARIABLE, fn () => $this->parseVariable());
+        $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
     }
 
     public function parseProgram(): Program
@@ -149,6 +151,44 @@ final class Parser
         return new VariableExpression(
             $this->curToken,
             $this->curToken->literal,
+        );
+    }
+
+    private function parseIfExpression(): Expression|null
+    {
+        $this->nextToken();
+
+        $condition = $this->parseExpression();
+
+        if (!$this->expectPeek(TokenType::CLOSING_BRACES)) {
+            return null;
+        }
+
+        $this->nextToken();
+
+        $consequence = [];
+
+        while (true) {
+            if (
+                $this->curTokenIs(TokenType::OPENING_BRACES) &&
+                ($this->peekTokenIs(TokenType::END) || $this->peekTokenIs(TokenType::ELSE))
+            ) {
+                $this->nextToken();
+                break;
+            }
+
+            $consequence[] = $this->parseStatement();
+
+            $this->nextToken();
+        }
+
+        $alternative = [];
+
+        return new IfExpression(
+            $this->curToken,
+            $condition,
+            $consequence,
+            $alternative,
         );
     }
 
