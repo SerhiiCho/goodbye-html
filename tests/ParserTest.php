@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Serhii\Tests;
 
+use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Parser\Parser;
@@ -100,6 +102,26 @@ class ParserTest extends TestCase
 
         /** @var IfExpression */
         $if = $stmt->expression;
+
+        $this->testVariable($if->condition, 'uses_php');
+        $this->assertCount(2, $if->consequence->statements, 'Consequence must contain 2 statements');
+        $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
+        $this->assertInstanceOf(ExpressionStatement::class, $if->consequence->statements[1]);
+
+        /** @var IfExpression $if */
+        $if = $if->consequence->statements[1]->expression;
+
+        $this->assertCount(1, $if->consequence->statements, 'Consequence must contain 1 statement');
+        $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
+        $this->assertSame('guy', $if->consequence->statements[0]->string());
+
+        $this->testVariable($if->condition, 'male');
+    }
+
+    public function testVariable($var, string $val): void
+    {
+        $this->assertInstanceOf(VariableExpression::class, $var);
+        $this->assertSame($val, $var->value);
     }
 
     public function testParsingElseStatement(): void

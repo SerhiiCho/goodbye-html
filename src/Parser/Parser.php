@@ -190,13 +190,18 @@ final class Parser
     {
         $statements = [];
         $token = $this->curToken;
+        $endsAmount = 0;
 
-        while (
-            !$this->curTokenIs(TokenType::OPENING_BRACES) && (
-                !$this->curTokenIs(TokenType::ELSE) ||
-                !$this->curTokenIs(TokenType::END)
-            )
-        ) {
+        while (true) {
+            $isOpening = $this->curTokenIs(TokenType::OPENING_BRACES);
+            $isPeekEnd = $this->peekTokenIs(TokenType::END);
+            $isPeekElse = $this->peekTokenIs(TokenType::ELSE);
+            $isPeekIf = $this->peekTokenIs(TokenType::IF);
+
+            if ($isOpening && ($isPeekEnd || $isPeekElse)) {
+                break;
+            }
+
             $stmt = $this->parseStatement();
 
             if ($stmt) {
