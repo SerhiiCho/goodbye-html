@@ -9,6 +9,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Parser\Parser;
@@ -33,6 +34,12 @@ class ParserTest extends TestCase
     {
         self::assertInstanceOf(VariableExpression::class, $var);
         self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
+    }
+
+    private static function testString($str, string $val): void
+    {
+        self::assertInstanceOf(StringLiteral::class, $str);
+        self::assertSame($val, $str->value, "String must have value '{$val}', got: '{$str->value}'");
     }
 
     private static function testInteger($int, $val): void
@@ -213,5 +220,22 @@ class ParserTest extends TestCase
         $this->assertSame('<li><a href="#">Link - ', $stmts[0]->string());
         $this->testVariable($stmts[1]->expression, 'index');
         $this->assertSame("</a></li>\n", $stmts[2]->string());
+    }
+
+    public function testParsingStrings(): void
+    {
+        $input = "{{ 'hello' }}";
+
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var StringLiteral $var */
+        $str = $program->statements[0]->expression;
+
+        $this->testString($str, 'hello');
     }
 }
