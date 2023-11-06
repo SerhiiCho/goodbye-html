@@ -7,6 +7,8 @@ namespace Serhii\Tests;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Parser\Parser;
@@ -138,11 +140,8 @@ class ParserTest extends TestCase
 
         $this->checkForErrors($parser, $program->statements, 1);
 
-        /** @var ExpressionStatement $stmt */
-        $stmt = $program->statements[0];
-
         /** @var IfExpression */
-        $if = $stmt->expression;
+        $if = $program->statements[0]->expression;
 
         self::testVariable($if->condition, 'underAge');
 
@@ -150,11 +149,28 @@ class ParserTest extends TestCase
         $this->assertSame("<span>You can drink beer</span>\n", $if->alternative->string());
     }
 
+    public function testParsingIntegerLiteral(): void
+    {
+        $input = '<span>{{ 5 }}</span>';
+
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 3);
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[1];
+
+        $this->testInteger($stmt->expression, 5);
+    }
+
     public function testParsingLoopStatement(): void
     {
         $input = <<<HTML
         <ul class="links">
-        {{ loop \$f, \$t }}
+        {{ loop \$fr, 5 }}
             <li><a href="#">Link - {{ \$index }}</a></li>
         {{ end }}
         </ul>
@@ -170,8 +186,19 @@ class ParserTest extends TestCase
         $this->assertInstanceOf(HtmlStatement::class, $program->statements[0]);
         $this->assertInstanceOf(HtmlStatement::class, $program->statements[2]);
 
-        /** @var ExpressionStatement $stmt */
-        $stmt = $program->statements[1];
+        /** @var LoopExpression $loop */
+        $loop = $program->statements[1]->expression;
+
+        $this->testVariable($loop->from, 'fr');
+        $this->testInteger($loop->to, 5);
+
+        $this->assertCount(3, $loop->body->statements, 'Loop body must contain 3 statements');
+
+        $stmts = $loop->body->statements;
+
+        $this->assertSame('<li><a href="#">Link - ', $stmts[0]->string());
+        $this->testVariable($stmts[1]->expression, 'index');
+        $this->assertSame("</a></li>\n", $stmts[2]->string());
     }
 
     /**
@@ -192,5 +219,11 @@ class ParserTest extends TestCase
     {
         self::assertInstanceOf(VariableExpression::class, $var);
         self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
+    }
+
+    private static function testInteger($int, $val): void
+    {
+        self::assertInstanceOf(IntegerLiteral::class, $int);
+        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
     }
 }
