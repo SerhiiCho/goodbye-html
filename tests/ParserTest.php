@@ -108,6 +108,7 @@ class ParserTest extends TestCase
         $this->assertCount(2, $if->consequence->statements, 'Consequence must contain 2 statements');
         $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
         $this->assertInstanceOf(ExpressionStatement::class, $if->consequence->statements[1]);
+        $this->assertNull($if->alternative);
 
         /** @var IfExpression $if */
         $if = $if->consequence->statements[1]->expression;
@@ -115,6 +116,7 @@ class ParserTest extends TestCase
         $this->assertCount(1, $if->consequence->statements, 'Consequence must contain 1 statement');
         $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
         $this->assertSame('guy', $if->consequence->statements[0]->string());
+        $this->assertNull($if->alternative);
 
         self::testVariable($if->condition, 'male');
     }
