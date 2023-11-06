@@ -15,6 +15,32 @@ use Serhii\GoodbyeHtml\Parser\Parser;
 
 class ParserTest extends TestCase
 {
+    /**
+     * @param ExpressionStatement[] $stmt
+     */
+    private function checkForErrors(Parser $parser, array $stmt, int $statements): void
+    {
+        $errors = $parser->errors();
+
+        if (!empty($errors)) {
+            $this->fail(implode("\n", $errors));
+        }
+
+        $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
+    }
+
+    private static function testVariable($var, string $val): void
+    {
+        self::assertInstanceOf(VariableExpression::class, $var);
+        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
+    }
+
+    private static function testInteger($int, $val): void
+    {
+        self::assertInstanceOf(IntegerLiteral::class, $int);
+        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
+    }
+
     public function testParsingVariables(): void
     {
         $input = '<div>{{ $userName }}</div>';
@@ -199,31 +225,5 @@ class ParserTest extends TestCase
         $this->assertSame('<li><a href="#">Link - ', $stmts[0]->string());
         $this->testVariable($stmts[1]->expression, 'index');
         $this->assertSame("</a></li>\n", $stmts[2]->string());
-    }
-
-    /**
-     * @param ExpressionStatement[] $stmt
-     */
-    private function checkForErrors(Parser $parser, array $stmt, int $statements): void
-    {
-        $errors = $parser->errors();
-
-        if (!empty($errors)) {
-            $this->fail(implode("\n", $errors));
-        }
-
-        $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
-    }
-
-    private static function testVariable($var, string $val): void
-    {
-        self::assertInstanceOf(VariableExpression::class, $var);
-        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
-    }
-
-    private static function testInteger($int, $val): void
-    {
-        self::assertInstanceOf(IntegerLiteral::class, $int);
-        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
     }
 }
