@@ -14,6 +14,7 @@ use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\Statement;
+use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
@@ -43,6 +44,7 @@ final class Parser
         $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
+        $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
     }
 
     public function parseProgram(): Program
@@ -164,6 +166,14 @@ final class Parser
         return new IntegerLiteral(
             $this->curToken,
             (int) $this->curToken->literal,
+        );
+    }
+
+    private function parseStringLiteral(): Expression
+    {
+        return new StringLiteral(
+            $this->curToken,
+            $this->curToken->literal,
         );
     }
 
