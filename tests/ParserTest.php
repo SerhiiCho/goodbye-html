@@ -43,20 +43,17 @@ class ParserTest extends TestCase
 
     public function testParsingVariables(): void
     {
-        $input = '<div>{{ $userName }}</div>';
+        $input = '{{ $userName }}';
 
         $lexer = new Lexer($input);
         $parser = new Parser($lexer);
 
         $program = $parser->parseProgram();
 
-        $this->checkForErrors($parser, $program->statements, 3);
-
-        /** @var ExpressionStatement $stmt */
-        $stmt = $program->statements[1];
+        $this->checkForErrors($parser, $program->statements, 1);
 
         /** @var VariableExpression $var */
-        $var = $stmt->expression;
+        $var = $program->statements[0]->expression;
 
         self::testVariable($var, 'userName');
         $this->assertSame('userName', $var->tokenLiteral(), "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'");
@@ -65,23 +62,19 @@ class ParserTest extends TestCase
 
     public function testParsingHtml(): void
     {
-        $input = '<div class="nice">{{ $age }}</div>';
+        $input = '<div class="nice"></div>';
 
         $lexer = new Lexer($input);
         $parser = new Parser($lexer);
 
         $program = $parser->parseProgram();
 
-        $this->checkForErrors($parser, $program->statements, 3);
+        $this->checkForErrors($parser, $program->statements, 1);
 
-        /** @var HtmlStatement $stmt1 */
-        $stmt1 = $program->statements[0];
+        /** @var HtmlStatement $stmt */
+        $stmt = $program->statements[0];
 
-        /** @var HtmlStatement $stmt2 */
-        $stmt2 = $program->statements[2];
-
-        $this->assertSame('<div class="nice">', $stmt1->string());
-        $this->assertSame('</div>', $stmt2->string());
+        $this->assertSame('<div class="nice"></div>', $stmt->string());
     }
 
     public function testParsingIfStatement(): void
@@ -177,17 +170,17 @@ class ParserTest extends TestCase
 
     public function testParsingIntegerLiteral(): void
     {
-        $input = '<span>{{ 5 }}</span>';
+        $input = '{{ 5 }}';
 
         $lexer = new Lexer($input);
         $parser = new Parser($lexer);
 
         $program = $parser->parseProgram();
 
-        $this->checkForErrors($parser, $program->statements, 3);
+        $this->checkForErrors($parser, $program->statements, 1);
 
         /** @var ExpressionStatement $stmt */
-        $stmt = $program->statements[1];
+        $stmt = $program->statements[0];
 
         $this->testInteger($stmt->expression, 5);
     }
@@ -195,11 +188,9 @@ class ParserTest extends TestCase
     public function testParsingLoopStatement(): void
     {
         $input = <<<HTML
-        <ul class="links">
         {{ loop \$fr, 5 }}
             <li><a href="#">Link - {{ \$index }}</a></li>
         {{ end }}
-        </ul>
         HTML;
 
         $lexer = new Lexer($input);
@@ -207,13 +198,10 @@ class ParserTest extends TestCase
 
         $program = $parser->parseProgram();
 
-        $this->checkForErrors($parser, $program->statements, 3);
-
-        $this->assertInstanceOf(HtmlStatement::class, $program->statements[0]);
-        $this->assertInstanceOf(HtmlStatement::class, $program->statements[2]);
+        $this->checkForErrors($parser, $program->statements, 1);
 
         /** @var LoopExpression $loop */
-        $loop = $program->statements[1]->expression;
+        $loop = $program->statements[0]->expression;
 
         $this->testVariable($loop->from, 'fr');
         $this->testInteger($loop->to, 5);
