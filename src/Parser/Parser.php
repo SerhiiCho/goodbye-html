@@ -10,6 +10,7 @@ use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\Statement;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
@@ -39,6 +40,7 @@ final class Parser
 
         $this->registerPrefix(TokenType::VARIABLE, fn () => $this->parseVariable());
         $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
+        $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
     }
 
     public function parseProgram(): Program
@@ -184,6 +186,41 @@ final class Parser
             $consequence,
             $alternative,
         );
+    }
+
+    private function parseLoopExpression(): Expression|null
+    {
+        $token = $this->curToken;
+
+        $this->nextToken(); // skip "loop" keyword
+
+        $from = $this->parseExpression();
+
+        if (!$this->expectPeek(TokenType::COMMA)) {
+            return null;
+        }
+
+        $this->nextToken();
+
+        $to = $this->parseExpression();
+
+        if (!$this->expectPeek(TokenType::CLOSING_BRACES)) {
+            return null;
+        }
+
+        $this->nextToken();
+
+        $body = $this->parseBlockStatement();
+
+        if (!$this->expectPeek(TokenType::END)) { // skip "{{"
+            return null;
+        }
+
+        if (!$this->expectPeek(TokenType::CLOSING_BRACES)) { // skip "end"
+            return null;
+        }
+
+        return new LoopExpression($token, $from, $to, $body);
     }
 
     private function parseBlockStatement(): BlockStatement

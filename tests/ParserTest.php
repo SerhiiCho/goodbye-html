@@ -150,6 +150,30 @@ class ParserTest extends TestCase
         $this->assertSame("<span>You can drink beer</span>\n", $if->alternative->string());
     }
 
+    public function testParsingLoopStatement(): void
+    {
+        $input = <<<HTML
+        <ul class="links">
+        {{ loop \$f, \$t }}
+            <li><a href="#">Link - {{ \$index }}</a></li>
+        {{ end }}
+        </ul>
+        HTML;
+
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 3);
+
+        $this->assertInstanceOf(HtmlStatement::class, $program->statements[0]);
+        $this->assertInstanceOf(HtmlStatement::class, $program->statements[2]);
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[1];
+    }
+
     /**
      * @param ExpressionStatement[] $stmt
      */

@@ -25,7 +25,11 @@ readonly class BlockStatement implements Statement
         $result = '';
 
         foreach ($this->statements as $stmt) {
-            $result .= $stmt->string();
+            if ($stmt instanceof HtmlStatement) {
+                $result .= $stmt->string();
+            } else {
+                $result .= "{{ {$stmt->string()} }}";
+            }
         }
 
         return $result;
