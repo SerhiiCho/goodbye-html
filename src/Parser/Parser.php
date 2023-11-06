@@ -10,7 +10,6 @@ use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
-use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
@@ -121,25 +120,6 @@ final class Parser
         }
 
         return $result;
-    }
-
-    private function parseInfixExpression(Expression $left): Expression|null
-    {
-        $token = $this->curToken;
-        $operator = $this->curToken->literal;
-
-        $this->nextToken();
-
-        $right = $this->parseExpression();
-
-        $this->nextToken();
-
-        return new InfixExpression(
-            token: $token,
-            left: $left,
-            operator: $operator,
-            right: $right,
-        );
     }
 
     private function parseExpression(): Expression|null
