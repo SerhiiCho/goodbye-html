@@ -11,8 +11,8 @@ readonly class TernaryExpression implements Expression
     public function __construct(
         public Token $token,
         public Expression $condition,
-        public BlockStatement $consequence,
-        public BlockStatement $alternative,
+        public Expression $consequence,
+        public Expression $alternative,
     ) {
     }
 

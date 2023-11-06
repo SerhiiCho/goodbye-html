@@ -19,6 +19,6 @@ readonly class StringLiteral implements Expression
 
     public function string(): string
     {
-        return $this->value;
+        return '"' . $this->value . '"';
     }
 }

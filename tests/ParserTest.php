@@ -10,6 +10,7 @@ use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Parser\Parser;
@@ -237,5 +238,26 @@ class ParserTest extends TestCase
         $str = $program->statements[0]->expression;
 
         $this->testString($str, 'hello');
+    }
+
+    public function testParsingTernaryExpression(): void
+    {
+        $input = "{{ \$hasContainer ? 'container' : '' }}";
+
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var TernaryExpression $ternary */
+        $ternary = $program->statements[0]->expression;
+
+        $this->assertInstanceOf(TernaryExpression::class, $ternary);
+
+        $this->testVariable($ternary->condition, 'hasContainer');
+        $this->testString($ternary->consequence, 'container');
+        $this->testString($ternary->alternative, '');
     }
 }

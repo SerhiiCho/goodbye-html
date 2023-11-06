@@ -10,11 +10,13 @@ use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\Statement;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
@@ -40,11 +42,15 @@ final class Parser
         $this->nextToken();
         $this->nextToken();
 
+        // Prefix operators
         $this->registerPrefix(TokenType::VARIABLE, fn () => $this->parseVariable());
         $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
+
+        // Infix operators
+        $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));
     }
 
     public function parseProgram(): Program
@@ -115,6 +121,25 @@ final class Parser
         }
 
         return $result;
+    }
+
+    private function parseInfixExpression(Expression $left): Expression|null
+    {
+        $token = $this->curToken;
+        $operator = $this->curToken->literal;
+
+        $this->nextToken();
+
+        $right = $this->parseExpression();
+
+        $this->nextToken();
+
+        return new InfixExpression(
+            token: $token,
+            left: $left,
+            operator: $operator,
+            right: $right,
+        );
     }
 
     private function parseExpression(): Expression|null
@@ -205,6 +230,30 @@ final class Parser
             $condition,
             $consequence,
             $alternative,
+        );
+    }
+
+    private function parseTernaryExpression(Expression $left): Expression|null
+    {
+        $this->nextToken(); // skip "?"
+
+        $consequence = $this->parseExpression();
+
+        if (!$this->expectPeek(TokenType::COLON)) {
+            return null;
+        }
+
+        $this->nextToken(); // skip ":"
+
+        $alternative = $this->parseExpression();
+
+        $this->nextToken(); // skip alternative
+
+        return new TernaryExpression(
+            token: $this->curToken,
+            condition: $left,
+            consequence: $consequence,
+            alternative: $alternative,
         );
     }
 
