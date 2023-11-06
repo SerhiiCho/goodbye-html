@@ -26,14 +26,14 @@ readonly class IfExpression implements Expression
         $result = sprintf("{{ if %s }}\n", $this->condition->string());
 
         foreach ($this->consequence->statements as $stmt) {
-            $result .= $stmt->string();
+            $result .= $stmt->string() . "\n";
         }
 
         if ($this->alternative) {
             $result .= "{{ else }}\n";
 
             foreach ($this->alternative->statements as $stmt) {
-                $result .= $stmt->string();
+                $result .= $stmt->string() + "\n";
             }
         }
 
