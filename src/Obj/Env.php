@@ -14,4 +14,9 @@ readonly class Env
         private ?self $outer = null,
     ) {
     }
+
+    public static function newEnclosedEnv(Env $outer): self
+    {
+        return new self([], $outer);
+    }
 }

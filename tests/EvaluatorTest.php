@@ -16,9 +16,9 @@ class EvaluatorTest extends TestCase
     /**
      * @dataProvider providerForTestEvalHtml
      */
-    public function testEvalHtml(string $input, string $expect): void
+    public function testEvalHtml(string $input, string $expect, ?Env $env = null): void
     {
-        $evaluated = $this->testEval($input);
+        $evaluated = $this->testEval($input, $env);
         $this->assertSame($expect, $evaluated->inspect());
     }
 
@@ -47,16 +47,15 @@ class EvaluatorTest extends TestCase
         ];
     }
 
-    private function testEval(string $input): Obj|null
+    private function testEval(string $input, ?Env $env = null): Obj|null
     {
         $lexer = new Lexer($input);
         $parser = new Parser($lexer);
         $program = $parser->parseProgram();
-        $env = new Env();
 
         $evaluator = new Evaluator();
 
-        return $evaluator->eval($program, $env);
+        return $evaluator->eval($program, $env ?? new Env());
     }
 
     private function testIntegerObject(Obj $obj, int $expected): void
