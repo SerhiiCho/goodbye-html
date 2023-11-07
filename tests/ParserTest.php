@@ -17,38 +17,6 @@ use Serhii\GoodbyeHtml\Parser\Parser;
 
 class ParserTest extends TestCase
 {
-    /**
-     * @param ExpressionStatement[] $stmt
-     */
-    private function checkForErrors(Parser $parser, array $stmt, int $statements): void
-    {
-        $errors = $parser->errors();
-
-        if (!empty($errors)) {
-            $this->fail(implode("\n", $errors));
-        }
-
-        $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
-    }
-
-    private static function testVariable($var, string $val): void
-    {
-        self::assertInstanceOf(VariableExpression::class, $var);
-        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
-    }
-
-    private static function testString($str, string $val): void
-    {
-        self::assertInstanceOf(StringLiteral::class, $str);
-        self::assertSame($val, $str->value, "String must have value '{$val}', got: '{$str->value}'");
-    }
-
-    private static function testInteger($int, $val): void
-    {
-        self::assertInstanceOf(IntegerLiteral::class, $int);
-        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
-    }
-
     public function testParsingVariables(): void
     {
         $input = '{{ $userName }}';
@@ -259,5 +227,37 @@ class ParserTest extends TestCase
         $this->testVariable($ternary->condition, 'hasContainer');
         $this->testString($ternary->consequence, 'container');
         $this->testString($ternary->alternative, '');
+    }
+
+    /**
+     * @param ExpressionStatement[] $stmt
+     */
+    private function checkForErrors(Parser $parser, array $stmt, int $statements): void
+    {
+        $errors = $parser->errors();
+
+        if (!empty($errors)) {
+            $this->fail(implode("\n", $errors));
+        }
+
+        $this->assertCount($statements, $stmt, "Program must contain {$statements} statements");
+    }
+
+    private static function testVariable($var, string $val): void
+    {
+        self::assertInstanceOf(VariableExpression::class, $var);
+        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
+    }
+
+    private static function testString($str, string $val): void
+    {
+        self::assertInstanceOf(StringLiteral::class, $str);
+        self::assertSame($val, $str->value, "String must have value '{$val}', got: '{$str->value}'");
+    }
+
+    private static function testInteger($int, $val): void
+    {
+        self::assertInstanceOf(IntegerLiteral::class, $int);
+        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
     }
 }
