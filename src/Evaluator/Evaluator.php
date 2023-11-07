@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\Evaluator;
 
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
@@ -12,6 +13,7 @@ use Serhii\GoodbyeHtml\Ast\Node;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Obj\Err;
+use Serhii\GoodbyeHtml\Obj\Html;
 use Serhii\GoodbyeHtml\Obj\Integer;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 
@@ -33,24 +35,26 @@ readonly class Evaluator
             }
 
             return $this->evalPrefixExpression($node->operator, $right);
+        } elseif ($node instanceof HtmlStatement) {
+            return new Html($node->string());
         }
 
         return null;
     }
 
-    private function evalProgram(Program $program, Env $env): Obj
+    private function evalProgram(Program $program, Env $env): Obj|null
     {
-        $result = null;
+        $result = '';
 
         foreach ($program->statements as $stmt) {
-            $result = $this->eval($stmt, $env);
+            $result .= $this->eval($stmt, $env)->inspect();
 
             if ($result instanceof Err) {
                 return $result;
             }
         }
 
-        return $result;
+        return new Html($result);
     }
 
     private function evalPrefixExpression(string $operator, Obj $right): Obj

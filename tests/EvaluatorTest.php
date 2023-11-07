@@ -13,9 +13,20 @@ use Serhii\GoodbyeHtml\Parser\Parser;
 
 class EvaluatorTest extends TestCase
 {
-    public function testEvalHtml(): void
+    /**
+     * @dataProvider providerForTestEvalHtml
+     */
+    public function testEvalHtml(string $input, string $expect): void
     {
-        #
+        $evaluated = $this->testEval($input);
+        $this->assertSame($expect, $evaluated->inspect());
+    }
+
+    public static function providerForTestEvalHtml(): array
+    {
+        return [
+            ['<span>{{ 3 }}</span>', '<span>3</span>'],
+        ];
     }
 
     /**
@@ -36,7 +47,7 @@ class EvaluatorTest extends TestCase
         ];
     }
 
-    private function testEval(string $input): Obj
+    private function testEval(string $input): Obj|null
     {
         $lexer = new Lexer($input);
         $parser = new Parser($lexer);
