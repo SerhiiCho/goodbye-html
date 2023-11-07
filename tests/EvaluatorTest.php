@@ -66,6 +66,11 @@ class EvaluatorTest extends TestCase
     {
         return [
             ['<span>{{ 3 }}</span>', '<span>3</span>'],
+            [
+                '<div><h1>{{ $title }}</h1></div>',
+                '<div><h1>Goodbye HTML package</h1></div>',
+                new Env(['title' => new StringObj('Goodbye HTML package')]),
+            ],
         ];
     }
 
