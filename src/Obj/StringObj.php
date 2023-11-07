@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class Html implements Obj
+readonly class StringObj implements Obj
 {
-    public function __construct(public string $html)
+    public function __construct(public string $value)
     {
     }
 
     public function type(): ObjType
     {
-        return ObjType::HTML_OBJ;
+        return ObjType::STRING_OBJ;
     }
 
     public function inspect(): string
     {
-        return $this->html;
+        return $this->value;
     }
 }

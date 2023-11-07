@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class Err implements Obj
+readonly class HtmlObj implements Obj
 {
-    public function __construct(public string $message)
+    public function __construct(public string $html)
     {
     }
 
     public function type(): ObjType
     {
-        return ObjType::ERROR_OBJ;
+        return ObjType::HTML_OBJ;
     }
 
     public function inspect(): string
     {
-        return "ERROR: {$this->message}";
+        return $this->html;
     }
 }

@@ -14,11 +14,11 @@ use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
-use Serhii\GoodbyeHtml\Obj\Err;
-use Serhii\GoodbyeHtml\Obj\Html;
-use Serhii\GoodbyeHtml\Obj\Integer;
+use Serhii\GoodbyeHtml\Obj\ErrorObj;
+use Serhii\GoodbyeHtml\Obj\HtmlObj;
+use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
-use Serhii\GoodbyeHtml\Obj\Str;
+use Serhii\GoodbyeHtml\Obj\StringObj;
 
 readonly class Evaluator
 {
@@ -29,19 +29,19 @@ readonly class Evaluator
         } elseif ($node instanceof ExpressionStatement) {
             return $this->eval($node->expression, $env);
         } elseif ($node instanceof IntegerLiteral) {
-            return new Integer($node->value);
+            return new IntegerObj($node->value);
         } elseif ($node instanceof StringLiteral) {
-            return new Str($node->value);
+            return new StringObj($node->value);
         } elseif ($node instanceof PrefixExpression) {
             $right = $this->eval($node->right, $env);
 
-            if ($right instanceof Err) {
+            if ($right instanceof ErrorObj) {
                 return $right;
             }
 
             return $this->evalPrefixExpression($node->operator, $right);
         } elseif ($node instanceof HtmlStatement) {
-            return new Html($node->string());
+            return new HtmlObj($node->string());
         } elseif ($node instanceof VariableExpression) {
             return $this->evalVariableExpression($node, $env);
         }
@@ -56,7 +56,7 @@ readonly class Evaluator
         foreach ($program->statements as $stmt) {
             $obj = $this->eval($stmt, $env);
 
-            if ($result instanceof Err) {
+            if ($result instanceof ErrorObj) {
                 return $result;
             }
 
@@ -65,7 +65,7 @@ readonly class Evaluator
             }
         }
 
-        return new Html($result);
+        return new HtmlObj($result);
     }
 
     private function evalPrefixExpression(string $operator, Obj $right): Obj
@@ -74,7 +74,7 @@ readonly class Evaluator
             return $this->evalMinusPrefixOperatorExpression($right);
         }
 
-        return new Err(sprintf('Unknown operator: %s%s', $operator, $right->type()));
+        return new ErrorObj(sprintf('Unknown operator: %s%s', $operator, $right->type()));
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj
@@ -85,15 +85,15 @@ readonly class Evaluator
             return $val;
         }
 
-        return new Err(sprintf('Identifier not found: %s', $node->value));
+        return new ErrorObj(sprintf('Identifier not found: %s', $node->value));
     }
 
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
     {
         if ($right->type() !== ObjType::INTEGER_OBJ) {
-            return new Err(sprintf('Unknown operator: -%s', $right->type()));
+            return new ErrorObj(sprintf('Unknown operator: -%s', $right->type()));
         }
 
-        return new Integer(-$right->value);
+        return new IntegerObj(-$right->value);
     }
 }

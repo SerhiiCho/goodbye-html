@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class Integer implements Obj
+readonly class ErrorObj implements Obj
 {
-    public function __construct(public int $value)
+    public function __construct(public string $message)
     {
     }
 
     public function type(): ObjType
     {
-        return ObjType::INTEGER_OBJ;
+        return ObjType::ERROR_OBJ;
     }
 
     public function inspect(): string
     {
-        return (string) $this->value;
+        return "ERROR: {$this->message}";
     }
 }

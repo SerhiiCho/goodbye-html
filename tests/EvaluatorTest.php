@@ -7,9 +7,9 @@ namespace Serhii\Tests;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Obj\Env;
-use Serhii\GoodbyeHtml\Obj\Integer;
+use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\Obj;
-use Serhii\GoodbyeHtml\Obj\Str;
+use Serhii\GoodbyeHtml\Obj\StringObj;
 use Serhii\GoodbyeHtml\Parser\Parser;
 
 class EvaluatorTest extends TestCase
@@ -46,8 +46,8 @@ class EvaluatorTest extends TestCase
     public static function providerForTestEvalVariable(): array
     {
         return [
-            ['{{ $name }}', 'Anna', new Env(['name' => new Str('Anna')])],
-            ['{{$her_age}}', '23', new Env(['her_age' => new Integer(23)])],
+            ['{{ $name }}', 'Anna', new Env(['name' => new StringObj('Anna')])],
+            ['{{$her_age}}', '23', new Env(['her_age' => new IntegerObj(23)])],
         ];
     }
 
