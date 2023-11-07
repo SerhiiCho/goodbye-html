@@ -12,6 +12,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\Statement;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
@@ -47,6 +48,7 @@ final class Parser
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
+        $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));
@@ -180,6 +182,18 @@ final class Parser
             $this->curToken,
             $this->curToken->literal,
         );
+    }
+
+    private function parsePrefixExpression(): Expression
+    {
+        $token = $this->curToken;
+        $operator = $this->curToken->literal;
+
+        $this->nextToken(); // skip prefix operator
+
+        $right = $this->parseExpression();
+
+        return new PrefixExpression($token, $operator, $right);
     }
 
     private function parseIfExpression(): Expression|null

@@ -9,6 +9,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
@@ -227,6 +228,32 @@ class ParserTest extends TestCase
         $this->testVariable($ternary->condition, 'hasContainer');
         $this->testString($ternary->consequence, 'container');
         $this->testString($ternary->alternative, '');
+    }
+
+    /**
+     * @dataProvider providerForTestPrefixExpressions
+     */
+    public function testPrefixExpressions(string $input, string $operator, $expect): void
+    {
+        $lexer = new Lexer($input);
+        $parser = new Parser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var PrefixExpression $prefix */
+        $prefix = $program->statements[0]->expression;
+
+        $this->assertInstanceOf(PrefixExpression::class, $prefix);
+    }
+
+    public static function providerForTestPrefixExpressions(): array
+    {
+        return [
+            ['{{ -4 }}', '-', 4],
+            ['{{ -284 }}', '-', 284],
+        ];
     }
 
     /**
