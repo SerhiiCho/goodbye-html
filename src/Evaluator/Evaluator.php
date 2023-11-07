@@ -12,10 +12,13 @@ use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Node;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
+use Serhii\GoodbyeHtml\Ast\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Obj\Err;
 use Serhii\GoodbyeHtml\Obj\Html;
 use Serhii\GoodbyeHtml\Obj\Integer;
 use Serhii\GoodbyeHtml\Obj\ObjType;
+use Serhii\GoodbyeHtml\Obj\Str;
 
 readonly class Evaluator
 {
@@ -27,6 +30,8 @@ readonly class Evaluator
             return $this->eval($node->expression, $env);
         } elseif ($node instanceof IntegerLiteral) {
             return new Integer($node->value);
+        } elseif ($node instanceof StringLiteral) {
+            return new Str($node->value);
         } elseif ($node instanceof PrefixExpression) {
             $right = $this->eval($node->right, $env);
 
@@ -37,6 +42,8 @@ readonly class Evaluator
             return $this->evalPrefixExpression($node->operator, $right);
         } elseif ($node instanceof HtmlStatement) {
             return new Html($node->string());
+        } elseif ($node instanceof VariableExpression) {
+            return $this->evalVariableExpression($node, $env);
         }
 
         return null;
@@ -47,10 +54,14 @@ readonly class Evaluator
         $result = '';
 
         foreach ($program->statements as $stmt) {
-            $result .= $this->eval($stmt, $env)->inspect();
+            $obj = $this->eval($stmt, $env);
 
             if ($result instanceof Err) {
                 return $result;
+            }
+
+            if ($obj !== null) {
+                $result .= $obj->inspect();
             }
         }
 
@@ -64,6 +75,17 @@ readonly class Evaluator
         }
 
         return new Err(sprintf('Unknown operator: %s%s', $operator, $right->type()));
+    }
+
+    private function evalVariableExpression(VariableExpression $node, Env $env): Obj
+    {
+        $val = $env->get($node->value);
+
+        if ($val !== null) {
+            return $val;
+        }
+
+        return new Err(sprintf('Identifier not found: %s', $node->value));
     }
 
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
