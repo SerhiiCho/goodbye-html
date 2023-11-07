@@ -35,7 +35,7 @@ class LexerTest extends TestCase
 
         <h1>{{ if \$is_cat }}{{ \$cat_var }}{{ else }}{{ \$dog_var }}{{ end }}</h1>
 
-        {{ if \$uses_php }}
+        {{ if -3 }}
             You are a cool {{ if \$male }}guy{{ end }}
         {{ end }}
         HTML;
@@ -136,7 +136,8 @@ class LexerTest extends TestCase
             // Nested If statement
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IF, 'if'),
-            new Token(TokenType::VARIABLE, 'uses_php'),
+            new Token(TokenType::MINUS, '-'),
+            new Token(TokenType::INTEGER, '3'),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, 'You are a cool '),
             new Token(TokenType::OPENING_BRACES, "{{"),

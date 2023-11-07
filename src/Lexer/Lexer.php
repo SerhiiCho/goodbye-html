@@ -35,6 +35,8 @@ final class Lexer
         } elseif ($this->char === '}' && $this->peekChar() === '}') {
             $this->advanceChar();
             $token = new Token(TokenType::CLOSING_BRACES, '}}');
+        } elseif ($this->char === '-') {
+            $token = new Token(TokenType::MINUS, $this->char);
         } elseif (!$this->isHtml && $this->char === '$' && $this->isLetter($this->peekChar())) {
             $this->advanceChar();
             return new Token(TokenType::VARIABLE, $this->readIdentifier());

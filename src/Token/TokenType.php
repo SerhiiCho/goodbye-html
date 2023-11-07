@@ -23,6 +23,7 @@ enum TokenType: string
     case COLON = ':';
     case OPENING_BRACES = '{{';
     case CLOSING_BRACES = '}}';
+    case MINUS = '-';
 
     private const KEYWORDS = [
         'if' => self::IF,
