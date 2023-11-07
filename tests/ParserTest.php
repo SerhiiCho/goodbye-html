@@ -246,6 +246,8 @@ class ParserTest extends TestCase
         $prefix = $program->statements[0]->expression;
 
         $this->assertInstanceOf(PrefixExpression::class, $prefix);
+        $this->testInteger($prefix->right, $expect);
+        $this->assertSame($operator, $prefix->operator);
     }
 
     public static function providerForTestPrefixExpressions(): array
