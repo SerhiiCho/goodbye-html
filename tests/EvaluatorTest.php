@@ -13,6 +13,11 @@ use Serhii\GoodbyeHtml\Parser\Parser;
 
 class EvaluatorTest extends TestCase
 {
+    public function testEvalHtml(): void
+    {
+        #
+    }
+
     /**
      * @dataProvider providerForTestEvalIntegerExpression
      */
@@ -27,6 +32,7 @@ class EvaluatorTest extends TestCase
         return [
             ['{{ 5 }}', 5],
             ['{{ 190 }}', 190],
+            ['{{ -34 }}', -34],
         ];
     }
 
