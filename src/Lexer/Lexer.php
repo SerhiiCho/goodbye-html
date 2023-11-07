@@ -96,8 +96,12 @@ final class Lexer
         return preg_match('/[_a-zA-Z]/', $letter) === 1;
     }
 
-    private function isNumber(string $number): bool
+    private function isNumber(int|string $number): bool
     {
+        if ($number === 0) {
+            return false;
+        }
+
         return preg_match('/[0-9]/', $number) === 1;
     }
 
