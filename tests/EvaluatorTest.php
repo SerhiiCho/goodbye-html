@@ -7,6 +7,7 @@ namespace Serhii\Tests;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Obj\Env;
+use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\StringObj;
@@ -108,6 +109,25 @@ class EvaluatorTest extends TestCase
     }
 
     /**
+     * @dataProvider providerForTestEvalLoopExpression
+     */
+    public function testEvalLoopExpression(string $input, string $expected, ?Env $env = null): void
+    {
+        $evaluated = $this->testEval($input, $env);
+        $this->assertSame($expected, $evaluated->html);
+    }
+
+    public static function providerForTestEvalLoopExpression(): array
+    {
+        return [
+            [
+                '{{ loop 1, 4 }}<li>{{ $index }}</li>{{ end }}',
+                '<li>0</li><li>1</li><li>2</li><li>3</li>',
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider providerForTestEvalHtml
      */
     public function testEvalHtml(string $input, string $expect, ?Env $env = null): void
@@ -137,8 +157,20 @@ class EvaluatorTest extends TestCase
         $parser = new Parser($lexer);
         $program = $parser->parseProgram();
 
+        $errors = $parser->errors();
+
+        if (!empty($errors)) {
+            $this->fail(implode("\n", $errors));
+        }
+
         $evaluator = new Evaluator();
 
-        return $evaluator->eval($program, $env ?? new Env());
+        $eval = $evaluator->eval($program, $env ?? new Env());
+
+        if ($eval instanceof ErrorObj) {
+            $this->fail($eval->inspect());
+        }
+
+        return $eval;
     }
 }
