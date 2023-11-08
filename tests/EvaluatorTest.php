@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Serhii\Tests;
 
+use Serhii\GoodbyeHtml\ErrorMessage;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\Obj;
+use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
 use Serhii\GoodbyeHtml\Parser\Parser;
 
@@ -151,6 +153,31 @@ class EvaluatorTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider providerForTestErrorHandling
+     */
+    public function testErrorHandling(string $input, string $expectMessage): void
+    {
+        $evaluated = $this->testEval($input);
+
+        $this->assertInstanceOf(ErrorObj::class, $evaluated);
+        $this->assertSame($expectMessage, $evaluated->message);
+    }
+
+    public static function providerForTestErrorHandling(): array
+    {
+        return [
+            [
+                '{{ loop "hello", 4 }}loop{{ end }}',
+                ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, new StringObj('hello'))->message,
+            ],
+            [
+                '{{ loop 3, "6" }}loop{{ end }}',
+                ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, new StringObj('6'))->message,
+            ],
+        ];
+    }
+
     private function testEval(string $input, ?Env $env = null): Obj|null
     {
         $lexer = new Lexer($input);
@@ -165,12 +192,6 @@ class EvaluatorTest extends TestCase
 
         $evaluator = new Evaluator();
 
-        $eval = $evaluator->eval($program, $env ?? new Env());
-
-        if ($eval instanceof ErrorObj) {
-            $this->fail($eval->inspect());
-        }
-
-        return $eval;
+        return $evaluator->eval($program, $env ?? new Env());
     }
 }
