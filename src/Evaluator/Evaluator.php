@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Evaluator;
 
+use Serhii\GoodbyeHtml\Ast\BlockStatement;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
@@ -24,14 +26,16 @@ readonly class Evaluator
 {
     public function eval(Node $node, Env $env): Obj|null
     {
-        if ($node instanceof Program) {
-            return $this->evalProgram($node, $env);
-        } elseif ($node instanceof ExpressionStatement) {
-            return $this->eval($node->expression, $env);
-        } elseif ($node instanceof IntegerLiteral) {
+        if ($node instanceof IntegerLiteral) {
             return new IntegerObj($node->value);
         } elseif ($node instanceof StringLiteral) {
             return new StringObj($node->value);
+        } elseif ($node instanceof HtmlStatement) {
+            return new HtmlObj($node->string());
+        } elseif ($node instanceof Program) {
+            return $this->evalProgram($node, $env);
+        } elseif ($node instanceof ExpressionStatement) {
+            return $this->eval($node->expression, $env);
         } elseif ($node instanceof PrefixExpression) {
             $right = $this->eval($node->right, $env);
 
@@ -40,10 +44,12 @@ readonly class Evaluator
             }
 
             return $this->evalPrefixExpression($node->operator, $right);
-        } elseif ($node instanceof HtmlStatement) {
-            return new HtmlObj($node->string());
         } elseif ($node instanceof VariableExpression) {
             return $this->evalVariableExpression($node, $env);
+        } elseif ($node instanceof IfExpression) {
+            return $this->evalIfExpression($node, $env);
+        } elseif ($node instanceof BlockStatement) {
+            return $this->evalBlockStatement($node, $env);
         }
 
         return null;
@@ -51,21 +57,21 @@ readonly class Evaluator
 
     private function evalProgram(Program $program, Env $env): Obj|null
     {
-        $result = '';
+        $html = '';
 
         foreach ($program->statements as $stmt) {
             $obj = $this->eval($stmt, $env);
 
-            if ($result instanceof ErrorObj) {
-                return $result;
+            if ($obj instanceof ErrorObj) {
+                return $obj;
             }
 
             if ($obj !== null) {
-                $result .= $obj->inspect();
+                $html .= $obj->inspect();
             }
         }
 
-        return new HtmlObj($result);
+        return new HtmlObj($html);
     }
 
     private function evalPrefixExpression(string $operator, Obj $right): Obj
@@ -86,6 +92,36 @@ readonly class Evaluator
         }
 
         return new ErrorObj(sprintf('Identifier not found: %s', $node->value));
+    }
+
+    private function evalIfExpression(IfExpression $node, Env $env): Obj
+    {
+        $condition = $this->eval($node->condition, $env);
+
+        if ($condition->value) {
+            return $this->eval($node->consequence, $env);
+        }
+
+        return $this->eval($node->alternative, $env);
+    }
+
+    private function evalBlockStatement(BlockStatement $node, Env $env): Obj
+    {
+        $html = '';
+
+        foreach ($node->statements as $stmt) {
+            $obj = $this->eval($stmt, $env);
+
+            if ($obj instanceof ErrorObj) {
+                return $obj;
+            }
+
+            if ($obj !== null) {
+                $html .= $obj->inspect();
+            }
+        }
+
+        return new HtmlObj($html);
     }
 
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
