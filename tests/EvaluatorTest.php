@@ -17,18 +17,18 @@ class EvaluatorTest extends TestCase
     /**
      * @dataProvider providerForTestEvalIntegerExpression
      */
-    public function testEvalIntegerExpression(string $input, int $expected): void
+    public function testEvalIntegerExpression(string $input, string $expected): void
     {
         $evaluated = $this->testEval($input);
-        $this->testIntegerObject($evaluated, $expected);
+        $this->assertSame($expected, $evaluated->html);
     }
 
     public static function providerForTestEvalIntegerExpression(): array
     {
         return [
-            ['{{ 5 }}', 5],
-            ['{{ 190 }}', 190],
-            ['{{ -34 }}', -34],
+            ['{{ 5 }}', '5'],
+            ['{{ 190 }}', '190'],
+            ['{{ -34 }}', '-34'],
         ];
     }
 
@@ -66,6 +66,7 @@ class EvaluatorTest extends TestCase
     {
         return [
             ['<span>{{ 3 }}</span>', '<span>3</span>'],
+            ["<p>{{ 'Some string' }}</p>", '<p>Some string</p>'],
             [
                 '<div><h1>{{ $title }}</h1></div>',
                 '<div><h1>Goodbye HTML package</h1></div>',
@@ -83,11 +84,5 @@ class EvaluatorTest extends TestCase
         $evaluator = new Evaluator();
 
         return $evaluator->eval($program, $env ?? new Env());
-    }
-
-    private function testIntegerObject(Obj $obj, int $expected): void
-    {
-        $this->assertInstanceOf(Integer::class, $obj);
-        $this->assertSame($expected, $obj->value, "Object has wrong value. Got {$obj->value}, want {$expected}");
     }
 }
