@@ -16,24 +16,24 @@ class LexerTest extends TestCase
         <div class="{{ \$show20 ? 'container' : '' }}">
         <h1 {{ \$classes }}>{{ \$heading }}</h1>
 
-        <ul>
+        <ul {{ "data-attr" }}>
         {{ loop 1, \$to }}
             <li>{{ \$index }}</li>
         {{ end }}
         </ul>
 
         {{ if \$is_old }}
-            <h1>I'm not a pro but it's only a matter of time</h1>
+            <h2>I'm not a pro but it's only a matter of time</h2>
         {{ end }}
         </div>
 
         {{ if \$likes_bread }}
-            <h1>I like bread</h1>
+            <h3>I like bread</h3>
         {{ else }}
-            <h1>I don't really like bread</h1>
+            <h4>I don't really like bread</h4>
         {{ end }}
 
-        <h1>{{ if \$is_cat }}{{ \$cat_var }}{{ else }}{{ \$dog_var }}{{ end }}</h1>
+        <h5>{{ if \$is_cat }}{{ \$cat_var }}{{ else }}{{ \$dog_var }}{{ end }}</h5>
 
         {{ if -3 }}
             You are a cool {{ if \$male }}guy{{ end }}
@@ -62,7 +62,11 @@ class LexerTest extends TestCase
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::VARIABLE, "heading"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, "</h1>\n\n<ul>\n"),
+            new Token(TokenType::HTML, "</h1>\n\n<ul "),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::STRING, "data-attr"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, ">\n"),
             // End variables
 
             // Loop statement
@@ -89,7 +93,7 @@ class LexerTest extends TestCase
             new Token(TokenType::IF, "if"),
             new Token(TokenType::VARIABLE, "is_old"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, "<h1>I'm not a pro but it's only a matter of time</h1>\n"),
+            new Token(TokenType::HTML, "<h2>I'm not a pro but it's only a matter of time</h2>\n"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::END, "end"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
@@ -102,18 +106,18 @@ class LexerTest extends TestCase
             new Token(TokenType::IF, "if"),
             new Token(TokenType::VARIABLE, "likes_bread"),
             new Token(TokenType::CLOSING_BRACES, '}}'),
-            new Token(TokenType::HTML, "<h1>I like bread</h1>\n"),
+            new Token(TokenType::HTML, "<h3>I like bread</h3>\n"),
             new Token(TokenType::OPENING_BRACES, '{{'),
             new Token(TokenType::ELSE, "else"),
             new Token(TokenType::CLOSING_BRACES, '}}'),
-            new Token(TokenType::HTML, "<h1>I don't really like bread</h1>\n"),
+            new Token(TokenType::HTML, "<h4>I don't really like bread</h4>\n"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::END, "end"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             // End If / Else statement
 
             // Inline If / Else / End statement
-            new Token(TokenType::HTML, "<h1>"),
+            new Token(TokenType::HTML, "<h5>"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IF, "if"),
             new Token(TokenType::VARIABLE, 'is_cat'),
@@ -130,7 +134,7 @@ class LexerTest extends TestCase
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::END, "end"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, "</h1>\n\n"),
+            new Token(TokenType::HTML, "</h5>\n\n"),
             // End inline If / Else / End statement
 
             // Nested If statement
@@ -160,7 +164,37 @@ class LexerTest extends TestCase
 
         foreach ($tests as $test) {
             $token = $lexer->nextToken();
-            $this->assertEquals($test->type, $token->type, "Test for: {$test->literal}");
+            $this->assertEquals($test, $token, "Test for: {$test->literal}");
+            $this->assertEquals($test->literal, $token->literal, "Test for token type: {$token->type->value}");
+        }
+    }
+
+    public function testProgramCanBeEmptyString(): void
+    {
+        $input = '';
+
+        $lexer = new Lexer($input);
+        $token = $lexer->nextToken();
+
+        $this->assertEquals(new Token(TokenType::EOF, 'EOF'), $token);
+    }
+
+    public function testProgramCanJustWithoutHtml(): void
+    {
+        $input = '{{ $name }}';
+
+        $lexer = new Lexer($input);
+
+        $tests = [
+            new Token(TokenType::OPENING_BRACES, '{{'),
+            new Token(TokenType::VARIABLE, 'name'),
+            new Token(TokenType::CLOSING_BRACES, '}}'),
+            new Token(TokenType::EOF, 'EOF'),
+        ];
+
+        foreach ($tests as $test) {
+            $token = $lexer->nextToken();
+            $this->assertEquals($test, $token, "Test for: {$test->literal}");
             $this->assertEquals($test->literal, $token->literal, "Test for token type: {$token->type->value}");
         }
     }
