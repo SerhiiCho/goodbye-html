@@ -17,6 +17,7 @@ use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
+use Serhii\GoodbyeHtml\ErrorMessage;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
@@ -53,6 +54,8 @@ readonly class Evaluator
             return $this->evalBlockStatement($node, $env);
         } elseif ($node instanceof LoopExpression) {
             return $this->evalLoopExpression($node, $env);
+        } elseif ($node instanceof ErrorObj) {
+            return $node;
         }
 
         return new ErrorObj('Unknown node type: ' . get_class($node));
@@ -101,6 +104,10 @@ readonly class Evaluator
     {
         $condition = $this->eval($node->condition, $env);
 
+        if ($condition instanceof ErrorObj) {
+            return $condition;
+        }
+
         if ($condition->value) {
             return $this->eval($node->consequence, $env);
         }
@@ -131,8 +138,17 @@ readonly class Evaluator
     {
         $html = '';
 
-        $to = $this->eval($node->to, $env);
         $from = $this->eval($node->from, $env);
+
+        if (!$from instanceof IntegerObj) {
+            return ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, $from);
+        }
+
+        $to = $this->eval($node->to, $env);
+
+        if (!$to instanceof IntegerObj) {
+            return ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, $to);
+        }
 
         for ($i = $from->value; $i <= $to->value; $i++) {
             $env->set('index', new IntegerObj($i));
