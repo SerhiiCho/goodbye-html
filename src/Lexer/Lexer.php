@@ -23,53 +23,86 @@ final class Lexer
 
     public function nextToken(): Token
     {
-        $token = null;
-
         $this->skipWhitespace();
 
         if ($this->char === 0) {
-            $token = new Token(TokenType::EOF, 'EOF');
-        } elseif ($this->char === '{' && $this->peekChar() === '{') {
+            return new Token(TokenType::EOF, 'EOF');
+        } elseif ($this->areOpeningBraces()) {
+            $this->isHtml = false;
             $this->advanceChar();
-            $token = new Token(TokenType::OPENING_BRACES, '{{');
-        } elseif ($this->char === '}' && $this->peekChar() === '}') {
             $this->advanceChar();
-            $token = new Token(TokenType::CLOSING_BRACES, '}}');
-        } elseif ($this->char === '-') {
-            $token = new Token(TokenType::MINUS, $this->char);
-        } elseif (!$this->isHtml && $this->char === '$' && $this->isLetter($this->peekChar())) {
+            return new Token(TokenType::OPENING_BRACES, '{{');
+        } elseif ($this->areClosingBraces()) {
+            $this->isHtml = true;
             $this->advanceChar();
-            return new Token(TokenType::VARIABLE, $this->readIdentifier());
-        } elseif ($this->char === ',') {
-            $token = new Token(TokenType::COMMA, $this->char);
-        } elseif ($this->char === '?') {
-            $token = new Token(TokenType::QUESTION_MARK, $this->char);
-        } elseif ($this->char === ':') {
-            $token = new Token(TokenType::COLON, $this->char);
-        } elseif ($this->char === "'") {
             $this->advanceChar();
-            $token = new Token(TokenType::STRING, $this->readString());
-        } elseif ($this->isLetter($this->char) && !$this->isHtml) {
-            $ident = $this->readIdentifier();
-            $type = TokenType::lookupIdentifier($ident);
-            return new Token($type, $ident);
-        } elseif ($this->isNumber($this->char)) {
-            return new Token(TokenType::INTEGER, $this->readNumber());
-        } elseif ($this->isHtml) {
-            $token = new Token(TokenType::HTML, $this->readHtml());
-        } else {
-            $token = Token::illegal($this->char);
+            return new Token(TokenType::CLOSING_BRACES, '}}');
         }
 
-        if ($token?->type === TokenType::CLOSING_BRACES) {
-            $this->isHtml = true;
-        } elseif ($token?->type === TokenType::OPENING_BRACES) {
-            $this->isHtml = false;
+        return $this->isHtml
+            ? $this->readHtmlToken()
+            : $this->readProgramToken();
+    }
+
+    private function readProgramToken(): Token
+    {
+        $token = null;
+
+        if ($this->char === '-') {
+            $token = new Token(TokenType::MINUS, $this->char);
+            $this->advanceChar();
+        } elseif ($this->char === '$' && $this->isLetter($this->peekChar())) {
+            $this->advanceChar();
+            $token = new Token(TokenType::VARIABLE, $this->readIdentifier());
+        } elseif ($this->char === ',') {
+            $token = new Token(TokenType::COMMA, $this->char);
+            $this->advanceChar();
+        } elseif ($this->char === '?') {
+            $token = new Token(TokenType::QUESTION_MARK, $this->char);
+            $this->advanceChar();
+        } elseif ($this->char === ':') {
+            $token = new Token(TokenType::COLON, $this->char);
+            $this->advanceChar();
+        } elseif ($this->char === "'" || $this->char === '"') {
+            $quote = $this->char;
+            $this->advanceChar();
+            $token = new Token(TokenType::STRING, $this->readString($quote));
+            $this->advanceChar();
+        } elseif ($this->isLetter($this->char)) {
+            $ident = $this->readIdentifier();
+            $type = TokenType::lookupIdentifier($ident);
+            $token = new Token($type, $ident);
+        } elseif ($this->isNumber($this->char)) {
+            $token = new Token(TokenType::INTEGER, $this->readNumber());
+        } else {
+            $token = Token::illegal($this->char);
+            $this->advanceChar();
+        }
+
+        return $token;
+    }
+
+    private function readHtmlToken(): Token
+    {
+        if ($this->char === 0) {
+            $token = new Token(TokenType::EOF, 'EOF');
+        } else {
+            $token = new Token(TokenType::HTML, $this->readHtml());
         }
 
         $this->advanceChar();
 
         return $token;
+    }
+
+    private function areOpeningBraces(): bool
+    {
+        return $this->char === '{' && $this->peekChar() === '{';
+    }
+
+    private function areClosingBraces(): bool
+    {
+        return $this->char === '}' && $this->peekChar() === '}';
     }
 
     private function advanceChar(): void
@@ -162,15 +195,15 @@ final class Lexer
         }
     }
 
-    private function readString(): string
+    private function readString(string $quote): string
     {
-        if ($this->char === "'") {
+        if ($this->char === $quote) {
             return '';
         }
 
         $position = $this->position;
 
-        while ($this->char !== "'") {
+        while ($this->char !== $quote) {
             $this->advanceChar();
         }
 
