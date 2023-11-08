@@ -52,7 +52,7 @@ readonly class Evaluator
             return $this->evalBlockStatement($node, $env);
         }
 
-        return null;
+        return new ErrorObj('Unknown node type: ' . get_class($node));
     }
 
     private function evalProgram(Program $program, Env $env): Obj|null
