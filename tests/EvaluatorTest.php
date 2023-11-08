@@ -69,6 +69,45 @@ class EvaluatorTest extends TestCase
     }
 
     /**
+     * @dataProvider providerForTestEvalIfExpression
+     */
+    public function testEvalIfExpression(string $input, string $expected, Env $env): void
+    {
+        $evaluated = $this->testEval($input, $env);
+        $this->assertSame($expected, $evaluated->html);
+    }
+
+    public static function providerForTestEvalIfExpression(): array
+    {
+        return [
+            [
+                '{{if $name}}Ann{{end}}',
+                'Ann',
+                new Env(['name' => new StringObj('Anna')])
+            ],
+            [
+                <<<HTML
+                {{ if \$age }}
+                    {{ if \$name }}
+                        Her name is {{ \$name }}, she is {{ \$age }}
+                    {{ end }}
+                {{ end }}
+                HTML,
+                'Her name is Anna, she is 23',
+                new Env([
+                    'age' => new IntegerObj(23),
+                    'name' => new StringObj('Anna'),
+                ]),
+            ],
+            [
+                '{{ if $not }}Not{{ else }}Yes{{ end }}',
+                'Yes',
+                new Env(['not' => new IntegerObj(0)]),
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider providerForTestEvalHtml
      */
     public function testEvalHtml(string $input, string $expect, ?Env $env = null): void
