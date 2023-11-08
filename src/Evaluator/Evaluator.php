@@ -9,6 +9,7 @@ use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Node;
@@ -50,6 +51,8 @@ readonly class Evaluator
             return $this->evalIfExpression($node, $env);
         } elseif ($node instanceof BlockStatement) {
             return $this->evalBlockStatement($node, $env);
+        } elseif ($node instanceof LoopExpression) {
+            return $this->evalLoopExpression($node, $env);
         }
 
         return new ErrorObj('Unknown node type: ' . get_class($node));
@@ -60,14 +63,14 @@ readonly class Evaluator
         $html = '';
 
         foreach ($program->statements as $stmt) {
-            $obj = $this->eval($stmt, $env);
+            $stmtObj = $this->eval($stmt, $env);
 
-            if ($obj instanceof ErrorObj) {
-                return $obj;
+            if ($stmtObj instanceof ErrorObj) {
+                return $stmtObj;
             }
 
-            if ($obj !== null) {
-                $html .= $obj->inspect();
+            if ($stmtObj !== null) {
+                $html .= $stmtObj->inspect();
             }
         }
 
@@ -110,14 +113,38 @@ readonly class Evaluator
         $html = '';
 
         foreach ($node->statements as $stmt) {
-            $obj = $this->eval($stmt, $env);
+            $stmtObj = $this->eval($stmt, $env);
 
-            if ($obj instanceof ErrorObj) {
-                return $obj;
+            if ($stmtObj instanceof ErrorObj) {
+                return $stmtObj;
             }
 
-            if ($obj !== null) {
-                $html .= $obj->inspect();
+            if ($stmtObj !== null) {
+                $html .= $stmtObj->inspect();
+            }
+        }
+
+        return new HtmlObj($html);
+    }
+
+    private function evalLoopExpression(LoopExpression $node, Env $env): Obj
+    {
+        $html = '';
+
+        $to = $this->eval($node->to, $env);
+        $from = $this->eval($node->from, $env);
+
+        for ($i = $from->value; $i <= $to->value; $i++) {
+            $env->set('index', new IntegerObj($i));
+
+            $block = $this->eval($node->body, $env);
+
+            if ($block instanceof ErrorObj) {
+                return $block;
+            }
+
+            if ($block !== null) {
+                $html .= $block->inspect();
             }
         }
 

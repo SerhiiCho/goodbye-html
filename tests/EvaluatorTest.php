@@ -122,7 +122,7 @@ class EvaluatorTest extends TestCase
         return [
             [
                 '{{ loop 1, 4 }}<li>{{ $index }}</li>{{ end }}',
-                '<li>0</li><li>1</li><li>2</li><li>3</li>',
+                '<li>1</li><li>2</li><li>3</li><li>4</li>',
             ],
         ];
     }
