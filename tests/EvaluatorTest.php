@@ -33,6 +33,22 @@ class EvaluatorTest extends TestCase
     }
 
     /**
+     * @dataProvider providerForTestEvalStringExpression
+     */
+    public function testEvalStringExpression(string $input, string $expected): void
+    {
+        $evaluated = $this->testEval($input);
+        $this->assertSame($expected, $evaluated->html);
+    }
+
+    public static function providerForTestEvalStringExpression(): array
+    {
+        return [
+            ["{{ 'This is a string' }}", 'This is a string'],
+        ];
+    }
+
+    /**
      * @dataProvider providerForTestEvalVariable
      */
     public function testEvalVariable(string $input, mixed $expect_html, ?Env $env = null): void
@@ -66,7 +82,7 @@ class EvaluatorTest extends TestCase
     {
         return [
             ['<span>{{ 3 }}</span>', '<span>3</span>'],
-            ["<p>{{ 'Some string' }}</p>", '<p>Some string</p>'],
+            ["<p>{{ 'Some string' }}<br />{{4}}</p>", '<p>Some string<br />4</p>'],
             [
                 '<div><h1>{{ $title }}</h1></div>',
                 '<div><h1>Goodbye HTML package</h1></div>',
