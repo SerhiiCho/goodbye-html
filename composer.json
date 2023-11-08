@@ -31,5 +31,8 @@
         "phpunit/phpunit": "^8.3",
         "symfony/var-dumper": "^5.0@dev",
         "laravel/pint": "dev-main"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit --testdox"
     }
 }
