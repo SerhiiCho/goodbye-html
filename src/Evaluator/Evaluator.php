@@ -171,7 +171,7 @@ readonly class Evaluator
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
     {
         if ($right->type() !== ObjType::INTEGER_OBJ) {
-            return new ErrorObj(sprintf('Unknown operator: -%s', $right->type()));
+            return EvalError::unknownOperator('-', $right);
         }
 
         return new IntegerObj(-$right->value);

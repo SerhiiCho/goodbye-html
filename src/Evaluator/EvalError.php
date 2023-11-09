@@ -29,7 +29,7 @@ readonly class EvalError
 
     public static function unknownOperator(string $operator, Obj $right): ErrorObj
     {
-        return new ErrorObj(sprintf('[EVAL_ERROR] unknown operator "%s%s"', $operator, $right->type()->value));
+        return new ErrorObj(sprintf('[EVAL_ERROR] unknown operator "%s" for type "%s"', $operator, $right->type()->value));
     }
 
     public static function variableIsUndefined(VariableExpression $node): ErrorObj

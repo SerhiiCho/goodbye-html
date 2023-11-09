@@ -187,8 +187,8 @@ class EvaluatorTest extends TestCase
                 EvalError::variableIsUndefined(new VariableExpression(new Token(TokenType::VARIABLE, 'test'), 'test'))->message,
             ],
             [
-                '{{ #4 }}',
-                EvalError::unknownOperator('|', new IntegerObj(4))->message,
+                '{{ -"hello" }}',
+                EvalError::unknownOperator('-', new StringObj('hello'))->message,
             ],
         ];
     }
