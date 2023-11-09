@@ -59,7 +59,7 @@ readonly class Evaluator
             return $node;
         }
 
-        return new ErrorObj('Unknown node type: ' . get_class($node));
+        return ErrorMessage::unknownType($node);
     }
 
     private function evalProgram(Program $program, Env $env): Obj|null
@@ -87,7 +87,7 @@ readonly class Evaluator
             return $this->evalMinusPrefixOperatorExpression($right);
         }
 
-        return new ErrorObj(sprintf('Unknown operator: %s%s', $operator, $right->type()));
+        return ErrorMessage::unknownOperator($operator, $right);
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj
@@ -98,7 +98,7 @@ readonly class Evaluator
             return $val;
         }
 
-        return new ErrorObj(sprintf('Identifier not found: %s', $node->value));
+        return ErrorMessage::variableIsUndefined($node);
     }
 
     private function evalIfExpression(IfExpression $node, Env $env): Obj
@@ -143,13 +143,13 @@ readonly class Evaluator
         $from = $this->eval($node->from, $env);
 
         if (!$from instanceof IntegerObj) {
-            return ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, $from);
+            return ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $from);
         }
 
         $to = $this->eval($node->to, $env);
 
         if (!$to instanceof IntegerObj) {
-            return ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, $to);
+            return ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $to);
         }
 
         for ($i = $from->value; $i <= $to->value; $i++) {
