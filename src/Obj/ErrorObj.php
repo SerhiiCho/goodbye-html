@@ -17,6 +17,6 @@ readonly class ErrorObj implements Obj
 
     public function inspect(): string
     {
-        return "ERROR: {$this->message}";
+        return $this->message;
     }
 }
