@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Serhii\Tests;
 
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
-use Serhii\GoodbyeHtml\ErrorMessage;
+use Serhii\GoodbyeHtml\Evaluator\EvalError;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Obj\Env;
@@ -176,15 +176,19 @@ class EvaluatorTest extends TestCase
         return [
             [
                 '{{ loop "hello", 4 }}loop{{ end }}',
-                ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, new StringObj('hello'))->message,
+                EvalError::wrongArgumentType('loop', ObjType::INTEGER_OBJ, new StringObj('hello'))->message,
             ],
             [
                 '{{ loop 3, "6" }}loop{{ end }}',
-                ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, new StringObj('6'))->message,
+                EvalError::wrongArgumentType('loop', ObjType::INTEGER_OBJ, new StringObj('6'))->message,
             ],
             [
                 '{{ $test }}',
-                ErrorMessage::variableIsUndefined(new VariableExpression(new Token(TokenType::VARIABLE, 'test'), 'test'))->message,
+                EvalError::variableIsUndefined(new VariableExpression(new Token(TokenType::VARIABLE, 'test'), 'test'))->message,
+            ],
+            [
+                '{{ #4 }}',
+                EvalError::unknownOperator('|', new IntegerObj(4))->message,
             ],
         ];
     }

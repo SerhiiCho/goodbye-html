@@ -17,7 +17,6 @@ use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
-use Serhii\GoodbyeHtml\ErrorMessage;
 use Serhii\GoodbyeHtml\Obj\BlockObj;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
@@ -59,7 +58,7 @@ readonly class Evaluator
             return $node;
         }
 
-        return ErrorMessage::unknownType($node);
+        return EvalError::unknownType($node);
     }
 
     private function evalProgram(Program $program, Env $env): Obj|null
@@ -87,7 +86,7 @@ readonly class Evaluator
             return $this->evalMinusPrefixOperatorExpression($right);
         }
 
-        return ErrorMessage::unknownOperator($operator, $right);
+        return EvalError::unknownOperator($operator, $right);
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj
@@ -98,7 +97,7 @@ readonly class Evaluator
             return $val;
         }
 
-        return ErrorMessage::variableIsUndefined($node);
+        return EvalError::variableIsUndefined($node);
     }
 
     private function evalIfExpression(IfExpression $node, Env $env): Obj
@@ -143,13 +142,13 @@ readonly class Evaluator
         $from = $this->eval($node->from, $env);
 
         if (!$from instanceof IntegerObj) {
-            return ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $from);
+            return EvalError::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $from);
         }
 
         $to = $this->eval($node->to, $env);
 
         if (!$to instanceof IntegerObj) {
-            return ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $to);
+            return EvalError::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $to);
         }
 
         for ($i = $from->value; $i <= $to->value; $i++) {
