@@ -10,4 +10,5 @@ enum ObjType: string
     case ERROR_OBJ = 'ERROR';
     case STRING_OBJ = 'STRING';
     case HTML_OBJ = 'HTML';
+    case BLOCK_OBJ = 'BLOCK';
 }
