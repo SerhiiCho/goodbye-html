@@ -129,7 +129,11 @@ final class Parser
         $prefix = $this->prefixParseFns[$this->curToken->type->value] ?? null;
 
         if (!$prefix) {
-            $this->errors[] = "no prefix parse function for {$this->curToken->type->value} found";
+            $this->errors[] = sprintf(
+                '[PARSER_ERROR] no prefix parse function for character "%s" found',
+                $this->curToken->literal,
+            );
+
             return null;
         }
 
