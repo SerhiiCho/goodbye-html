@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\Tests;
 
+use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\ErrorMessage;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
@@ -14,6 +15,8 @@ use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
 use Serhii\GoodbyeHtml\Parser\Parser;
+use Serhii\GoodbyeHtml\Token\Token;
+use Serhii\GoodbyeHtml\Token\TokenType;
 
 class EvaluatorTest extends TestCase
 {
@@ -173,11 +176,15 @@ class EvaluatorTest extends TestCase
         return [
             [
                 '{{ loop "hello", 4 }}loop{{ end }}',
-                ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, new StringObj('hello'))->message,
+                ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, new StringObj('hello'))->message,
             ],
             [
                 '{{ loop 3, "6" }}loop{{ end }}',
-                ErrorMessage::typeMismatch('loop', ObjType::INTEGER_OBJ, new StringObj('6'))->message,
+                ErrorMessage::wrongArgumentType('loop', ObjType::INTEGER_OBJ, new StringObj('6'))->message,
+            ],
+            [
+                '{{ $test }}',
+                ErrorMessage::variableIsUndefined(new VariableExpression(new Token(TokenType::VARIABLE, 'test'), 'test'))->message,
             ],
         ];
     }
