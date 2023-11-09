@@ -18,6 +18,7 @@ use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\ErrorMessage;
+use Serhii\GoodbyeHtml\Obj\BlockObj;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
@@ -117,7 +118,8 @@ readonly class Evaluator
 
     private function evalBlockStatement(BlockStatement $node, Env $env): Obj
     {
-        $html = '';
+        /** @var Obj[] $elements */
+        $elements = [];
 
         foreach ($node->statements as $stmt) {
             $stmtObj = $this->eval($stmt, $env);
@@ -127,11 +129,11 @@ readonly class Evaluator
             }
 
             if ($stmtObj !== null) {
-                $html .= $stmtObj->inspect();
+                $elements[] = $stmtObj;
             }
         }
 
-        return new HtmlObj($html);
+        return new BlockObj($elements);
     }
 
     private function evalLoopExpression(LoopExpression $node, Env $env): Obj
