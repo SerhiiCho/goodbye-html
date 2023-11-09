@@ -188,7 +188,7 @@ class EvaluatorTest extends TestCase
             ],
             [
                 '{{ -"hello" }}',
-                EvalError::unknownOperator('-', new StringObj('hello'))->message,
+                EvalError::operatorNotAllowed('-', new StringObj('hello'))->message,
             ],
         ];
     }

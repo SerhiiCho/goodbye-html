@@ -86,7 +86,7 @@ readonly class Evaluator
             return $this->evalMinusPrefixOperatorExpression($right);
         }
 
-        return EvalError::unknownOperator($operator, $right);
+        return EvalError::operatorNotAllowed($operator, $right);
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj
@@ -171,7 +171,7 @@ readonly class Evaluator
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
     {
         if ($right->type() !== ObjType::INTEGER_OBJ) {
-            return EvalError::unknownOperator('-', $right);
+            return EvalError::operatorNotAllowed('-', $right);
         }
 
         return new IntegerObj(-$right->value);

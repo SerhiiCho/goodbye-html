@@ -27,9 +27,9 @@ readonly class EvalError
         return new ErrorObj('[EVAL_ERROR] unknown type: "' . get_class($node) . '"');
     }
 
-    public static function unknownOperator(string $operator, Obj $right): ErrorObj
+    public static function operatorNotAllowed(string $operator, Obj $right): ErrorObj
     {
-        return new ErrorObj(sprintf('[EVAL_ERROR] unknown operator "%s" for type "%s"', $operator, $right->type()->value));
+        return new ErrorObj(sprintf('[EVAL_ERROR] operator "%s" is not allowed for type "%s"', $operator, $right->type()->value));
     }
 
     public static function variableIsUndefined(VariableExpression $node): ErrorObj
