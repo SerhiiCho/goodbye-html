@@ -5,6 +5,15 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml;
 
 use Exception;
+use Serhii\GoodbyeHtml\Ast\Program;
+use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Evaluator\Evaluator;
+use Serhii\GoodbyeHtml\CoreParser\CoreParser;
+use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
+use Serhii\GoodbyeHtml\Exceptions\ParserException;
+use Serhii\GoodbyeHtml\Obj\Env;
+use Serhii\GoodbyeHtml\Obj\ErrorObj;
+use Serhii\GoodbyeHtml\Obj\Obj;
 
 final class Parser
 {
@@ -43,11 +52,31 @@ final class Parser
             return $this->html_content;
         }
 
-        return '';
+        $lexer = new Lexer($this->html_content);
+        $parser = new CoreParser($lexer);
+        $program = $parser->parseProgram();
+
+        if (count($parser->errors()) > 0) {
+            throw new ParserException($parser->errors()[0]);
+        }
+
+        $evaluated = $this->evaluate($program);
+
+        if ($evaluated instanceof ErrorObj) {
+            throw new EvaluatorException($evaluated->inspect());
+        }
+
+        return $evaluated->inspect();
     }
 
     private function hasVariables(): bool
     {
         return is_array($this->variables) && !empty($this->variables);
+    }
+
+    private function evaluate(Program $program): Obj
+    {
+        $env = Env::fromArray($this->variables);
+        return (new Evaluator())->eval($program, $env);
     }
 }
