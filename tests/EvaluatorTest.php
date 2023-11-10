@@ -162,6 +162,26 @@ class EvaluatorTest extends TestCase
         ];
     }
 
+    public function testEvalHtmlStatement(): void
+    {
+        $input = <<<HTML
+        <body>
+            <main>
+                <h1>Hello friend</h1>
+                <p>Nice to meet you</p>
+            </main>
+        </body>
+        HTML;
+
+        $evaluated = $this->testEval($input);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($input, $evaluated?->html);
+    }
+
     /**
      * @dataProvider providerForTestEvalLoopExpression
      */
@@ -180,12 +200,12 @@ class EvaluatorTest extends TestCase
     {
         return [
             [
-                '{{ loop 1, 4 }}<li>{{ $index }}</li>{{ end }}',
-                '<li>1</li><li>2</li><li>3</li><li>4</li>',
+                '<ul>{{ loop 1, 4 }}<li>{{ $index }}</li>{{ end }}</ul>',
+                '<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>',
             ],
             [
-                '{{ loop -3, 18 }}{{ $index }},{{ end }}',
-                '-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,',
+                '<span>{{ loop -3, 18 }}{{ $index }},{{ end }}</span>',
+                '<span>-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,</span>',
             ],
         ];
     }
