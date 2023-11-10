@@ -15,6 +15,7 @@ use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
+use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
@@ -40,6 +41,28 @@ class EvaluatorTest extends TestCase
             ['{{ 5 }}', '5'],
             ['{{ 190 }}', '190'],
             ['{{ -34 }}', '-34'],
+        ];
+    }
+
+    /**
+     * @dataProvider providerForTestEvalBooleanExpression
+     */
+    public function testEvalBooleanExpression(string $input, string $expected): void
+    {
+        $evaluated = $this->testEval($input);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($expected, $evaluated->value());
+    }
+
+    public static function providerForTestEvalBooleanExpression(): array
+    {
+        return [
+            ['{{ true }}', '1'], // in PHP true to string is 1
+            ['{{ false }}', ''], // in PHP false to string is ''
         ];
     }
 
@@ -91,7 +114,7 @@ class EvaluatorTest extends TestCase
     /**
      * @dataProvider providerForTestEvalIfExpression
      */
-    public function testEvalIfExpression(string $input, string $expected, Env $env): void
+    public function testEvalIfExpression(string $input, string $expected, ?Env $env = null): void
     {
         $evaluated = $this->testEval($input, $env);
 
@@ -113,7 +136,7 @@ class EvaluatorTest extends TestCase
             [
                 <<<HTML
                 {{ if \$age }}
-                    {{ if \$name }}
+                    {{ if \$isMarried }}
                         Her name is {{ \$name }}, she is {{ \$age }}
                     {{ end }}
                 {{ end }}
@@ -122,12 +145,12 @@ class EvaluatorTest extends TestCase
                 new Env([
                     'age' => new IntegerObj(23),
                     'name' => new StringObj('Anna'),
+                    'isMarried' => new BooleanObj(true),
                 ]),
             ],
             [
-                '{{ if $not }}Not{{ else }}Yes{{ end }}',
+                '{{ if false }}Not{{ else }}Yes{{ end }}',
                 'Yes',
-                new Env(['not' => new IntegerObj(0)]),
             ],
         ];
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\Evaluator;
 
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
+use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
@@ -19,6 +20,7 @@ use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Obj\BlockObj;
+use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
@@ -35,6 +37,8 @@ readonly class Evaluator
             return new StringObj($node->value);
         } elseif ($node instanceof HtmlStatement) {
             return new HtmlObj($node->string());
+        } elseif ($node instanceof BooleanExpression) {
+            return new BooleanObj($node->value);
         } elseif ($node instanceof Program) {
             return $this->evalProgram($node, $env);
         } elseif ($node instanceof ExpressionStatement) {
