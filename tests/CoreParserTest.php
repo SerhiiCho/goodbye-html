@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\Tests;
 
+use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
@@ -54,10 +55,37 @@ class CoreParserTest extends TestCase
         $this->assertSame('<div class="nice"></div>', $stmt->string());
     }
 
+    public static function providerForTestPrefixExpressions(): array
+    {
+        return [
+            ['{{ -4 }}', '-', 4],
+            ['{{ -284 }}', '-', 284],
+        ];
+    }
+
+    /**
+     * @dataProvider providerForTestBooleanExpressions
+     */
+    public function testBooleanExpressions(string $input, string $expect): void
+    {
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var BooleanExpression $prefix */
+        $prefix = $program->statements[0]->expression;
+
+        $this->assertInstanceOf(BooleanExpression::class, $prefix);
+        $this->assertSame($expect, $prefix->string());
+    }
+
     public function testParsingIfStatement(): void
     {
         $input = <<<HTML
-        {{ if \$uses_php }}
+        {{ if true }}
             <h1>I'm not a pro but it's only a matter of time</h1>
         {{ end }}
         HTML;
@@ -76,7 +104,7 @@ class CoreParserTest extends TestCase
         $if = $stmt->expression;
 
         $this->assertSame("<h1>I'm not a pro but it's only a matter of time</h1>\n", $if->consequence->string());
-        $this->assertSame('$uses_php', $if->condition->string());
+        $this->assertSame('true', $if->condition->string());
         $this->assertNull($if->alternative);
     }
 
@@ -250,11 +278,11 @@ class CoreParserTest extends TestCase
         $this->assertSame($operator, $prefix->operator);
     }
 
-    public static function providerForTestPrefixExpressions(): array
+    public static function providerForTestBooleanExpressions(): array
     {
         return [
-            ['{{ -4 }}', '-', 4],
-            ['{{ -284 }}', '-', 284],
+            ['{{ true }}', 'true'],
+            ['{{ false }}', 'false'],
         ];
     }
 

@@ -6,6 +6,7 @@ namespace Serhii\GoodbyeHtml\CoreParser;
 
 use Closure;
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
+use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
@@ -49,6 +50,8 @@ final class CoreParser
         $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
         $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
+        $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBoolean());
+        $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBoolean());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));
@@ -198,6 +201,14 @@ final class CoreParser
         $right = $this->parseExpression();
 
         return new PrefixExpression($token, $operator, $right);
+    }
+
+    private function parseBoolean(): Expression
+    {
+        return new BooleanExpression(
+            token: $this->curToken,
+            value: $this->curToken->literal === 'true',
+        );
     }
 
     private function parseIfExpression(): Expression|null
