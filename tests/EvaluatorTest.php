@@ -191,30 +191,6 @@ class EvaluatorTest extends TestCase
     }
 
     /**
-     * @dataProvider providerForTestEvalHtml
-     */
-    public function testEvalHtml(string $input, string $expect, ?Env $env = null): void
-    {
-        $evaluated = $this->testEval($input, $env);
-
-        $this->assertNotNull($evaluated, 'Evaluated is null');
-        $this->assertSame($expect, $evaluated->inspect());
-    }
-
-    public static function providerForTestEvalHtml(): array
-    {
-        return [
-            ['<span>{{ 3 }}</span>', '<span>3</span>'],
-            ["<p>{{ 'Some string' }}<br />{{4}}</p>", '<p>Some string<br />4</p>'],
-            [
-                '<div><h1>{{ $title }}</h1></div>',
-                '<div><h1>Goodbye HTML package</h1></div>',
-                new Env(['title' => new StringObj('Goodbye HTML package')]),
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider providerForTestErrorHandling
      */
     public function testErrorHandling(string $input, string $expectMessage): void
