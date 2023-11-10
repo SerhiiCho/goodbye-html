@@ -37,4 +37,12 @@ final class Env
     {
         $this->store[$key] = $value;
     }
+
+    /**
+     * @param array<int,mixed> $arr
+     */
+    public static function fromArray(array $arr): self
+    {
+        return new self($arr);
+    }
 }
