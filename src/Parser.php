@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml;
 
 use Exception;
+use Serhii\GoodbyeHtml\Obj\Env;
+use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
-use Serhii\GoodbyeHtml\Exceptions\ParserException;
-use Serhii\GoodbyeHtml\Obj\Env;
-use Serhii\GoodbyeHtml\Obj\ErrorObj;
-use Serhii\GoodbyeHtml\Obj\Obj;
+use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
 
 final class Parser
 {
@@ -44,6 +44,7 @@ final class Parser
      * Takes html and replaces all embedded variables with values
      *
      * @return string Parsed html with replaced php variables
+     * @throws
      * @throws Exception Throws exception if variable is in html but doesn't have value
      */
     public function parseHtml(): string
@@ -57,7 +58,7 @@ final class Parser
         $program = $parser->parseProgram();
 
         if (count($parser->errors()) > 0) {
-            throw new ParserException($parser->errors()[0]);
+            throw new CoreParserException($parser->errors()[0]);
         }
 
         $evaluated = $this->evaluate($program);
