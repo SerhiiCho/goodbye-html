@@ -27,13 +27,13 @@ class LexerTest extends TestCase
         {{ end }}
         </div>
 
-        {{ if \$likes_bread }}
+        {{ if false }}
             <h3>I like bread</h3>
         {{ else }}
             <h4>I don't really like bread</h4>
         {{ end }}
 
-        <h5>{{ if \$is_cat }}{{ \$cat_var }}{{ else }}{{ \$dog_var }}{{ end }}</h5>
+        <h5>{{ if true }}{{ \$cat_var }}{{ else }}{{ \$dog_var }}{{ end }}</h5>
 
         {{ if -3 }}
             You are a cool {{ if \$male }}guy{{ end }}
@@ -104,7 +104,7 @@ class LexerTest extends TestCase
             // If / Else statement
             new Token(TokenType::OPENING_BRACES, '{{'),
             new Token(TokenType::IF, "if"),
-            new Token(TokenType::VARIABLE, "likes_bread"),
+            new Token(TokenType::FALSE, "false"),
             new Token(TokenType::CLOSING_BRACES, '}}'),
             new Token(TokenType::HTML, "<h3>I like bread</h3>\n"),
             new Token(TokenType::OPENING_BRACES, '{{'),
@@ -120,7 +120,7 @@ class LexerTest extends TestCase
             new Token(TokenType::HTML, "<h5>"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IF, "if"),
-            new Token(TokenType::VARIABLE, 'is_cat'),
+            new Token(TokenType::TRUE, 'true'),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::VARIABLE, 'cat_var'),

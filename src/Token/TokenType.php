@@ -14,10 +14,12 @@ enum TokenType: string
     case IDENTIFIER = 'IDENTIFIER';
     case IF = 'IF';
     case ELSE = 'ELSE';
-    case END = '{{ end }}';
     case LOOP = 'LOOP';
     case STRING = "STRING";
+    case TRUE = "TRUE";
+    case FALSE = "FALSE";
 
+    case END = '{{ end }}';
     case COMMA = ',';
     case QUESTION_MARK = '?';
     case COLON = ':';
@@ -30,6 +32,8 @@ enum TokenType: string
         'else' => self::ELSE,
         'end' => self::END,
         'loop' => self::LOOP,
+        'true' => self::TRUE,
+        'false' => self::FALSE,
     ];
 
     public static function lookupIdentifier(string $identifier): self
