@@ -27,7 +27,7 @@ class ParserTest extends TestCase
     public static function providerForTestParserEvaluation(): array
     {
         return [
-            ['if', ['isSecondary' => true, 'title' => 'Pretty title', 'showList' => false]],
+            ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
         ];
     }
 }
