@@ -14,6 +14,7 @@ use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
 use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
+use Serhii\GoodbyeHtml\Exceptions\ParserException;
 
 final class Parser
 {
@@ -75,9 +76,19 @@ final class Parser
         return is_array($this->variables) && !empty($this->variables);
     }
 
+    /**
+     * @throws ParserException
+     */
     private function evaluate(Program $program): Obj
     {
-        $env = Env::fromArray($this->variables);
+        $envVariables = [];
+
+        foreach ($this->variables as $name => $value) {
+            $envVariables[$name] = Obj::fromNative($value, $name);
+        }
+
+        $env = Env::fromArray($envVariables);
+
         return (new Evaluator())->eval($program, $env);
     }
 }
