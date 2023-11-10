@@ -114,6 +114,31 @@ class EvaluatorTest extends TestCase
     }
 
     /**
+     * @dataProvider providerForTestEvalTernaryExpression
+     */
+    public function testEvalTernaryExpression(string $input, string $expected, Env $env): void
+    {
+        $evaluated = $this->testEval($input, $env);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($expected, $evaluated?->html);
+    }
+
+    public static function providerForTestEvalTernaryExpression(): array
+    {
+        return [
+            [
+                '{{ $name ? "Ann" : "Anna" }}',
+                'Ann',
+                new Env(['name' => new StringObj('Anna')])
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider providerForTestEvalLoopExpression
      */
     public function testEvalLoopExpression(string $input, string $expected, ?Env $env = null): void
