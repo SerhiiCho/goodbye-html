@@ -17,7 +17,7 @@ class LexerTest extends TestCase
         <h1 {{ \$classes }}>{{ \$heading }}</h1>
 
         <ul {{ "data-attr" }}>
-        {{ loop 1, \$to }}
+        {{    loop 1, \$to     }}
             <li>{{ \$index }}</li>
         {{ end }}
         </ul>
