@@ -18,6 +18,8 @@ abstract readonly class Obj
             return new StringObj($value);
         } elseif (is_int($value)) {
             return new IntegerObj($value);
+        } elseif (is_bool($value)) {
+            return new BooleanObj($value);
         } else {
             $msg = sprintf('Provided variable "%s" has unsupported type "%s"', $name, gettype($value));
             throw new ParserException($msg);
