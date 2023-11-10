@@ -25,6 +25,14 @@
             {{ if $showList }}
                 <ul>
                     <li>Item 1</li>
+
+                    {{ if $isSecondary }}
+                        <li>Item 2</li>
+
+                        {{ if $title }}
+                            <li>{{ $title }}</li>
+                        {{ end }}
+                    {{ end }}
                     <li>Item 2</li>
                 </ul>
             {{ end }}
