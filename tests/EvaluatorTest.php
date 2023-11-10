@@ -26,6 +26,11 @@ class EvaluatorTest extends TestCase
     public function testEvalIntegerExpression(string $input, string $expected): void
     {
         $evaluated = $this->testEval($input);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
         $this->assertSame($expected, $evaluated->html);
     }
 
@@ -44,7 +49,12 @@ class EvaluatorTest extends TestCase
     public function testEvalStringExpression(string $input, string $expected): void
     {
         $evaluated = $this->testEval($input);
-        $this->assertSame($expected, $evaluated->html);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($expected, $evaluated?->html);
     }
 
     public static function providerForTestEvalStringExpression(): array
@@ -61,6 +71,10 @@ class EvaluatorTest extends TestCase
     public function testEvalVariable(string $input, mixed $expect_html, ?Env $env = null): void
     {
         $evaluated = $this->testEval($input, $env);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
 
         $this->assertNotNull($evaluated, 'Evaluated is null');
         $this->assertSame($expect_html, $evaluated->inspect());
@@ -80,7 +94,12 @@ class EvaluatorTest extends TestCase
     public function testEvalIfExpression(string $input, string $expected, Env $env): void
     {
         $evaluated = $this->testEval($input, $env);
-        $this->assertSame($expected, $evaluated->html);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($expected, $evaluated?->html);
     }
 
     public static function providerForTestEvalIfExpression(): array
@@ -144,7 +163,12 @@ class EvaluatorTest extends TestCase
     public function testEvalLoopExpression(string $input, string $expected, ?Env $env = null): void
     {
         $evaluated = $this->testEval($input, $env);
-        $this->assertSame($expected, $evaluated->html);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($expected, $evaluated?->html);
     }
 
     public static function providerForTestEvalLoopExpression(): array
