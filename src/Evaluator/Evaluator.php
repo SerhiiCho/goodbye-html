@@ -27,7 +27,7 @@ use Serhii\GoodbyeHtml\Obj\StringObj;
 
 readonly class Evaluator
 {
-    public function eval(Node $node, Env $env): Obj|null
+    public function eval(Node $node, Env $env): Obj
     {
         if ($node instanceof IntegerLiteral) {
             return new IntegerObj($node->value);
@@ -64,7 +64,7 @@ readonly class Evaluator
         return EvalError::unknownType($node);
     }
 
-    private function evalProgram(Program $program, Env $env): Obj|null
+    private function evalProgram(Program $program, Env $env): Obj
     {
         $html = '';
 
@@ -75,9 +75,7 @@ readonly class Evaluator
                 return $stmtObj;
             }
 
-            if ($stmtObj !== null) {
-                $html .= $stmtObj->inspect();
-            }
+            $html .= $stmtObj->inspect();
         }
 
         return new HtmlObj($html);
@@ -145,9 +143,7 @@ readonly class Evaluator
                 return $stmtObj;
             }
 
-            if ($stmtObj !== null) {
-                $elements[] = $stmtObj;
-            }
+            $elements[] = $stmtObj;
         }
 
         return new BlockObj($elements);
@@ -178,9 +174,7 @@ readonly class Evaluator
                 return $block;
             }
 
-            if ($block !== null) {
-                $html .= $block->inspect();
-            }
+            $html .= $block->inspect();
         }
 
         return new HtmlObj($html);
