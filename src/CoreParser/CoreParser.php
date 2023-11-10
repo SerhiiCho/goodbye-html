@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Parser;
+namespace Serhii\GoodbyeHtml\CoreParser;
 
 use Closure;
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
@@ -22,7 +22,7 @@ use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
-final class Parser
+final class CoreParser
 {
     private Token $curToken;
     private Token $peekToken;

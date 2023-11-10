@@ -14,16 +14,16 @@ use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
-use Serhii\GoodbyeHtml\Parser\Parser;
+use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 
-class ParserTest extends TestCase
+class CoreParserTest extends TestCase
 {
     public function testParsingVariables(): void
     {
         $input = '{{ $userName }}';
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -42,7 +42,7 @@ class ParserTest extends TestCase
         $input = '<div class="nice"></div>';
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -63,7 +63,7 @@ class ParserTest extends TestCase
         HTML;
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -89,7 +89,7 @@ class ParserTest extends TestCase
         HTML;
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -130,7 +130,7 @@ class ParserTest extends TestCase
         HTML;
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -150,7 +150,7 @@ class ParserTest extends TestCase
         $input = '{{ 5 }}';
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -171,7 +171,7 @@ class ParserTest extends TestCase
         HTML;
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -197,7 +197,7 @@ class ParserTest extends TestCase
         $input = "{{ 'hello' }}";
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -214,7 +214,7 @@ class ParserTest extends TestCase
         $input = "{{ \$hasContainer ? 'container' : '' }}";
 
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -236,7 +236,7 @@ class ParserTest extends TestCase
     public function testPrefixExpressions(string $input, string $operator, $expect): void
     {
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
 
         $program = $parser->parseProgram();
 
@@ -261,7 +261,7 @@ class ParserTest extends TestCase
     /**
      * @param ExpressionStatement[] $stmt
      */
-    private function checkForErrors(Parser $parser, array $stmt, int $statements): void
+    private function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
     {
         $errors = $parser->errors();
 

@@ -14,7 +14,7 @@ use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
-use Serhii\GoodbyeHtml\Parser\Parser;
+use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
@@ -246,7 +246,7 @@ class EvaluatorTest extends TestCase
     private function testEval(string $input, ?Env $env = null): Obj|null
     {
         $lexer = new Lexer($input);
-        $parser = new Parser($lexer);
+        $parser = new CoreParser($lexer);
         $program = $parser->parseProgram();
 
         $errors = $parser->errors();
