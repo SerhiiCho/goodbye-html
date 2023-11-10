@@ -150,9 +150,14 @@ class EvaluatorTest extends TestCase
     {
         return [
             [
-                '{{ $name ? "Ann" : "Anna" }}',
+                '{{ $name ? "Ann" : "Sam" }}',
                 'Ann',
                 new Env(['name' => new StringObj('Anna')])
+            ],
+            [
+                '{{ $name ? "Ann" : "Sam" }}',
+                'Sam',
+                new Env(['name' => new StringObj('')])
             ],
         ];
     }

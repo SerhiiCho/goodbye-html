@@ -16,6 +16,7 @@ use Serhii\GoodbyeHtml\Ast\Node;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Obj\BlockObj;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
@@ -56,6 +57,8 @@ readonly class Evaluator
             return $this->evalLoopExpression($node, $env);
         } elseif ($node instanceof ErrorObj) {
             return $node;
+        } elseif ($node instanceof TernaryExpression) {
+            return $this->evalTernaryExpression($node, $env);
         }
 
         return EvalError::unknownType($node);
@@ -101,6 +104,21 @@ readonly class Evaluator
     }
 
     private function evalIfExpression(IfExpression $node, Env $env): Obj
+    {
+        $condition = $this->eval($node->condition, $env);
+
+        if ($condition instanceof ErrorObj) {
+            return $condition;
+        }
+
+        if ($condition->value) {
+            return $this->eval($node->consequence, $env);
+        }
+
+        return $this->eval($node->alternative, $env);
+    }
+
+    private function evalTernaryExpression(TernaryExpression $node, Env $env): Obj
     {
         $condition = $this->eval($node->condition, $env);
 
