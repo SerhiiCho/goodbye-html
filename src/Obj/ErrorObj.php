@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class ErrorObj implements Obj
+readonly class ErrorObj extends Obj
 {
     public function __construct(public string $message)
     {

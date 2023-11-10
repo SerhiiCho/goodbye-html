@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class IntegerObj implements Obj
+readonly class IntegerObj extends Obj
 {
     public function __construct(public int $value)
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class StringObj implements Obj
+readonly class StringObj extends Obj
 {
     public function __construct(public string $value)
     {

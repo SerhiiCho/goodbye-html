@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class BlockObj implements Obj
+readonly class BlockObj extends Obj
 {
     /**
      * @param Obj[] $elements
