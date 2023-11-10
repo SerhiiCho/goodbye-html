@@ -15,7 +15,7 @@ readonly class ErrorObj extends Obj
         return ObjType::ERROR_OBJ;
     }
 
-    public function inspect(): string
+    public function value(): string
     {
         return $this->message;
     }

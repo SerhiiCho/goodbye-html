@@ -65,10 +65,10 @@ final class Parser
         $evaluated = $this->evaluate($program);
 
         if ($evaluated instanceof ErrorObj) {
-            throw new EvaluatorException($evaluated->inspect());
+            throw new EvaluatorException($evaluated->value());
         }
 
-        return $evaluated->inspect();
+        return $evaluated->value();
     }
 
     private function hasVariables(): bool

@@ -10,7 +10,7 @@ abstract readonly class Obj
 {
     abstract public function type(): ObjType;
 
-    abstract public function inspect(): string;
+    abstract public function value(): int|string|bool;
 
     public static function fromNative(mixed $value, string $name): self
     {

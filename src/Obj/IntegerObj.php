@@ -15,8 +15,8 @@ readonly class IntegerObj extends Obj
         return ObjType::INTEGER_OBJ;
     }
 
-    public function inspect(): string
+    public function value(): int
     {
-        return (string) $this->value;
+        return $this->value;
     }
 }

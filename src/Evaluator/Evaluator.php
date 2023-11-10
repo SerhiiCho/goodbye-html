@@ -75,7 +75,7 @@ readonly class Evaluator
                 return $stmtObj;
             }
 
-            $html .= $stmtObj->inspect();
+            $html .= $stmtObj->value();
         }
 
         return new HtmlObj($html);
@@ -109,7 +109,7 @@ readonly class Evaluator
             return $condition;
         }
 
-        if ($condition->value) {
+        if ($condition->value()) {
             return $this->eval($node->consequence, $env);
         }
 
@@ -124,7 +124,7 @@ readonly class Evaluator
             return $condition;
         }
 
-        if ($condition->value) {
+        if ($condition->value()) {
             return $this->eval($node->consequence, $env);
         }
 
@@ -174,7 +174,7 @@ readonly class Evaluator
                 return $block;
             }
 
-            $html .= $block->inspect();
+            $html .= $block->value();
         }
 
         return new HtmlObj($html);
@@ -186,6 +186,6 @@ readonly class Evaluator
             return EvalError::operatorNotAllowed('-', $right);
         }
 
-        return new IntegerObj(-$right->value);
+        return new IntegerObj(-$right->value());
     }
 }

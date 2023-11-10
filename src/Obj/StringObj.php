@@ -15,7 +15,7 @@ readonly class StringObj extends Obj
         return ObjType::STRING_OBJ;
     }
 
-    public function inspect(): string
+    public function value(): string
     {
         return $this->value;
     }

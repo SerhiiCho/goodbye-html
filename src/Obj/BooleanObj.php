@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-readonly class HtmlObj extends Obj
+readonly class BooleanObj extends Obj
 {
-    public function __construct(public string $value)
+    public function __construct(public bool $value)
     {
     }
 
     public function type(): ObjType
     {
-        return ObjType::HTML_OBJ;
+        return ObjType::INTEGER_OBJ;
     }
 
-    public function value(): string
+    public function value(): bool
     {
         return $this->value;
     }

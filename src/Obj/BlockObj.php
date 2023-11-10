@@ -18,12 +18,12 @@ readonly class BlockObj extends Obj
         return ObjType::BLOCK_OBJ;
     }
 
-    public function inspect(): string
+    public function value(): string
     {
         $result = '';
 
         foreach ($this->elements as $element) {
-            $result .= $element->inspect();
+            $result .= $element->value();
         }
 
         return $result;

@@ -31,7 +31,7 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, $evaluated->html);
+        $this->assertSame($expected, $evaluated->value());
     }
 
     public static function providerForTestEvalIntegerExpression(): array
@@ -54,7 +54,7 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, $evaluated?->html);
+        $this->assertSame($expected, $evaluated?->value());
     }
 
     public static function providerForTestEvalStringExpression(): array
@@ -77,7 +77,7 @@ class EvaluatorTest extends TestCase
         }
 
         $this->assertNotNull($evaluated, 'Evaluated is null');
-        $this->assertSame($expect_html, $evaluated->inspect());
+        $this->assertSame($expect_html, $evaluated->value());
     }
 
     public static function providerForTestEvalVariable(): array
@@ -99,7 +99,7 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, $evaluated?->html);
+        $this->assertSame($expected, $evaluated->value());
     }
 
     public static function providerForTestEvalIfExpression(): array
@@ -143,7 +143,7 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, $evaluated?->html);
+        $this->assertSame($expected, $evaluated->value());
     }
 
     public static function providerForTestEvalTernaryExpression(): array
@@ -179,7 +179,7 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($input, $evaluated?->html);
+        $this->assertSame($input, $evaluated->value());
     }
 
     /**
@@ -193,7 +193,7 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, $evaluated?->html);
+        $this->assertSame($expected, $evaluated->value());
     }
 
     public static function providerForTestEvalLoopExpression(): array
@@ -218,7 +218,7 @@ class EvaluatorTest extends TestCase
         $evaluated = $this->testEval($input);
 
         $this->assertInstanceOf(ErrorObj::class, $evaluated);
-        $this->assertSame($expectMessage, $evaluated->message);
+        $this->assertSame($expectMessage, $evaluated->value());
     }
 
     public static function providerForTestErrorHandling(): array
