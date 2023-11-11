@@ -183,19 +183,24 @@ class LexerTest extends TestCase
     public function testLexingVariables(): void
     {
         $input = <<<HTML
-        <h3>My name is {{ \$name }}, my age is {{ \$age }}</h3>
+        <h3>My name is {{ \$my_name }}, my age is {{ \$myAge }}</h3>
+        <h4>{{ \$i86 }}</h4>
         HTML;
 
         $this->tokenizeString($input, [
             new Token(TokenType::HTML, "<h3>My name is "),
             new Token(TokenType::OPENING_BRACES, "{{"),
-            new Token(TokenType::VARIABLE, "name"),
+            new Token(TokenType::VARIABLE, "my_name"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, ", my age is "),
             new Token(TokenType::OPENING_BRACES, "{{"),
-            new Token(TokenType::VARIABLE, "age"),
+            new Token(TokenType::VARIABLE, "myAge"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, "</h3>"),
+            new Token(TokenType::HTML, "</h3>\n<h4>"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "i86"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</h4>"),
             new Token(TokenType::EOF, ""),
         ]);
     }
