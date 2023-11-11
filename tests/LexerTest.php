@@ -10,6 +10,23 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 
 class LexerTest extends TestCase
 {
+    private function tokenizeString(string $input, array $expect): void
+    {
+        $lexer = new Lexer($input);
+
+        foreach ($expect as $expectToken) {
+            $actualToken = $lexer->nextToken();
+
+            $msg = sprintf(
+                "Expected token type: \n%s\ngot: \n%s",
+                json_encode($expectToken, JSON_PRETTY_PRINT),
+                json_encode($actualToken, JSON_PRETTY_PRINT),
+            );
+
+            $this->assertEquals($expectToken, $actualToken, $msg);
+        }
+    }
+
     public function testLexingStrings(): void
     {
         $input = <<<HTML
@@ -142,20 +159,43 @@ class LexerTest extends TestCase
         ]);
     }
 
-    private function tokenizeString(string $input, array $expect): void
+    public function testLexingTernaryExpression(): void
     {
-        $lexer = new Lexer($input);
+        $input = <<<HTML
+        <h3>{{ true ? 'Main page' : 'Secondary page' }}</h3>
+        HTML;
 
-        foreach ($expect as $expectToken) {
-            $actualToken = $lexer->nextToken();
+        $this->tokenizeString($input, [
+            new Token(TokenType::HTML, "<h3>"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::TRUE, "true"),
+            new Token(TokenType::QUESTION_MARK, "?"),
+            new Token(TokenType::STRING, "Main page"),
+            new Token(TokenType::COLON, ":"),
+            new Token(TokenType::STRING, "Secondary page"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</h3>"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
 
-            $msg = sprintf(
-                "Expected token type: \n%s\ngot: \n%s",
-                json_encode($expectToken, JSON_PRETTY_PRINT),
-                json_encode($actualToken, JSON_PRETTY_PRINT),
-            );
+    public function testLexingVariables(): void
+    {
+        $input = <<<HTML
+        <h3>My name is {{ \$name }}, my age is {{ \$age }}</h3>
+        HTML;
 
-            $this->assertEquals($expectToken, $actualToken, $msg);
-        }
+        $this->tokenizeString($input, [
+            new Token(TokenType::HTML, "<h3>My name is "),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "name"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, ", my age is "),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::VARIABLE, "age"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</h3>"),
+            new Token(TokenType::EOF, ""),
+        ]);
     }
 }
