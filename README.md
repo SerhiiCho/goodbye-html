@@ -9,6 +9,7 @@ A very simple package for separating PHP logic from HTML or any other text. It a
 
 ## Supported PHP versions
 - ✅ 8.2
+- ✅ 8.3
 
 ## Usage
 
