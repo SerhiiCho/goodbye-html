@@ -5,9 +5,10 @@
     <a href="https://github.com/SerhiiCho/goodbye-html/blob/master/LICENSE.md"><img alt="GitHub" src="https://img.shields.io/github/license/SerhiiCho/goodbye-html"></a>
 </p>
 
-A very simple package for separating php logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
+A very simple package for separating PHP logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
 
 ## Supported PHP versions
+- ✅ 8.1
 - ✅ 8.2
 
 ## Usage
@@ -17,7 +18,7 @@ use Serhii\GoodbyeHtml\Parser;
 
 $variables = [
     'title' => 'Title of the document',
-    '$uses_php_3_years' => true,
+    'uses_php_3_years' => true,
     'show_container' => false,
 ];
 
@@ -62,13 +63,19 @@ Parsed HTML to a PHP string
 <body class="">
     <nav>
         <ul>
+            
                 <li><a href="#">Link - 1</a></li>
+            
                 <li><a href="#">Link - 2</a></li>
+            
                 <li><a href="#">Link - 3</a></li>
+            
         </ul>
     </nav>
 
+    
         <h1>I'm not a pro but it's only a matter of time</h1>
+    
 </body>
 </html>
 ```
@@ -82,7 +89,7 @@ add_shortcode('my_shortcode', 'shortcode_callback');
 function shortcode_callback() {
     $parser = new Parser('shortcodes/main.html', [
         'title' => 'Title of the document',
-        '$uses_php_3_years' => true,
+        'uses_php_3_years' => true,
         'show_container' => false,
     ]);
     return $parser->parseHtml();
@@ -108,7 +115,7 @@ function shortcode_callback() {
 ```html
 <!-- Block syntax -->
 <section>
-    {{ if $show_title }}
+    {{ if true }}
         <h1>PHP is awesome programming language</h1>
     {{ end }}
 </section>
