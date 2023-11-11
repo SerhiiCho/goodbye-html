@@ -4,6 +4,14 @@
 
 ----
 
+## v2.0 (2023-11-11)
+
+- Rewritten the whole package to proper Lexical Analyzer, Parser and Evaluator. Now you can do that you couldn't do before. Like using nested loops, if statements, ternary operators and so on.
+- Rewritten the whole documentation
+- Rewritten the tests
+
+----
+
 ## v1.6.3 (2023-10-13)
 
 - Added `CHANGELOG.md` file to the project
