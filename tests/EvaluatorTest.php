@@ -85,6 +85,8 @@ class EvaluatorTest extends TestCase
         return [
             ["{{ 'This is a string' }}", 'This is a string'],
             ['{{ "Anna Korotchaeva" }}', 'Anna Korotchaeva'],
+            ["{{ 'Anna \'Korotchaeva\'' }}", "Anna 'Korotchaeva'"],
+            ['{{ "Serhii \"Cho\"" }}', 'Serhii "Cho"'],
         ];
     }
 
