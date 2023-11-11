@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{$title}}</title>
+</head>
+<body>
+    <main>
+        <section class="section {{ $isSecondary ? 'secondary' : '' }}">
+            <h2>First section</h2>
+
+            <p>
+                {{ if $isSecondary }}
+                    This is a secondary section.
+                {{ else}}
+                    This is a primary section.
+                {{ end }}
+            </p>
+        </section>
+
+        <section class="section {{ $isSecondary ? '' : 'not-secondary' }}">
+            <h2>Second section</h2>
+
+            {{ if $showList }}
+                <ul>
+                    <li>Item 1</li>
+
+                    {{ if true }}
+                        <li>Item 2</li>
+
+                        {{ if $title }}
+                            <li> {{ $title }}</li>
+                        {{ end }}
+                    {{ end }}
+                    <li>Item 2</li>
+                </ul>
+            {{ end }}
+        </section>
+    </main>
+</body>
+</html>

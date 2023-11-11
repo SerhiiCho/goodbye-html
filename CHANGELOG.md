@@ -4,6 +4,19 @@
 
 ----
 
+## v2.0 (2023-11-11)
+
+- Rewritten the whole package to proper Lexical Analyzer, Parser and Evaluator. Now you can do that you couldn't do before. Like using nested loops, if statements, ternary operators and so on.
+- Rewritten the whole documentation
+- Rewritten the tests
+- Dropped support for PHP versions below 8.2. Now, the minimum required PHP version is 8.2
+- Added BOOLEAN type support for the parser. Now you can use `true` and `false` like this: `{{ if true }}` or `{{ if false }}
+- Added STRING type support for the parser. Now you can use strings like this: `{{ 'some string' }}` or `{{ if "some string" }}`
+- Added quote escaping for strings. Now you can use strings like this: `{{ 'some \'string\'' }}` or `{{ if "some \"string\"" }}`
+- Added support for PHP 8.3
+
+----
+
 ## v1.6.3 (2023-10-13)
 
 - Added `CHANGELOG.md` file to the project

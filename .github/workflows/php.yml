@@ -11,12 +11,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php-versions }} test
     strategy:
+      fail-fast: true
       matrix:
-        php_version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
+        php_version: ['8.2', '8.3']
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
 
     - name: Validate composer.json and composer.lock
       run: composer validate

@@ -5,17 +5,9 @@
     <a href="https://github.com/SerhiiCho/goodbye-html/blob/master/LICENSE.md"><img alt="GitHub" src="https://img.shields.io/github/license/SerhiiCho/goodbye-html"></a>
 </p>
 
-A very simple package for separating php logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
-
-PLEASE NOTE! This package is not parsing files like other templating engines, all it does is just taking key/value pairs that you provide as an associative array, and replacing all embedded variables and statements with those values. You cannot use || or && operators or any other PHP syntax. The syntax of the parser has nothing to do with PHP. Also, parser doesn't support nested loops and statements, only variables can be nested inside loops and statements.
+A very simple package for separating PHP logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
 
 ## Supported PHP versions
-- ✅ 7.1
-- ✅ 7.2
-- ✅ 7.3
-- ✅ 7.4
-- ✅ 8.0
-- ✅ 8.1
 - ✅ 8.2
 
 ## Usage
@@ -25,7 +17,7 @@ use Serhii\GoodbyeHtml\Parser;
 
 $variables = [
     'title' => 'Title of the document',
-    '$uses_php_3_years' => true,
+    'uses_php_3_years' => true,
     'show_container' => false,
 ];
 
@@ -70,13 +62,19 @@ Parsed HTML to a PHP string
 <body class="">
     <nav>
         <ul>
+            
                 <li><a href="#">Link - 1</a></li>
+            
                 <li><a href="#">Link - 2</a></li>
+            
                 <li><a href="#">Link - 3</a></li>
+            
         </ul>
     </nav>
 
+    
         <h1>I'm not a pro but it's only a matter of time</h1>
+    
 </body>
 </html>
 ```
@@ -90,12 +88,22 @@ add_shortcode('my_shortcode', 'shortcode_callback');
 function shortcode_callback() {
     $parser = new Parser('shortcodes/main.html', [
         'title' => 'Title of the document',
-        '$uses_php_3_years' => true,
+        'uses_php_3_years' => true,
         'show_container' => false,
     ]);
     return $parser->parseHtml();
 }
 ```
+
+## Supported types
+
+Types that you can pass to the parser to include them in the html/text file. Note that not all PHP types are supported for know. More types will be added in next releases.
+
+| PHP Type    | Value example |
+| ----------- | ------------- |
+| bool        | true          |
+| string      | 'Is title'    |
+| int         | 24            |
 
 ## All the available syntax in html/text file
 
@@ -116,7 +124,7 @@ function shortcode_callback() {
 ```html
 <!-- Block syntax -->
 <section>
-    {{ if $show_title }}
+    {{ if true }}
         <h1>PHP is awesome programming language</h1>
     {{ end }}
 </section>

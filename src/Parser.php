@@ -4,34 +4,33 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml;
 
-use Serhii\GoodbyeHtml\Syntax\ReplacesIf;
-use Serhii\GoodbyeHtml\Syntax\ReplacesIfElse;
-use Serhii\GoodbyeHtml\Syntax\ReplacesTernary;
-use Serhii\GoodbyeHtml\Syntax\ReplacesLoops;
-use Serhii\GoodbyeHtml\Syntax\ReplacesVariables;
 use Exception;
+use Serhii\GoodbyeHtml\Obj\Env;
+use Serhii\GoodbyeHtml\Obj\Obj;
+use Serhii\GoodbyeHtml\Ast\Program;
+use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Obj\ErrorObj;
+use Serhii\GoodbyeHtml\Evaluator\Evaluator;
+use Serhii\GoodbyeHtml\CoreParser\CoreParser;
+use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
+use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
+use Serhii\GoodbyeHtml\Exceptions\ParserException;
 
 final class Parser
 {
-    use ReplacesIfElse;
-    use ReplacesIf;
-    use ReplacesTernary;
-    use ReplacesLoops;
-    use ReplacesVariables;
-
     /**
-     * @var string The content that is being parsed.
+     * @var string The content that is being parsed
      */
     private $html_content;
 
     /**
-     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted'] of variable name
-     * and content that it holds.
+     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted']
+     * of variable name and content that it holds
      */
     private $variables;
 
     /**
-     * Parser constructor.
+     * Parser constructor
      *
      * @param string $file_path Absolute or relative path to an html file
      * @param string[]|null $variables Associative array ['var_name' => 'will be inserted']
@@ -46,21 +45,30 @@ final class Parser
      * Takes html and replaces all embedded variables with values
      *
      * @return string Parsed html with replaced php variables
+     * @throws
      * @throws Exception Throws exception if variable is in html but doesn't have value
      */
     public function parseHtml(): string
     {
-        $this->replaceLoopsFromHtml();
-
-        if ($this->hasVariables()) {
-            // Order of method calls matters
-            $this->replaceIfElseStatementsFromHtml();
-            $this->replaceIfStatementsFromHtml();
-            $this->replaceTernaryStatementsFromHtml();
-            $this->replaceVariablesFromHtml();
+        if (!$this->hasVariables()) {
+            return $this->html_content;
         }
 
-        return $this->html_content;
+        $lexer = new Lexer($this->html_content);
+        $parser = new CoreParser($lexer);
+        $program = $parser->parseProgram();
+
+        if (count($parser->errors()) > 0) {
+            throw new CoreParserException($parser->errors()[0]);
+        }
+
+        $evaluated = $this->evaluate($program);
+
+        if ($evaluated instanceof ErrorObj) {
+            throw new EvaluatorException($evaluated->value());
+        }
+
+        return $evaluated->value();
     }
 
     private function hasVariables(): bool
@@ -69,43 +77,18 @@ final class Parser
     }
 
     /**
-     * @param array $parsed
+     * @throws ParserException
      */
-    private function replaceStatements(array $parsed): void
+    private function evaluate(Program $program): Obj
     {
-        $this->html_content = str_replace($parsed['raw'], $parsed['replacements'], $this->html_content);
+        $envVariables = [];
 
-        if (!isset($parsed['var_names']) || empty($parsed['var_names'])) {
-            return;
+        foreach ($this->variables as $name => $value) {
+            $envVariables[$name] = Obj::fromNative($value, $name);
         }
 
-        $this->variables = array_filter($this->variables, function ($var_name) use ($parsed) {
-            return !in_array($var_name, $parsed['var_names']);
-        }, ARRAY_FILTER_USE_KEY);
-    }
+        $env = Env::fromArray($envVariables);
 
-    /**
-     * @param $raw
-     * @param $var_names
-     * @param $true_block
-     * @param $false_block
-     *
-     * @return array[]
-     */
-    private function getVarNamesWithRaw($raw, $var_names, $true_block, $false_block): array
-    {
-        $replacements = [];
-
-        for ($i = 0; $i < count($raw); $i++) {
-            if ($this->variables[$var_names[$i]] === true) {
-                $replacements[] = $true_block[$i];
-            }
-
-            if ($this->variables[$var_names[$i]] === false) {
-                $replacements[] = $false_block[$i];
-            }
-        }
-
-        return compact('raw', 'replacements', 'var_names');
+        return (new Evaluator())->eval($program, $env);
     }
 }
