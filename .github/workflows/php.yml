@@ -18,7 +18,7 @@ jobs:
         stability: [prefer-lowest, prefer-stable]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
       run: composer validate
