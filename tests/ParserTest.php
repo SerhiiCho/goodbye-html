@@ -28,6 +28,7 @@ class ParserTest extends TestCase
     {
         return [
             ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
+            ['loop', ['to' => 3]],
         ];
     }
 }
