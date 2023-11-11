@@ -19,7 +19,7 @@ class LexerTest extends TestCase
         </div>
         HTML;
 
-        $expect = [
+        $this->tokenizeString($input, [
             new Token(TokenType::HTML, "<div>\n    <h2>"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::STRING, "Hello world!"),
@@ -30,9 +30,7 @@ class LexerTest extends TestCase
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "</h3>\n</div>"),
             new Token(TokenType::EOF, ""),
-        ];
-
-        $this->tokenizeString($input, $expect);
+        ]);
     }
 
     public function testLexingIntegers(): void
@@ -41,16 +39,14 @@ class LexerTest extends TestCase
         <h1>We have {{ 3 }} computers</h1>
         HTML;
 
-        $expect = [
+        $this->tokenizeString($input, [
             new Token(TokenType::HTML, "<h1>We have "),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::INTEGER, "3"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, " computers</h1>"),
             new Token(TokenType::EOF, ""),
-        ];
-
-        $this->tokenizeString($input, $expect);
+        ]);
     }
 
     public function testLexingBooleans(): void
@@ -59,7 +55,7 @@ class LexerTest extends TestCase
         <h1>{{ true }} and {{ false }}</h1>
         HTML;
 
-        $expect = [
+        $this->tokenizeString($input, [
             new Token(TokenType::HTML, "<h1>"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::TRUE, "true"),
@@ -70,9 +66,7 @@ class LexerTest extends TestCase
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "</h1>"),
             new Token(TokenType::EOF, ""),
-        ];
-
-        $this->tokenizeString($input, $expect);
+        ]);
     }
 
     public function testLexingIfExpressions(): void
@@ -83,7 +77,7 @@ class LexerTest extends TestCase
         {{ end }}
         HTML;
 
-        $expect = [
+        $this->tokenizeString($input, [
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::IF, "if"),
             new Token(TokenType::TRUE, "true"),
@@ -93,9 +87,7 @@ class LexerTest extends TestCase
             new Token(TokenType::END, "end"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::EOF, ""),
-        ];
-
-        $this->tokenizeString($input, $expect);
+        ]);
     }
 
     public function testLexingLoopExpressions(): void
@@ -108,7 +100,7 @@ class LexerTest extends TestCase
         </ul>
         HTML;
 
-        $expect = [
+        $this->tokenizeString($input, [
             new Token(TokenType::HTML, "<ul>\n    "),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::LOOP, "loop"),
@@ -122,9 +114,32 @@ class LexerTest extends TestCase
             new Token(TokenType::CLOSING_BRACES, '}}'),
             new Token(TokenType::HTML, "\n</ul>"),
             new Token(TokenType::EOF, ""),
-        ];
+        ]);
+    }
 
-        $this->tokenizeString($input, $expect);
+    public function testLexingIfElseExpressions(): void
+    {
+        $input = <<<HTML
+        <h3>{{if true}}Main page{{else}}404{{end}}</h3>
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::HTML, "<h3>"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::IF, "if"),
+            new Token(TokenType::TRUE, "true"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "Main page"),
+            new Token(TokenType::OPENING_BRACES, '{{'),
+            new Token(TokenType::ELSE, "else"),
+            new Token(TokenType::CLOSING_BRACES, '}}'),
+            new Token(TokenType::HTML, "404"),
+            new Token(TokenType::OPENING_BRACES, '{{'),
+            new Token(TokenType::END, "end"),
+            new Token(TokenType::CLOSING_BRACES, '}}'),
+            new Token(TokenType::HTML, "</h3>"),
+            new Token(TokenType::EOF, ""),
+        ]);
     }
 
     private function tokenizeString(string $input, array $expect): void
