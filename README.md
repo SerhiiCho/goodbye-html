@@ -8,7 +8,6 @@
 A very simple package for separating PHP logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file. It is useful in things like WordPress plugins and themes. If you need to create a WordPress shortcode, and you want to keep your HTML separate from PHP.
 
 ## Supported PHP versions
-- ✅ 8.1
 - ✅ 8.2
 
 ## Usage
