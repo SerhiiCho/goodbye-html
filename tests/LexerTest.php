@@ -54,15 +54,20 @@ class LexerTest extends TestCase
     public function testLexingIntegers(): void
     {
         $input = <<<HTML
-        <h1>We have {{ 3 }} computers</h1>
+        <h1>{{ 3 }} and {{ -4 }}</h1>
         HTML;
 
         $this->tokenizeString($input, [
-            new Token(TokenType::HTML, "<h1>We have "),
+            new Token(TokenType::HTML, "<h1>"),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::INTEGER, "3"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, " computers</h1>"),
+            new Token(TokenType::HTML, " and "),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::MINUS, "-"),
+            new Token(TokenType::INTEGER, "4"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</h1>"),
             new Token(TokenType::EOF, ""),
         ]);
     }
