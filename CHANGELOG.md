@@ -9,6 +9,7 @@
 - Rewritten the whole package to proper Lexical Analyzer, Parser and Evaluator. Now you can do that you couldn't do before. Like using nested loops, if statements, ternary operators and so on.
 - Rewritten the whole documentation
 - Rewritten the tests
+- Dropped support for PHP versions below 8.1. Now, the minimum required PHP version is 8.1
 
 ----
 
