@@ -12,8 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: true
       matrix:
-        php_version: ['8.2']
+        php_version: ['8.2', '8.3']
+        stability: [prefer-lowest, prefer-stable]
 
     steps:
     - uses: actions/checkout@v1
