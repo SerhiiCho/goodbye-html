@@ -205,10 +205,21 @@ final class Lexer
 
         $position = $this->position;
 
-        while ($this->char !== $quote) {
+        while (true) {
+            $prevChar = $this->char;
+
             $this->advanceChar();
+
+            if ($this->char === $quote && $prevChar !== '\\') {
+                break;
+            }
         }
 
-        return substr($this->input, $position, $this->position - $position);
+        $result = substr($this->input, $position, $this->position - $position);
+
+        // remove slashes before quotes
+        $result = str_replace('\\' . $quote, $quote, $result);
+
+        return $result;
     }
 }

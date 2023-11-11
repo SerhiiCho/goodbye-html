@@ -34,6 +34,7 @@ class LexerTest extends TestCase
         <div>
             <h2>{{ 'Hello world!' }}</h2>
             <h3>{{ "Good luck!" }}</h3>
+            <h4>{{ "Good \"luck!\"" }}</h4>
         </div>
         HTML;
 
@@ -46,7 +47,11 @@ class LexerTest extends TestCase
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::STRING, "Good luck!"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, "</h3>\n</div>"),
+            new Token(TokenType::HTML, "</h3>\n    <h4>"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::STRING, 'Good "luck!"'),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</h4>\n</div>"),
             new Token(TokenType::EOF, ""),
         ]);
     }
