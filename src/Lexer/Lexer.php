@@ -23,10 +23,12 @@ final class Lexer
 
     public function nextToken(): Token
     {
-        $this->skipWhitespace();
+        if (!$this->isHtml) {
+            $this->skipWhitespace();
+        }
 
         if ($this->char === 0) {
-            return new Token(TokenType::EOF, 'EOF');
+            return new Token(TokenType::EOF, '');
         } elseif ($this->areOpeningBraces()) {
             $this->isHtml = false;
             $this->advanceChar();
