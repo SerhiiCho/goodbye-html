@@ -11,14 +11,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php-versions }} test
     strategy:
       fail-fast: true
       matrix:
         php_version: ['8.2', '8.3']
-        stability: [prefer-lowest, prefer-stable]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: intl #optional
+        ini-values: "post_max_size=256M" #optional
 
     - name: Validate composer.json and composer.lock
       run: composer validate
