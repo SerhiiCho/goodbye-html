@@ -141,7 +141,7 @@ class EvaluatorTest extends TestCase
                     {{ end }}
                 {{ end }}
                 HTML,
-                'Her name is Anna, she is 23',
+                "\n    \n        Her name is Anna, she is 23\n    \n",
                 new Env([
                     'age' => new IntegerObj(23),
                     'name' => new StringObj('Anna'),

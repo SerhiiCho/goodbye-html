@@ -82,7 +82,7 @@ class CoreParserTest extends TestCase
         $this->assertSame($expect, $prefix->string());
     }
 
-    public function testParsingIfStatement(): void
+    public function testParsingIfExpression(): void
     {
         $input = <<<HTML
         {{ if true }}
@@ -103,7 +103,7 @@ class CoreParserTest extends TestCase
         /** @var IfExpression */
         $if = $stmt->expression;
 
-        $this->assertSame("<h1>I'm not a pro but it's only a matter of time</h1>\n", $if->consequence->string());
+        $this->assertSame("\n    <h1>I'm not a pro but it's only a matter of time</h1>\n", $if->consequence->string());
         $this->assertSame('true', $if->condition->string());
         $this->assertNull($if->alternative);
     }
@@ -111,9 +111,7 @@ class CoreParserTest extends TestCase
     public function testParsingNestedIfStatement(): void
     {
         $input = <<<HTML
-        {{ if \$uses_php }}
-            You are a cool {{ if \$male }}guy{{ end }}
-        {{ end }}
+        {{ if \$uses_php }}You are a cool{{ if \$male }}guy{{ end }}{{ end }}
         HTML;
 
         $lexer = new Lexer($input);
@@ -150,11 +148,7 @@ class CoreParserTest extends TestCase
     public function testParsingElseStatement(): void
     {
         $input = <<<HTML
-        {{ if \$underAge }}
-            <span>You are too young to be here</span>
-        {{ else }}
-            <span>You can drink beer</span>
-        {{ end }}
+        {{ if \$underAge }}<span>You are too young to be here</span>{{ else }}<span>You can drink beer</span>{{ end }}
         HTML;
 
         $lexer = new Lexer($input);
@@ -169,8 +163,8 @@ class CoreParserTest extends TestCase
 
         self::testVariable($if->condition, 'underAge');
 
-        $this->assertSame("<span>You are too young to be here</span>\n", $if->consequence->string());
-        $this->assertSame("<span>You can drink beer</span>\n", $if->alternative->string());
+        $this->assertSame("<span>You are too young to be here</span>", $if->consequence->string());
+        $this->assertSame("<span>You can drink beer</span>", $if->alternative->string());
     }
 
     public function testParsingIntegerLiteral(): void
@@ -190,12 +184,10 @@ class CoreParserTest extends TestCase
         $this->testInteger($stmt->expression, 5);
     }
 
-    public function testParsingLoopStatement(): void
+    public function testParsingLoopExpression(): void
     {
         $input = <<<HTML
-        {{ loop \$fr, 5 }}
-            <li><a href="#">Link - {{ \$index }}</a></li>
-        {{ end }}
+        {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
         HTML;
 
         $lexer = new Lexer($input);
@@ -217,7 +209,7 @@ class CoreParserTest extends TestCase
 
         $this->assertSame('<li><a href="#">Link - ', $stmts[0]->string());
         $this->testVariable($stmts[1]->expression, 'index');
-        $this->assertSame("</a></li>\n", $stmts[2]->string());
+        $this->assertSame("</a></li>", $stmts[2]->string());
     }
 
     public function testParsingStrings(): void
