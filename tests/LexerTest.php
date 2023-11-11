@@ -198,4 +198,24 @@ class LexerTest extends TestCase
             new Token(TokenType::EOF, ""),
         ]);
     }
+
+    public function testLexingTernaryExpressionInsideHtmlAttributes()
+    {
+        $input = <<<HTML
+        <h3 class="{{ true ? 'main-page' : 'secondary-page' }}">Hello world!</h3>
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::HTML, "<h3 class=\""),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::TRUE, "true"),
+            new Token(TokenType::QUESTION_MARK, "?"),
+            new Token(TokenType::STRING, "main-page"),
+            new Token(TokenType::COLON, ":"),
+            new Token(TokenType::STRING, "secondary-page"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "\">Hello world!</h3>"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
 }
