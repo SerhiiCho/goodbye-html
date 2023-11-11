@@ -95,6 +95,16 @@ function shortcode_callback() {
 }
 ```
 
+## Supported types
+
+Types that you can pass to the parser to include them in the html/text file. Note that not all PHP types are supported for know. More types will be added in next releases.
+
+| PHP Type    | Value example |
+| ----------- | ------------- |
+| bool        | true          |
+| string      | 'Is title'    |
+| int         | 24            |
+
 ## All the available syntax in html/text file
 
 #### Variable
