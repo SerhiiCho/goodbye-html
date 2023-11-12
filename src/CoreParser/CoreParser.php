@@ -9,6 +9,7 @@ use Serhii\GoodbyeHtml\Ast\BlockStatement;
 use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
@@ -48,6 +49,7 @@ final class CoreParser
         $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
+        $this->registerPrefix(TokenType::FLOAT, fn () => $this->parseFloatLiteral());
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
         $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBoolean());
@@ -180,6 +182,14 @@ final class CoreParser
         return new IntegerLiteral(
             $this->curToken,
             (int) $this->curToken->literal,
+        );
+    }
+
+    private function parseFloatLiteral(): Expression
+    {
+        return new FloatLiteral(
+            $this->curToken,
+            (float) $this->curToken->literal,
         );
     }
 
