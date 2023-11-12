@@ -57,14 +57,6 @@ class CoreParserTest extends TestCase
         $this->assertSame('<div class="nice"></div>', $stmt->string());
     }
 
-    public static function providerForTestPrefixExpressions(): array
-    {
-        return [
-            ['{{ -4 }}', '-', 4],
-            ['{{ -284 }}', '-', 284],
-        ];
-    }
-
     /**
      * @dataProvider providerForTestBooleanExpressions
      */
@@ -82,6 +74,14 @@ class CoreParserTest extends TestCase
 
         $this->assertInstanceOf(BooleanExpression::class, $prefix);
         $this->assertSame($expect, $prefix->string());
+    }
+
+    public static function providerForTestBooleanExpressions(): array
+    {
+        return [
+            ['{{ true }}', 'true'],
+            ['{{ false }}', 'false'],
+        ];
     }
 
     public function testParsingIfExpression(): void
@@ -289,11 +289,11 @@ class CoreParserTest extends TestCase
         $this->assertSame($operator, $prefix->operator);
     }
 
-    public static function providerForTestBooleanExpressions(): array
+    public static function providerForTestPrefixExpressions(): array
     {
         return [
-            ['{{ true }}', 'true'],
-            ['{{ false }}', 'false'],
+            ['{{ -4 }}', '-', 4],
+            ['{{ -284 }}', '-', 284],
         ];
     }
 
