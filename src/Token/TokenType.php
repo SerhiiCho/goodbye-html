@@ -13,20 +13,22 @@ enum TokenType: string
     case INTEGER = 'INTEGER';
     case FLOAT = 'FLOAT';
     case IDENTIFIER = 'IDENTIFIER';
-    case IF = 'IF';
-    case ELSE = 'ELSE';
-    case LOOP = 'LOOP';
-    case STRING = "STRING";
-    case TRUE = "TRUE";
-    case FALSE = "FALSE";
-    case NULL = "NULL";
 
-    case END = '{{ end }}';
+    case IF = 'if';
+    case ELSE = 'else';
+    case LOOP = 'loop';
+    case END = 'end';
+    case STRING = "string";
+    case TRUE = "true";
+    case FALSE = "false";
+    case NULL = "null";
+
+    case OPENING_BRACES = '{{';
+    case CLOSING_BRACES = '}}';
+
     case COMMA = ',';
     case QUESTION_MARK = '?';
     case COLON = ':';
-    case OPENING_BRACES = '{{';
-    case CLOSING_BRACES = '}}';
     case MINUS = '-';
 
     private const KEYWORDS = [
