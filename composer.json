@@ -33,6 +33,6 @@
         "laravel/pint": "dev-main"
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit --testdox"
+        "test": "./vendor/bin/phpunit tests"
     }
 }
