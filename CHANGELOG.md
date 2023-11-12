@@ -7,7 +7,6 @@
 ## v2.1.0 (2023-11-12)
 
 - Changed the first parameter of the `Parser` class. Now, it accepts absolute path to the template file or a string with template content. Before, it was accepting only the path
-- Added backslash before each PHP native function calls
 - Improved code readability to refactoring the `Parser` class
 
 ----
