@@ -307,4 +307,16 @@ class EvaluatorTest extends TestCase
 
         return $evaluator->eval($program, $env ?? new Env());
     }
+
+    public function testEvalNull(): void
+    {
+        $evaluated = $this->testEval('<span>{{ null }}</span>');
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertNotNull($evaluated, 'Evaluated is null');
+        $this->assertSame('<span></span>', $evaluated->value());
+    }
 }
