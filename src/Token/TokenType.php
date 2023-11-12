@@ -22,6 +22,7 @@ enum TokenType: string
     case TRUE = "true";
     case FALSE = "false";
     case NULL = "null";
+    case NOT = "!";
 
     case OPENING_BRACES = '{{';
     case CLOSING_BRACES = '}}';

@@ -101,7 +101,7 @@ class LexerTest extends TestCase
     public function testLexingBooleans(): void
     {
         $input = <<<HTML
-        <h1>{{ true }} and {{ false }}</h1>
+        <h1>{{ true }}, {{ false }}, {{ !true }}</h1>
         HTML;
 
         $this->tokenizeString($input, [
@@ -109,9 +109,14 @@ class LexerTest extends TestCase
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::TRUE, "true"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
-            new Token(TokenType::HTML, " and "),
+            new Token(TokenType::HTML, ", "),
             new Token(TokenType::OPENING_BRACES, "{{"),
             new Token(TokenType::FALSE, "false"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, ", "),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::NOT, "!"),
+            new Token(TokenType::TRUE, "true"),
             new Token(TokenType::CLOSING_BRACES, "}}"),
             new Token(TokenType::HTML, "</h1>"),
             new Token(TokenType::EOF, ""),

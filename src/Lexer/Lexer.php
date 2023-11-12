@@ -62,6 +62,9 @@ final class Lexer
         } elseif ($this->char === '?') {
             $token = new Token(TokenType::QUESTION_MARK, $this->char);
             $this->advanceChar();
+        } elseif ($this->char === '!') {
+            $token = new Token(TokenType::NOT, $this->char);
+            $this->advanceChar();
         } elseif ($this->char === ':') {
             $token = new Token(TokenType::COLON, $this->char);
             $this->advanceChar();
