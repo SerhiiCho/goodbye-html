@@ -75,15 +75,24 @@ final class Lexer
             $type = TokenType::lookupIdentifier($ident);
             $token = new Token($type, $ident);
         } elseif ($this->isNumber($this->char)) {
-            $number = $this->readNumber();
-            $tokenType = str_contains($number, '.') ? TokenType::FLOAT : TokenType::INTEGER;
-            $token = new Token($tokenType, $number);
+            $num = $this->readNumber();
+            $token = new Token($this->readNumberTokenType($num), $num);
         } else {
             $token = Token::illegal($this->char);
             $this->advanceChar();
         }
 
         return $token;
+    }
+
+    private function readNumberTokenType(string $num): TokenType
+    {
+        // If number contains more then one dot, the token is ILLEGAL
+        if (substr_count($num, '.') > 1) {
+            return TokenType::ILLEGAL;
+        }
+
+        return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INTEGER;
     }
 
     private function readHtmlToken(): Token
