@@ -74,8 +74,10 @@ final class Lexer
             $ident = $this->readIdentifier();
             $type = TokenType::lookupIdentifier($ident);
             $token = new Token($type, $ident);
-        } elseif ($this->isInteger($this->char)) {
-            $token = new Token(TokenType::INTEGER, $this->readNumber());
+        } elseif ($this->isNumber($this->char)) {
+            $number = $this->readNumber();
+            $tokenType = str_contains($number, '.') ? TokenType::FLOAT : TokenType::INTEGER;
+            $token = new Token($tokenType, $number);
         } else {
             $token = Token::illegal($this->char);
             $this->advanceChar();
@@ -139,7 +141,21 @@ final class Lexer
             return false;
         }
 
+        // The number must not contain a dot
+        if (str_contains((string) $number, '.')) {
+            return false;
+        }
+
         return preg_match('/[0-9]/', $number) === 1;
+    }
+
+    private function isNumber(string $number): bool
+    {
+        if ($number === 0) {
+            return false;
+        }
+
+        return preg_match('/[0-9.]/', $number) === 1;
     }
 
     private function readIdentifier(): string

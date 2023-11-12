@@ -77,6 +77,27 @@ class LexerTest extends TestCase
         ]);
     }
 
+    public function testLexingFloats(): void
+    {
+        $input = <<<HTML
+        <h1>{{ 2.5213 }} and {{ -1.3 }}</h1>
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::HTML, "<h1>"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::FLOAT, "2.5213"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, " and "),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::MINUS, "-"),
+            new Token(TokenType::FLOAT, "1.3"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</h1>"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
+
     public function testLexingBooleans(): void
     {
         $input = <<<HTML
