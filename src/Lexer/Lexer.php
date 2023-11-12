@@ -61,20 +61,36 @@ final class Lexer
                 return $this->createTokenAndAdvanceChar(TokenType::NOT, $this->char);
         }
 
-        if ($this->char === '$' && $this->isLetter($this->peekChar())) {
+        if ($this->isVariableStart()) {
             $this->advanceChar();
             return new Token(TokenType::VARIABLE, $this->readIdentifier());
-        } elseif ($this->char === "'" || $this->char === '"') {
+        }
+
+        if ($this->isStringStart()) {
             return $this->createTokenAndAdvanceChar(TokenType::STRING, $this->readString());
-        } elseif ($this->isLetter($this->char)) {
+        }
+
+        if ($this->isLetter($this->char)) {
             $ident = $this->readIdentifier();
             return new Token(TokenType::lookupIdentifier($ident), $ident);
-        } elseif ($this->isNumber($this->char)) {
+        }
+
+        if ($this->isNumber($this->char)) {
             $num = $this->readNumber();
             return new Token($this->readNumberTokenType($num), $num);
         }
 
         return $this->createTokenAndAdvanceChar(TokenType::ILLEGAL, $this->char);
+    }
+
+    private function isStringStart(): bool
+    {
+        return $this->char === "'" || $this->char === '"';
+    }
+
+    private function isVariableStart(): bool
+    {
+        return $this->char === '$' && $this->isLetter($this->peekChar());
     }
 
     private function createTokenAndAdvanceChar(TokenType $type, string $char): Token
