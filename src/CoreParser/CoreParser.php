@@ -53,9 +53,10 @@ final class CoreParser
         $this->registerPrefix(TokenType::NULL, fn () => $this->parserNullLiteral());
         $this->registerPrefix(TokenType::FLOAT, fn () => $this->parseFloatLiteral());
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
-        $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBoolean());
         $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBoolean());
+        $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
+        $this->registerPrefix(TokenType::NOT, fn () => $this->parsePrefixExpression());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));

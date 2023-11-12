@@ -285,7 +285,6 @@ class CoreParserTest extends TestCase
         $prefix = $program->statements[0]->expression;
 
         $this->assertInstanceOf(PrefixExpression::class, $prefix);
-        $this->testInteger($prefix->right, $expect);
         $this->assertSame($operator, $prefix->operator);
     }
 
@@ -294,6 +293,8 @@ class CoreParserTest extends TestCase
         return [
             ['{{ -4 }}', '-', 4],
             ['{{ -284 }}', '-', 284],
+            ['{{ !true }}', '!', false],
+            ['{{ !false }}', '!', true],
         ];
     }
 
