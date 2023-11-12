@@ -22,7 +22,10 @@ $variables = [
     'show_container' => false,
 ];
 
-$parser = new Parser('hello.html', $variables);
+// Absolute file path or file content as a string
+$file_path = __DIR__ . '/hello.html';
+
+$parser = new Parser($file_path, $variables);
 
 // this will parsed content of hello.html file
 echo $parser->parseHtml();
@@ -87,7 +90,7 @@ use Serhii\GoodbyeHtml\Parser;
 add_shortcode('my_shortcode', 'shortcode_callback');
 
 function shortcode_callback() {
-    $parser = new Parser('shortcodes/main.html', [
+    $parser = new Parser(__DIR__ . '/shortcodes/main.html', [
         'title' => 'Title of the document',
         'uses_php_3_years' => true,
         'show_container' => false,
@@ -98,13 +101,14 @@ function shortcode_callback() {
 
 ## Supported types
 
-Types that you can pass to the parser to include them in the html/text file. Note that not all PHP types are supported for know. More types will be added in next releases.
+Types that you can pass to the parser to include them in the `html/text` file. Note that not all PHP types are supported for know. More types will be added in next releases.
 
 | PHP Type    | Value example |
 | ----------- | ------------- |
 | bool        | true          |
 | string      | 'Is title'    |
 | int         | 24            |
+| float       | 3.1415        |
 
 ## All the available syntax in html/text file
 
