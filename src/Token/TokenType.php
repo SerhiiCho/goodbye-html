@@ -6,31 +6,41 @@ namespace Serhii\GoodbyeHtml\Token;
 
 enum TokenType: string
 {
+    // Special tokens
     case EOF = 'EOF';
-    case VARIABLE = 'VARIABLE';
     case ILLEGAL = 'ILLEGAL';
+
+    // Data types
     case HTML = 'HTML';
     case INTEGER = 'INTEGER';
     case FLOAT = 'FLOAT';
-    case IDENTIFIER = 'IDENTIFIER';
-
-    case IF = 'if';
-    case ELSE = 'else';
-    case LOOP = 'loop';
-    case END = 'end';
     case STRING = "string";
     case TRUE = "true";
     case FALSE = "false";
     case NULL = "null";
+
+    // Identifiers
+    case VARIABLE = 'VARIABLE';
+    case IDENTIFIER = 'IDENTIFIER';
+
+    // Control flow keywords
+    case IF = 'if';
+    case ELSE = 'else';
+    case LOOP = 'loop';
+    case END = 'end';
+
+    // Prefix operators
     case NOT = "!";
 
+    // Infix and Prefix operators
+    case MINUS = '-';
+
+    // Delimiters
     case OPENING_BRACES = '{{';
     case CLOSING_BRACES = '}}';
-
-    case COMMA = ',';
     case QUESTION_MARK = '?';
+    case COMMA = ',';
     case COLON = ':';
-    case MINUS = '-';
 
     private const KEYWORDS = [
         'if' => self::IF,
