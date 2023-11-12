@@ -48,44 +48,39 @@ final class Lexer
 
     private function readProgramToken(): Token
     {
-        $token = null;
-
-        if ($this->char === '-') {
-            $token = new Token(TokenType::MINUS, $this->char);
-            $this->advanceChar();
-        } elseif ($this->char === '$' && $this->isLetter($this->peekChar())) {
-            $this->advanceChar();
-            $token = new Token(TokenType::VARIABLE, $this->readIdentifier());
-        } elseif ($this->char === ',') {
-            $token = new Token(TokenType::COMMA, $this->char);
-            $this->advanceChar();
-        } elseif ($this->char === '?') {
-            $token = new Token(TokenType::QUESTION_MARK, $this->char);
-            $this->advanceChar();
-        } elseif ($this->char === '!') {
-            $token = new Token(TokenType::NOT, $this->char);
-            $this->advanceChar();
-        } elseif ($this->char === ':') {
-            $token = new Token(TokenType::COLON, $this->char);
-            $this->advanceChar();
-        } elseif ($this->char === "'" || $this->char === '"') {
-            $quote = $this->char;
-            $this->advanceChar();
-            $token = new Token(TokenType::STRING, $this->readString($quote));
-            $this->advanceChar();
-        } elseif ($this->isLetter($this->char)) {
-            $ident = $this->readIdentifier();
-            $type = TokenType::lookupIdentifier($ident);
-            $token = new Token($type, $ident);
-        } elseif ($this->isNumber($this->char)) {
-            $num = $this->readNumber();
-            $token = new Token($this->readNumberTokenType($num), $num);
-        } else {
-            $token = Token::illegal($this->char);
-            $this->advanceChar();
+        switch ($this->char) {
+            case '-':
+                return $this->createTokenAndAdvanceChar(TokenType::MINUS, $this->char);
+            case ',':
+                return $this->createTokenAndAdvanceChar(TokenType::COMMA, $this->char);
+            case '?':
+                return $this->createTokenAndAdvanceChar(TokenType::QUESTION_MARK, $this->char);
+            case ':':
+                return $this->createTokenAndAdvanceChar(TokenType::COLON, $this->char);
+            case '!':
+                return $this->createTokenAndAdvanceChar(TokenType::NOT, $this->char);
         }
 
-        return $token;
+        if ($this->char === '$' && $this->isLetter($this->peekChar())) {
+            $this->advanceChar();
+            return new Token(TokenType::VARIABLE, $this->readIdentifier());
+        } elseif ($this->char === "'" || $this->char === '"') {
+            return $this->createTokenAndAdvanceChar(TokenType::STRING, $this->readString());
+        } elseif ($this->isLetter($this->char)) {
+            $ident = $this->readIdentifier();
+            return new Token(TokenType::lookupIdentifier($ident), $ident);
+        } elseif ($this->isNumber($this->char)) {
+            $num = $this->readNumber();
+            return new Token($this->readNumberTokenType($num), $num);
+        }
+
+        return $this->createTokenAndAdvanceChar(TokenType::ILLEGAL, $this->char);
+    }
+
+    private function createTokenAndAdvanceChar(TokenType $type, string $char): Token
+    {
+        $this->advanceChar();
+        return new Token($type, $char);
     }
 
     private function readNumberTokenType(string $num): TokenType
@@ -225,8 +220,12 @@ final class Lexer
         }
     }
 
-    private function readString(string $quote): string
+    private function readString(): string
     {
+        $quote = $this->char;
+
+        $this->advanceChar();
+
         if ($this->char === $quote) {
             return '';
         }
