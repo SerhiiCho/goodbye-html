@@ -30,7 +30,7 @@ class ParserTest extends TestCase
             ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
             ['loop', ['to' => 3]],
             ['ternary', ['hasContainer' => true]],
-            ['all', ['title' => 'Title of the document', 'uses_php_3_years' => true, 'show_container' => false]],
+            ['readme', ['title' => 'Title of the document', 'uses_php_3_years' => true, 'show_container' => false]],
         ];
     }
 }
