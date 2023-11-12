@@ -16,40 +16,36 @@ use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
 use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
 use Serhii\GoodbyeHtml\Exceptions\ParserException;
 
-final class Parser
+final readonly class Parser
 {
     /**
      * @var string The content that is being parsed
      */
-    private $html_content;
+    private string $html_content;
 
     /**
-     * @var string[]|null $variables Associative array ['var_name' => 'will be inserted']
-     * of variable name and content that it holds
-     */
-    private $variables;
-
-    /**
-     * Parser constructor
-     *
-     * @param string $file_path Absolute or relative path to an html file
+     * @param string $file_path Absolute file path or the file content itself
      * @param string[]|null $variables Associative array ['var_name' => 'will be inserted']
      */
-    public function __construct(string $file_path, ?array $variables = null)
-    {
-        $this->html_content = file_get_contents($file_path);
-        $this->variables = $variables;
+    public function __construct(
+        private string $file_path,
+        private ?array $variables = null,
+    ) {
     }
 
     /**
-     * Takes html and replaces all embedded variables with values
+     * Takes HTML and replaces all embedded variables with values
      *
-     * @return string Parsed html with replaced php variables
-     * @throws
-     * @throws Exception Throws exception if variable is in html but doesn't have value
+     * @return string Parsed HTML with replaced PHP variables
+     * @throws Exception
+     * @throws ParserException
+     * @throws CoreParserException
+     * @throws EvaluatorException
      */
     public function parseHtml(): string
     {
+        $this->setHtmlContent();
+
         if (!$this->hasVariables()) {
             return $this->html_content;
         }
@@ -69,6 +65,26 @@ final class Parser
         }
 
         return $evaluated->value();
+    }
+
+    /**
+     * @throws ParserException
+     */
+    private function setHtmlContent(): void
+    {
+        if (!str_starts_with($this->file_path, '/')) {
+            $this->html_content = $this->file_path;
+            return;
+        }
+
+        $content = file_get_contents($this->file_path);
+
+        if ($content === false) {
+            $msg = "File {$this->file_path} doesn't exist. Make sure the path is absolute and starts with '/'";
+            throw new ParserException($msg);
+        }
+
+        $this->html_content = $content;
     }
 
     private function hasVariables(): bool
