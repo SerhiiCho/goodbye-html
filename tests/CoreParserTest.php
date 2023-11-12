@@ -11,6 +11,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\TernaryExpression;
@@ -332,5 +333,23 @@ class CoreParserTest extends TestCase
     {
         self::assertInstanceOf(FloatLiteral::class, $float);
         self::assertSame($val, $float->value, "Float must have value '{$val}', got: '{$float->value}'");
+    }
+
+    public function testParsingNull(): void
+    {
+        $input = '{{ null }}';
+
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var NullLiteral $null */
+        $null = $program->statements[0]->expression;
+
+        self::assertInstanceOf(NullLiteral::class, $null);
+        self::assertSame('null', $null->token->literal);
     }
 }
