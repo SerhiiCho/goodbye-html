@@ -29,7 +29,7 @@ final readonly class Parser
      */
     public function __construct(
         private string $file_path,
-        private ?array $variables = null,
+        private array|null $variables = null,
     ) {
     }
 
