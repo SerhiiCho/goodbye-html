@@ -10,7 +10,7 @@ abstract readonly class Obj
 {
     abstract public function type(): ObjType;
 
-    abstract public function value(): int|string|bool|float;
+    abstract public function value(): int|string|bool|float|null;
 
     public static function fromNative(mixed $value, string $name): self
     {
@@ -25,6 +25,8 @@ abstract readonly class Obj
                 return new BooleanObj($value);
             case 'double': // gettype returns 'double' for float values
                 return new FloatObj($value);
+            case 'NULL':
+                return new NullObj();
             default:
                 $msg = sprintf('[PARSER_ERROR] Provided variable "%s" has unsupported type "%s"', $name, $type);
                 throw new ParserException($msg);

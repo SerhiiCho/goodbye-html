@@ -15,6 +15,7 @@ use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Node;
+use Serhii\GoodbyeHtml\Ast\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
@@ -26,6 +27,7 @@ use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\FloatObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
+use Serhii\GoodbyeHtml\Obj\NullObj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
 
@@ -43,6 +45,8 @@ readonly class Evaluator
             return new HtmlObj($node->string());
         } elseif ($node instanceof BooleanExpression) {
             return new BooleanObj($node->value);
+        } elseif ($node instanceof NullLiteral) {
+            return new NullObj();
         } elseif ($node instanceof Program) {
             return $this->evalProgram($node, $env);
         } elseif ($node instanceof ExpressionStatement) {
@@ -91,11 +95,14 @@ readonly class Evaluator
 
     private function evalPrefixExpression(string $operator, Obj $right): Obj
     {
-        if ($operator === '-') {
-            return $this->evalMinusPrefixOperatorExpression($right);
+        switch ($operator) {
+            case '-':
+                return $this->evalMinusPrefixOperatorExpression($right);
+            case '!':
+                return new BooleanObj(!$right->value());
+            default:
+                return EvalError::operatorNotAllowed($operator, $right);
         }
-
-        return EvalError::operatorNotAllowed($operator, $right);
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj

@@ -6,27 +6,41 @@ namespace Serhii\GoodbyeHtml\Token;
 
 enum TokenType: string
 {
+    // Special tokens
     case EOF = 'EOF';
-    case VARIABLE = 'VARIABLE';
     case ILLEGAL = 'ILLEGAL';
+
+    // Data types
     case HTML = 'HTML';
     case INTEGER = 'INTEGER';
     case FLOAT = 'FLOAT';
-    case IDENTIFIER = 'IDENTIFIER';
-    case IF = 'IF';
-    case ELSE = 'ELSE';
-    case LOOP = 'LOOP';
-    case STRING = "STRING";
-    case TRUE = "TRUE";
-    case FALSE = "FALSE";
+    case STRING = "string";
+    case TRUE = "true";
+    case FALSE = "false";
+    case NULL = "null";
 
-    case END = '{{ end }}';
-    case COMMA = ',';
-    case QUESTION_MARK = '?';
-    case COLON = ':';
+    // Identifiers
+    case VARIABLE = 'VARIABLE';
+    case IDENTIFIER = 'IDENTIFIER';
+
+    // Control flow keywords
+    case IF = 'if';
+    case ELSE = 'else';
+    case LOOP = 'loop';
+    case END = 'end';
+
+    // Prefix operators
+    case NOT = "!";
+
+    // Infix and Prefix operators
+    case MINUS = '-';
+
+    // Delimiters
     case OPENING_BRACES = '{{';
     case CLOSING_BRACES = '}}';
-    case MINUS = '-';
+    case QUESTION_MARK = '?';
+    case COMMA = ',';
+    case COLON = ':';
 
     private const KEYWORDS = [
         'if' => self::IF,
@@ -35,6 +49,7 @@ enum TokenType: string
         'loop' => self::LOOP,
         'true' => self::TRUE,
         'false' => self::FALSE,
+        'null' => self::NULL,
     ];
 
     public static function lookupIdentifier(string $identifier): self

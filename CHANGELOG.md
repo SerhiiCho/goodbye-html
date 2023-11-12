@@ -4,11 +4,19 @@
 
 ----
 
+## v2.2.0 (2023-11-12)
+
+- Added support for `null` type support. Now you can use `null` like this: `{{ if null }}`
+- Added negation operator (`!`). Now you can use it like this: `{{ if !true }}` or `{{ if !false }}`
+- Improved code readability to refactoring the `Lexer` class
+
+----
+
 ## v2.1.0 (2023-11-12)
 
 - Changed the first parameter of the `Parser` class. Now, it accepts absolute path to the template file or a string with template content. Before, it was accepting only the path
 - Improved code readability to refactoring the `Parser` class
-- Added support for `floats` to the lexer and core parser
+- Added support for `floats`. Now you can use `floats` like this: `{{ if 1.2 }}`
 - Bug fix, when you pass a relative path as a first argument to the `Parser` class. Now, it will throw an exception with a descriptive message
 
 ----

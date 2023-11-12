@@ -12,4 +12,6 @@ enum ObjType: string
     case STRING_OBJ = 'STRING';
     case HTML_OBJ = 'HTML';
     case BLOCK_OBJ = 'BLOCK';
+    case NULL_OBJ = 'NULL';
+    case BOOLEAN_OBJ = 'BOOLEAN';
 }

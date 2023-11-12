@@ -27,10 +27,31 @@ class ParserTest extends TestCase
     public static function providerForTestParserEvaluation(): array
     {
         return [
-            // ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
-            // ['loop', ['to' => 3]],
-            // ['ternary', ['hasContainer' => true]],
-            ['all', ['title' => 'Title of the document', 'uses_php_3_years' => true, 'show_container' => false]],
+            ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
+            ['loop', ['to' => 3]],
+            ['ternary', ['hasContainer' => true]],
+            ['readme', ['title' => 'Title of the document', 'uses_php_3_years' => true, 'show_container' => false]],
+            ['types', ['weight' => 61.5, 'eyeColor' => null, 'smart' => true, 'tall' => false]],
         ];
+    }
+
+    public function testParserCanParseTextDirectly(): void
+    {
+        $input = <<<TEXT
+        She is {{ if \$isNice }}nice{{ else }}not nice{{ end }}.
+        He has {{ \$cats ? \$cats : 'no' }} cats.
+        TEXT;
+
+        $expect = <<<TEXT
+        She is nice.
+        He has no cats.
+        TEXT;
+
+        $parser = new Parser($input, [
+            'isNice' => true,
+            'cats' => null,
+        ]);
+
+        $this->assertSame($expect, $parser->parseHtml());
     }
 }

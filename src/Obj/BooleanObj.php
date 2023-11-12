@@ -12,7 +12,7 @@ readonly class BooleanObj extends Obj
 
     public function type(): ObjType
     {
-        return ObjType::INTEGER_OBJ;
+        return ObjType::BOOLEAN_OBJ;
     }
 
     public function value(): bool

@@ -24,7 +24,7 @@ class EvaluatorTest extends TestCase
     /**
      * @dataProvider providerForTestEvalIntegerExpression
      */
-    public function testEvalIntegerExpression(string $input, int $expected): void
+    public function testEvalIntegerExpression(string $input, string $expected): void
     {
         $evaluated = $this->testEval($input);
 
@@ -32,22 +32,27 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, (int) $evaluated->value());
+        $this->assertSame($expected, $evaluated->value());
     }
 
     public static function providerForTestEvalIntegerExpression(): array
     {
         return [
-            ['{{ 5 }}', 5],
-            ['{{ 190 }}', 190],
-            ['{{ -34 }}', -34],
+            ['{{ 5 }}', '5'],
+            ['{{ 190 }}', '190'],
+            ['{{ -34 }}', '-34'],
+            ['{{ !-1 }}', ''],
+            ['{{ !0 }}', '1'],
+            ['{{ !1 }}', ''],
+            ['{{ !2 }}', ''],
+            ['{{ !22 }}', ''],
         ];
     }
 
     /**
      * @dataProvider providerForTestEvalFloatExpression
      */
-    public function testEvalFloatExpression(string $input, float $expected): void
+    public function testEvalFloatExpression(string $input, string $expected): void
     {
         $evaluated = $this->testEval($input);
 
@@ -55,15 +60,15 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, (float) $evaluated->value());
+        $this->assertSame($expected, $evaluated->value());
     }
 
     public static function providerForTestEvalFloatExpression(): array
     {
         return [
-            ['{{ 3.425 }}', 3.425],
-            ['{{ 1.9 }}', 1.9],
-            ['{{ -3.34 }}', -3.34],
+            ['{{ 3.425 }}', '3.425'],
+            ['{{ 1.9 }}', '1.9'],
+            ['{{ -3.34 }}', '-3.34'],
         ];
     }
 
@@ -86,6 +91,8 @@ class EvaluatorTest extends TestCase
         return [
             ['{{ true }}', '1'], // in PHP true to string is 1
             ['{{ false }}', ''], // in PHP false to string is ''
+            ['{{ !true }}', ''],
+            ['{{ !false }}', '1'],
         ];
     }
 
@@ -306,5 +313,17 @@ class EvaluatorTest extends TestCase
         $evaluator = new Evaluator();
 
         return $evaluator->eval($program, $env ?? new Env());
+    }
+
+    public function testEvalNull(): void
+    {
+        $evaluated = $this->testEval('<span>{{ null }}</span>');
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertNotNull($evaluated, 'Evaluated is null');
+        $this->assertSame('<span></span>', $evaluated->value());
     }
 }
