@@ -7,6 +7,8 @@
 ## v2.2.0 (2023-11-12)
 
 - Added support for `null` type support. Now you can use `null` like this: `{{ if null }}`
+- Added negation operator (`!`). Now you can use it like this: `{{ if !true }}` or `{{ if !false }}`
+- Improved code readability to refactoring the `Lexer` class
 
 ----
 

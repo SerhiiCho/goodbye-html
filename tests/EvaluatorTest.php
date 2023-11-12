@@ -86,6 +86,8 @@ class EvaluatorTest extends TestCase
         return [
             ['{{ true }}', '1'], // in PHP true to string is 1
             ['{{ false }}', ''], // in PHP false to string is ''
+            ['{{ !true }}', ''],
+            ['{{ !false }}', '1'],
         ];
     }
 

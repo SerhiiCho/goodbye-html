@@ -95,11 +95,14 @@ readonly class Evaluator
 
     private function evalPrefixExpression(string $operator, Obj $right): Obj
     {
-        if ($operator === '-') {
-            return $this->evalMinusPrefixOperatorExpression($right);
+        switch ($operator) {
+            case '-':
+                return $this->evalMinusPrefixOperatorExpression($right);
+            case '!':
+                return new BooleanObj(!$right->value());
+            default:
+                return EvalError::operatorNotAllowed($operator, $right);
         }
-
-        return EvalError::operatorNotAllowed($operator, $right);
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj
