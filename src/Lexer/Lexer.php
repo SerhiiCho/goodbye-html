@@ -74,7 +74,7 @@ final class Lexer
             $ident = $this->readIdentifier();
             $type = TokenType::lookupIdentifier($ident);
             $token = new Token($type, $ident);
-        } elseif ($this->isNumber($this->char)) {
+        } elseif ($this->isInteger($this->char)) {
             $token = new Token(TokenType::INTEGER, $this->readNumber());
         } else {
             $token = Token::illegal($this->char);
@@ -133,7 +133,7 @@ final class Lexer
         return preg_match('/[_a-zA-Z]/', $letter) === 1;
     }
 
-    private function isNumber(int|string $number): bool
+    private function isInteger(int|string $number): bool
     {
         if ($number === 0) {
             return false;
@@ -146,7 +146,7 @@ final class Lexer
     {
         $position = $this->position;
 
-        while ($this->isLetter($this->char) || $this->isNumber($this->char)) {
+        while ($this->isLetter($this->char) || $this->isInteger($this->char)) {
             $this->advanceChar();
         }
 
@@ -157,7 +157,7 @@ final class Lexer
     {
         $position = $this->position;
 
-        while ($this->isNumber($this->char)) {
+        while ($this->isInteger($this->char) || $this->char === '.') {
             $this->advanceChar();
         }
 
