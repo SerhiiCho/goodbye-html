@@ -19,6 +19,7 @@ enum TokenType: string
     case STRING = "STRING";
     case TRUE = "TRUE";
     case FALSE = "FALSE";
+    case NULL = "NULL";
 
     case END = '{{ end }}';
     case COMMA = ',';
@@ -35,6 +36,7 @@ enum TokenType: string
         'loop' => self::LOOP,
         'true' => self::TRUE,
         'false' => self::FALSE,
+        'null' => self::NULL,
     ];
 
     public static function lookupIdentifier(string $identifier): self

@@ -340,4 +340,20 @@ class LexerTest extends TestCase
             new Token(TokenType::EOF, ""),
         ]);
     }
+
+    public function testLexingNull(): void
+    {
+        $input = <<<HTML
+        <div>{{ null }}</div>
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::HTML, "<div>"),
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::NULL, "null"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::HTML, "</div>"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
 }
