@@ -11,6 +11,7 @@ enum TokenType: string
     case ILLEGAL = 'ILLEGAL';
     case HTML = 'HTML';
     case INTEGER = 'INTEGER';
+    case FLOAT = 'FLOAT';
     case IDENTIFIER = 'IDENTIFIER';
     case IF = 'IF';
     case ELSE = 'ELSE';

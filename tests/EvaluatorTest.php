@@ -24,7 +24,7 @@ class EvaluatorTest extends TestCase
     /**
      * @dataProvider providerForTestEvalIntegerExpression
      */
-    public function testEvalIntegerExpression(string $input, string $expected): void
+    public function testEvalIntegerExpression(string $input, int $expected): void
     {
         $evaluated = $this->testEval($input);
 
@@ -32,15 +32,38 @@ class EvaluatorTest extends TestCase
             $this->fail($evaluated->message);
         }
 
-        $this->assertSame($expected, $evaluated->value());
+        $this->assertSame($expected, (int) $evaluated->value());
     }
 
     public static function providerForTestEvalIntegerExpression(): array
     {
         return [
-            ['{{ 5 }}', '5'],
-            ['{{ 190 }}', '190'],
-            ['{{ -34 }}', '-34'],
+            ['{{ 5 }}', 5],
+            ['{{ 190 }}', 190],
+            ['{{ -34 }}', -34],
+        ];
+    }
+
+    /**
+     * @dataProvider providerForTestEvalFloatExpression
+     */
+    public function testEvalFloatExpression(string $input, float $expected): void
+    {
+        $evaluated = $this->testEval($input);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($expected, (float) $evaluated->value());
+    }
+
+    public static function providerForTestEvalFloatExpression(): array
+    {
+        return [
+            ['{{ 3.425 }}', 3.425],
+            ['{{ 1.9 }}', 1.9],
+            ['{{ -3.34 }}', -3.34],
         ];
     }
 

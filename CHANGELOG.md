@@ -4,6 +4,15 @@
 
 ----
 
+## v2.1.0 (2023-11-12)
+
+- Changed the first parameter of the `Parser` class. Now, it accepts absolute path to the template file or a string with template content. Before, it was accepting only the path
+- Improved code readability to refactoring the `Parser` class
+- Added support for `floats` to the lexer and core parser
+- Bug fix, when you pass a relative path as a first argument to the `Parser` class. Now, it will throw an exception with a descriptive message
+
+----
+
 ## v2.0 (2023-11-11)
 
 - Rewritten the whole package to proper Lexical Analyzer, Parser and Evaluator. Now you can do that you couldn't do before. Like using nested loops, if statements, ternary operators and so on.

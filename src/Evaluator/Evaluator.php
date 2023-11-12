@@ -7,6 +7,7 @@ namespace Serhii\GoodbyeHtml\Evaluator;
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
 use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
@@ -22,6 +23,7 @@ use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Obj\BlockObj;
 use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
+use Serhii\GoodbyeHtml\Obj\FloatObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
@@ -33,6 +35,8 @@ readonly class Evaluator
     {
         if ($node instanceof IntegerLiteral) {
             return new IntegerObj($node->value);
+        } elseif ($node instanceof FloatLiteral) {
+            return new FloatObj($node->value);
         } elseif ($node instanceof StringLiteral) {
             return new StringObj($node->value);
         } elseif ($node instanceof HtmlStatement) {
@@ -186,10 +190,10 @@ readonly class Evaluator
 
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
     {
-        if ($right->type() !== ObjType::INTEGER_OBJ) {
-            return EvalError::operatorNotAllowed('-', $right);
-        }
-
-        return new IntegerObj(-$right->value());
+        return match ($right->type()) {
+            ObjType::INTEGER_OBJ => new IntegerObj(-$right->value()),
+            ObjType::FLOAT_OBJ => new FloatObj(-$right->value()),
+            default => EvalError::operatorNotAllowed('-', $right),
+        };
     }
 }

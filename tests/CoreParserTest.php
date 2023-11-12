@@ -6,6 +6,7 @@ namespace Serhii\Tests;
 
 use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
@@ -184,6 +185,23 @@ class CoreParserTest extends TestCase
         $this->testInteger($stmt->expression, 5);
     }
 
+    public function testParsingFloatLiteral(): void
+    {
+        $input = '{{ 1.40123 }}';
+
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[0];
+
+        $this->testFloat($stmt->expression, 1.40123);
+    }
+
     public function testParsingLoopExpression(): void
     {
         $input = <<<HTML
@@ -308,5 +326,11 @@ class CoreParserTest extends TestCase
     {
         self::assertInstanceOf(IntegerLiteral::class, $int);
         self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
+    }
+
+    private static function testFloat($float, $val): void
+    {
+        self::assertInstanceOf(FloatLiteral::class, $float);
+        self::assertSame($val, $float->value, "Float must have value '{$val}', got: '{$float->value}'");
     }
 }
