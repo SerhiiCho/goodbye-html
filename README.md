@@ -109,6 +109,16 @@ Types that you can pass to the parser to include them in the `html/text` file. N
 | string      | 'Is title'    |
 | int         | 24            |
 | float       | 3.1415        |
+| null        | null          |
+
+## Supported prefix operators
+
+Prefix operators are used to change the value of the variable. For example if you have a variable `$is_smoking` and you want to check if it's false, you can use `!` prefix operator to change the value of the variable to false. Or if you have a variable `$age` and you want to make it negative, you can use `-` prefix operator to change the value of the variable to negative.
+
+| Prefix name | Prefix value  | Example     | Supported types for prefix |
+| ----------- | ------------- | ----------- | -------------------------- |
+| NOT         | !             | !true       | all the types              |
+| MINUS       | -             | -24         | int, float                 |
 
 ## All the available syntax in html/text file
 
