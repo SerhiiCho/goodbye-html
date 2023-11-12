@@ -1,0 +1,5 @@
+<section class="{{ $eyeColor }}">
+    <h1>{{ $eyeColor ? 'Knows' : "Doesn't know" }} eye color</h1>
+    <p>His weight is {{ $weight }}.{{if $smart}} He's smart.{{end}}</p>
+    <p>He is {{ if $tall }}tall{{ else }}short{{ end }}.</p>
+</section>
