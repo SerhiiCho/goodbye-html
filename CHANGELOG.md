@@ -9,6 +9,7 @@
 - Changed the first parameter of the `Parser` class. Now, it accepts absolute path to the template file or a string with template content. Before, it was accepting only the path
 - Improved code readability to refactoring the `Parser` class
 - Added support for `floats` to the lexer and core parser
+- Bug fix, when you pass a relative path as a first argument to the `Parser` class. Now, it will throw an exception with a descriptive message
 
 ----
 
