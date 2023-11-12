@@ -318,4 +318,26 @@ class LexerTest extends TestCase
             new Token(TokenType::EOF, ""),
         ]);
     }
+
+    public function testLexingIllegalTokens(): void
+    {
+        $input = <<<HTML
+        {{ 2.3.4 @ $ % ^ & * ( ) }}
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::OPENING_BRACES, "{{"),
+            new Token(TokenType::ILLEGAL, "2.3.4"),
+            new Token(TokenType::ILLEGAL, "@"),
+            new Token(TokenType::ILLEGAL, "$"),
+            new Token(TokenType::ILLEGAL, "%"),
+            new Token(TokenType::ILLEGAL, "^"),
+            new Token(TokenType::ILLEGAL, "&"),
+            new Token(TokenType::ILLEGAL, "*"),
+            new Token(TokenType::ILLEGAL, "("),
+            new Token(TokenType::ILLEGAL, ")"),
+            new Token(TokenType::CLOSING_BRACES, "}}"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
 }
