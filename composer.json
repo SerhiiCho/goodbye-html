@@ -30,8 +30,7 @@
     "require-dev": {
         "symfony/var-dumper": "^5.0@dev",
         "laravel/pint": "dev-main",
-        "pestphp/pest": "2.x-dev",
-        "pestphp/pest-plugin-drift": "2.x-dev"
+        "pestphp/pest": "2.x-dev"
     },
     "scripts": {
         "test": "./vendor/bin/pest"
