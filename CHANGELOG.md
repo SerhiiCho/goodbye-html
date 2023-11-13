@@ -4,6 +4,12 @@
 
 ----
 
+## v2.3.0 (2023-11-13)
+
+- Removed `final` keyword from all the classes to make it easier to extend the package
+
+----
+
 ## v2.2.0 (2023-11-12)
 
 - Added support for `null` type support. Now you can use `null` like this: `{{ if null }}`
