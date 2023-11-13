@@ -22,6 +22,6 @@ readonly class PrefixExpression implements Expression
 
     public function string(): string
     {
-        return "({$this->operator}{$this->right->string()})";
+        return sprintf('(%s%s)', $this->operator, $this->right->string());
     }
 }

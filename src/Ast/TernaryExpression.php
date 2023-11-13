@@ -23,10 +23,11 @@ readonly class TernaryExpression implements Expression
 
     public function string(): string
     {
-        $cond = $this->condition->string();
-        $con = $this->consequence->string();
-        $alt = $this->alternative->string();
-
-        return "(({$cond}) ? {$con} : {$alt})";
+        return sprintf(
+            '(%s ? %s : %s)',
+            $this->condition->string(),
+            $this->consequence->string(),
+            $this->alternative->string(),
+        );
     }
 }

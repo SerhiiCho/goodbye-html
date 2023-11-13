@@ -8,10 +8,11 @@ enum Precedence: int
 {
     case LOWEST = 0;
     case EQUALS = 1; // == and ===
-    case LESS_GREATER = 2; // > or <
-    case SUM = 3; // +
-    case PRODUCT = 4; // *
-    case PREFIX = 5; // -X or !X
-    case CALL = 6; // myFunction(X)
-    case INDEX = 7; // array[index]
+    case TERNARY = 2; // a ? b : c
+    case LESS_GREATER = 3; // > or <
+    case SUM = 4; // +
+    case PRODUCT = 5; // *
+    case PREFIX = 6; // -X or !X
+    case CALL = 7; // myFunction(X)
+    case INDEX = 8; // array[index]
 }

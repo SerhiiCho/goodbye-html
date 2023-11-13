@@ -33,6 +33,7 @@ class CoreParser
         // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
         // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
         // TokenType::PLUS->value => Precedence::SUM,
+        TokenType::QUESTION_MARK->value => Precedence::TERNARY,
         TokenType::MINUS->value => Precedence::SUM,
         // TokenType::SLASH->value => Precedence::PRODUCT,
         // TokenType::ASTERISK->value => Precedence::PRODUCT,
@@ -63,13 +64,13 @@ class CoreParser
         $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
+        $this->registerPrefix(TokenType::NOT, fn () => $this->parsePrefixExpression());
         $this->registerPrefix(TokenType::NULL, fn () => $this->parserNullLiteral());
         $this->registerPrefix(TokenType::FLOAT, fn () => $this->parseFloatLiteral());
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBoolean());
         $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBoolean());
         $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
-        $this->registerPrefix(TokenType::NOT, fn () => $this->parsePrefixExpression());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));
@@ -160,7 +161,10 @@ class CoreParser
 
         $leftExp = $prefix();
 
-        while (!$this->peekTokenIs(TokenType::CLOSING_BRACES) && $precedence < $this->peekPrecedence()) {
+        while (
+            !$this->peekTokenIs(TokenType::CLOSING_BRACES)
+            && $precedence->value < $this->peekPrecedence()->value
+        ) {
             $infix = $this->infixParseFns[$this->peekToken->type->value] ?? null;
 
             if ($infix === null) {
@@ -285,7 +289,7 @@ class CoreParser
     {
         $this->nextToken(); // skip "?"
 
-        $consequence = $this->parseExpression(Precedence::LOWEST);
+        $consequence = $this->parseExpression(Precedence::TERNARY);
 
         if (!$this->expectPeek(TokenType::COLON)) {
             return null;

@@ -176,7 +176,7 @@ dataset('providerForTestEvalTernaryExpression', function () {
         ],
         [
             '{{ !$isUgly ? "Pretty" : "Ugly" }}',
-            'Pretty',
+            'Ugly',
             new Env(['isUgly' => new BooleanObj(true)])
         ],
     ];
