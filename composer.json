@@ -28,11 +28,16 @@
         "php": "^8.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.3",
         "symfony/var-dumper": "^5.0@dev",
-        "laravel/pint": "dev-main"
+        "laravel/pint": "dev-main",
+        "pestphp/pest": "2.x-dev"
     },
     "scripts": {
         "test": "./vendor/bin/phpunit tests"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
