@@ -27,6 +27,19 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 
 class CoreParser
 {
+    private const PRECEDENCES = [
+        // TokenType::EQUAL => Precedence::EQUALS,
+        // TokenType::NOT_EQUAL => Precedence::EQUALS,
+        // TokenType::LESS_THAN => Precedence::LESS_GREATER,
+        // TokenType::GREATER_THAN => Precedence::LESS_GREATER,
+        // TokenType::PLUS => Precedence::SUM,
+        TokenType::MINUS => Precedence::SUM,
+        // TokenType::SLASH => Precedence::PRODUCT,
+        // TokenType::ASTERISK => Precedence::PRODUCT,
+        // TokenType::LEFT_PAREN => Precedence::CALL,
+        // TokenType::LEFT_BRACKET => Precedence::INDEX,
+    ];
+
     private Token $curToken;
     private Token $peekToken;
     private array $prefixParseFns = [];
