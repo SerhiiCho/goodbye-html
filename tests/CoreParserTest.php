@@ -17,6 +17,41 @@ use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 
+/**
+ * @param ExpressionStatement[] $stmt
+ */
+function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
+{
+    $errors = $parser->errors();
+
+    expect($errors)->toBeEmpty(implode("\n", $errors));
+    expect($stmt)->toHaveCount($statements, "Program must contain {$statements} statements");
+}
+
+function testVariable($var, string $val)
+{
+    expect($var)->toBeInstanceOf(VariableExpression::class);
+    expect($var->value)->toBe($val);
+}
+
+function testString($str, string $val)
+{
+    expect($str)->toBeInstanceOf(StringLiteral::class);
+    expect($str->value)->toBe($val);
+}
+
+function testInteger($int, $val)
+{
+    expect($int)->toBeInstanceOf(IntegerLiteral::class);
+    expect($int->value)->toBe($val);
+}
+
+function testFloat($float, $val)
+{
+    expect($float)->toBeInstanceOf(FloatLiteral::class);
+    expect($float->value)->toBe($val);
+}
+
 test('parsing variables', function () {
     $input = '{{ $userName }}';
 
@@ -136,8 +171,8 @@ test('parsing nested if statement', function () {
 
 test('parsing else statement', function () {
     $input = <<<HTML
-        {{ if \$underAge }}<span>You are too young to be here</span>{{ else }}<span>You can drink beer</span>{{ end }}
-        HTML;
+    {{ if \$underAge }}<span>You are too young to be here</span>{{ else }}<span>You can drink beer</span>{{ end }}
+    HTML;
 
     $lexer = new Lexer($input);
     $parser = new CoreParser($lexer);
@@ -189,8 +224,8 @@ test('parsing float literal', function () {
 
 test('parsing loop expression', function () {
     $input = <<<HTML
-        {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
-        HTML;
+    {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
+    HTML;
 
     $lexer = new Lexer($input);
     $parser = new CoreParser($lexer);
@@ -273,41 +308,6 @@ dataset('providerForTestPrefixExpressions', function () {
         ['{{ !false }}', '!', true],
     ];
 });
-
-/**
- * @param ExpressionStatement[] $stmt
- */
-function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
-{
-    $errors = $parser->errors();
-
-    expect($errors)->toBeEmpty(implode("\n", $errors));
-    expect($stmt)->toHaveCount($statements, "Program must contain {$statements} statements");
-}
-
-function testVariable($var, string $val)
-{
-    expect($var)->toBeInstanceOf(VariableExpression::class);
-    expect($var->value)->toBe($val);
-}
-
-function testString($str, string $val)
-{
-    expect($str)->toBeInstanceOf(StringLiteral::class);
-    expect($str->value)->toBe($val);
-}
-
-function testInteger($int, $val)
-{
-    expect($int)->toBeInstanceOf(IntegerLiteral::class);
-    expect($int->value)->toBe($val);
-}
-
-function testFloat($float, $val)
-{
-    expect($float)->toBeInstanceOf(FloatLiteral::class);
-    expect($float->value)->toBe($val);
-}
 
 test('test parsing null', function () {
     $input = '{{ null }}';
