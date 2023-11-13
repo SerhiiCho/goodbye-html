@@ -8,6 +8,7 @@
 
 - Removed `final` keyword from all the classes to make it easier to extend the package
 - Introduced Pratt Parsing
+- Replaced PHPUnit with Pest testing framework
 
 ----
 
