@@ -343,5 +343,6 @@ dataset('providerForTestOperatorPrecedenceParsing', function () {
     return [
         ['{{ !-1 }}', '(!(-1))'],
         ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
+        ['{{ !true ? 1 : true ? 3 : 5 }}', '((!true) ? 1 : (true ? 3 : 5))'],
     ];
 });
