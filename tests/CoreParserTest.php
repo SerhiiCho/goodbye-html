@@ -374,7 +374,7 @@ class CoreParserTest extends TestCase
     public static function providerForTestOperatorPrecedenceParsing(): array
     {
         return [
-            // ['{{ !-1 }}', '(!(-1))'],
+            ['{{ !-1 }}', '(!(-1))'],
             ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
         ];
     }
