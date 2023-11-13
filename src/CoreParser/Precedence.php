@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\CoreParser;
 
-enum Priority: int
+enum Precedence: int
 {
     case LOWEST = 0;
     case EQUALS = 1; // == and ===
