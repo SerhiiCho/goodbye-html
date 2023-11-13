@@ -33,7 +33,8 @@
         "pestphp/pest": "2.x-dev"
     },
     "scripts": {
-        "test": "./vendor/bin/pest"
+        "test": "./vendor/bin/pest",
+        "cover": "./vendor/bin/pest --coverage --min=90"
     },
     "config": {
         "allow-plugins": {
