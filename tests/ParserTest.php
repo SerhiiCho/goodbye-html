@@ -30,11 +30,13 @@ test('parser can parse text directly', function () {
     $input = <<<TEXT
     She is {{ if \$isNice }}nice{{ else }}not nice{{ end }}.
     He has {{ \$cats ? \$cats : 'no' }} cats.
+    He is {{ !false ? 'funny' : 'not funny' }}.
     TEXT;
 
     $expect = <<<TEXT
     She is nice.
     He has no cats.
+    He is funny.
     TEXT;
 
     $parser = new Parser($input, [
