@@ -28,16 +28,16 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 class CoreParser
 {
     private const PRECEDENCES = [
-        // TokenType::EQUAL => Precedence::EQUALS,
-        // TokenType::NOT_EQUAL => Precedence::EQUALS,
-        // TokenType::LESS_THAN => Precedence::LESS_GREATER,
-        // TokenType::GREATER_THAN => Precedence::LESS_GREATER,
-        // TokenType::PLUS => Precedence::SUM,
-        TokenType::MINUS => Precedence::SUM,
-        // TokenType::SLASH => Precedence::PRODUCT,
-        // TokenType::ASTERISK => Precedence::PRODUCT,
-        // TokenType::LEFT_PAREN => Precedence::CALL,
-        // TokenType::LEFT_BRACKET => Precedence::INDEX,
+        // TokenType::EQUAL->value => Precedence::EQUALS,
+        // TokenType::NOT_EQUAL->value => Precedence::EQUALS,
+        // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
+        // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
+        // TokenType::PLUS->value => Precedence::SUM,
+        TokenType::MINUS->value => Precedence::SUM,
+        // TokenType::SLASH->value => Precedence::PRODUCT,
+        // TokenType::ASTERISK->value => Precedence::PRODUCT,
+        // TokenType::LEFT_PAREN->value => Precedence::CALL,
+        // TokenType::LEFT_BRACKET->value => Precedence::INDEX,
     ];
 
     private Token $curToken;
@@ -135,7 +135,7 @@ class CoreParser
     {
         $this->nextToken();
 
-        $expr = $this->parseExpression();
+        $expr = $this->parseExpression(Precedence::LOWEST);
         $result = new ExpressionStatement($this->curToken, $expr);
 
         if ($this->peekTokenIs(TokenType::CLOSING_BRACES)) {
@@ -145,7 +145,7 @@ class CoreParser
         return $result;
     }
 
-    private function parseExpression(): Expression|null
+    private function parseExpression(Precedence $precedence): Expression|null
     {
         $prefix = $this->prefixParseFns[$this->curToken->type->value] ?? null;
 
@@ -160,7 +160,7 @@ class CoreParser
 
         $leftExp = $prefix();
 
-        while (!$this->peekTokenIs(TokenType::CLOSING_BRACES)) {
+        while (!$this->peekTokenIs(TokenType::CLOSING_BRACES) && $precedence < $this->peekPrecedence()) {
             $infix = $this->infixParseFns[$this->peekToken->type->value] ?? null;
 
             if ($infix === null) {
@@ -183,6 +183,14 @@ class CoreParser
     private function peekTokenIs(TokenType $token): bool
     {
         return $token === $this->peekToken->type;
+    }
+
+    /**
+     * Checks the precedence of the next token
+     */
+    private function peekPrecedence(): Precedence
+    {
+        return self::PRECEDENCES[$this->peekToken->type->value] ?? Precedence::LOWEST;
     }
 
     private function parseVariable(): Expression
@@ -229,7 +237,7 @@ class CoreParser
 
         $this->nextToken(); // skip prefix operator
 
-        $right = $this->parseExpression();
+        $right = $this->parseExpression(Precedence::PREFIX);
 
         return new PrefixExpression($token, $operator, $right);
     }
@@ -246,7 +254,7 @@ class CoreParser
     {
         $this->nextToken(); // skip "{{"
 
-        $condition = $this->parseExpression();
+        $condition = $this->parseExpression(Precedence::LOWEST);
 
         if (!$this->expectPeek(TokenType::CLOSING_BRACES)) {
             return null;
@@ -277,7 +285,7 @@ class CoreParser
     {
         $this->nextToken(); // skip "?"
 
-        $consequence = $this->parseExpression();
+        $consequence = $this->parseExpression(Precedence::LOWEST);
 
         if (!$this->expectPeek(TokenType::COLON)) {
             return null;
@@ -285,7 +293,7 @@ class CoreParser
 
         $this->nextToken(); // skip ":"
 
-        $alternative = $this->parseExpression();
+        $alternative = $this->parseExpression(Precedence::LOWEST);
 
         $this->nextToken(); // skip alternative
 
@@ -303,7 +311,7 @@ class CoreParser
 
         $this->nextToken(); // skip "loop" keyword
 
-        $from = $this->parseExpression();
+        $from = $this->parseExpression(Precedence::LOWEST);
 
         if (!$this->expectPeek(TokenType::COMMA)) {
             return null;
@@ -311,7 +319,7 @@ class CoreParser
 
         $this->nextToken();
 
-        $to = $this->parseExpression();
+        $to = $this->parseExpression(Precedence::LOWEST);
 
         if (!$this->expectPeek(TokenType::CLOSING_BRACES)) {
             return null;
