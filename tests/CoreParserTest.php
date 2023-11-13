@@ -353,4 +353,29 @@ class CoreParserTest extends TestCase
         self::assertInstanceOf(NullLiteral::class, $null);
         self::assertSame('null', $null->token->literal);
     }
+
+    /**
+     * @dataProvider providerForTestOperatorPrecedenceParsing
+     */
+    public function testOperatorPrecedenceParsing(string $input, string $expect): void
+    {
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        $program = $parser->parseProgram();
+
+        $this->checkForErrors($parser, $program->statements, 1);
+
+        $actual = $program->string();
+
+        $this->assertSame($expect, $actual, "Expected '{$expect}', got '{$actual}'");
+    }
+
+    public static function providerForTestOperatorPrecedenceParsing(): array
+    {
+        return [
+            // ['{{ !-1 }}', '(!(-1))'],
+            ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
+        ];
+    }
 }
