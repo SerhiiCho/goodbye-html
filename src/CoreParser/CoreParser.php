@@ -25,7 +25,7 @@ use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
-final class CoreParser
+class CoreParser
 {
     private Token $curToken;
     private Token $peekToken;

@@ -7,7 +7,7 @@ namespace Serhii\GoodbyeHtml\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
-final class Lexer
+class Lexer
 {
     private readonly string $input;
     private int $position = 0;

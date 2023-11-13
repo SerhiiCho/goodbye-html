@@ -6,6 +6,6 @@ namespace Serhii\GoodbyeHtml\Exceptions;
 
 use Exception;
 
-final class CoreParserException extends Exception
+class CoreParserException extends Exception
 {
 }

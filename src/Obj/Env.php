@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Obj;
 
-final class Env
+class Env
 {
     /**
      * @param array<int,Obj> $store

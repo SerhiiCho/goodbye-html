@@ -214,6 +214,11 @@ class EvaluatorTest extends TestCase
                 'Sam',
                 new Env(['name' => new StringObj('')])
             ],
+            [
+                '{{ !$isUgly ? "Pretty" : "Ugly" }}',
+                'Pretty',
+                new Env(['isUgly' => new BooleanObj(true)])
+            ],
         ];
     }
 
