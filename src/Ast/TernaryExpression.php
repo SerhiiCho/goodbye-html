@@ -27,6 +27,6 @@ readonly class TernaryExpression implements Expression
         $con = $this->consequence->string();
         $alt = $this->alternative->string();
 
-        return "{{ {$cond} ? {$con} : {$alt} }}";
+        return "(({$cond}) ? {$con} : {$alt})";
     }
 }
