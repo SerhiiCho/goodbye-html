@@ -59,6 +59,8 @@ class Lexer
                 return $this->createTokenAndAdvanceChar(TokenType::COLON, $this->char);
             case '!':
                 return $this->createTokenAndAdvanceChar(TokenType::NOT, $this->char);
+            case '.':
+                return $this->createTokenAndAdvanceChar(TokenType::CONCAT, $this->char);
         }
 
         if ($this->isVariableStart()) {

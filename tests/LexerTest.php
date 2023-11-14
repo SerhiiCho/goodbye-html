@@ -26,27 +26,26 @@ function tokenizeString(string $input, array $expect): void
 
 test('lexing strings', function () {
     $input = <<<HTML
-    <div>
-        <h2>{{ 'Hello world!' }}</h2>
-        <h3>{{ "Good luck!" }}</h3>
-        <h4>{{ "Good \"luck!\"" }}</h4>
-    </div>
+    {{ 'Hello world!' }}
+    {{ "Good luck!" }}
+    {{ "Good \"luck!\"" . ' Anna' }}
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::HTML, "<div>\n    <h2>"),
         new Token(TokenType::OPENING_BRACES, "{{"),
         new Token(TokenType::STRING, "Hello world!"),
         new Token(TokenType::CLOSING_BRACES, "}}"),
-        new Token(TokenType::HTML, "</h2>\n    <h3>"),
+        new Token(TokenType::HTML, "\n"),
         new Token(TokenType::OPENING_BRACES, "{{"),
         new Token(TokenType::STRING, "Good luck!"),
         new Token(TokenType::CLOSING_BRACES, "}}"),
-        new Token(TokenType::HTML, "</h3>\n    <h4>"),
+        new Token(TokenType::HTML, "\n"),
         new Token(TokenType::OPENING_BRACES, "{{"),
         new Token(TokenType::STRING, 'Good "luck!"'),
+        new Token(TokenType::CONCAT, "."),
+        new Token(TokenType::STRING, " Anna"),
         new Token(TokenType::CLOSING_BRACES, "}}"),
-        new Token(TokenType::HTML, "</h4>\n</div>"),
+
         new Token(TokenType::EOF, ""),
     ]);
 });
