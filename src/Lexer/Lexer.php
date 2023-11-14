@@ -7,7 +7,7 @@ namespace Serhii\GoodbyeHtml\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
-final class Lexer
+class Lexer
 {
     private readonly string $input;
     private int $position = 0;
@@ -59,6 +59,8 @@ final class Lexer
                 return $this->createTokenAndAdvanceChar(TokenType::COLON, $this->char);
             case '!':
                 return $this->createTokenAndAdvanceChar(TokenType::NOT, $this->char);
+            case '.':
+                return $this->createTokenAndAdvanceChar(TokenType::CONCAT, $this->char);
         }
 
         if ($this->isVariableStart()) {

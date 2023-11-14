@@ -10,6 +10,7 @@ use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Obj\Env;
@@ -35,45 +36,25 @@ readonly class Evaluator
 {
     public function eval(Node $node, Env $env): Obj
     {
-        if ($node instanceof IntegerLiteral) {
-            return new IntegerObj($node->value);
-        } elseif ($node instanceof FloatLiteral) {
-            return new FloatObj($node->value);
-        } elseif ($node instanceof StringLiteral) {
-            return new StringObj($node->value);
-        } elseif ($node instanceof HtmlStatement) {
-            return new HtmlObj($node->string());
-        } elseif ($node instanceof BooleanExpression) {
-            return new BooleanObj($node->value);
-        } elseif ($node instanceof NullLiteral) {
-            return new NullObj();
-        } elseif ($node instanceof Program) {
-            return $this->evalProgram($node, $env);
-        } elseif ($node instanceof ExpressionStatement) {
-            return $this->eval($node->expression, $env);
-        } elseif ($node instanceof PrefixExpression) {
-            $right = $this->eval($node->right, $env);
-
-            if ($right instanceof ErrorObj) {
-                return $right;
-            }
-
-            return $this->evalPrefixExpression($node->operator, $right);
-        } elseif ($node instanceof VariableExpression) {
-            return $this->evalVariableExpression($node, $env);
-        } elseif ($node instanceof IfExpression) {
-            return $this->evalIfExpression($node, $env);
-        } elseif ($node instanceof BlockStatement) {
-            return $this->evalBlockStatement($node, $env);
-        } elseif ($node instanceof LoopExpression) {
-            return $this->evalLoopExpression($node, $env);
-        } elseif ($node instanceof ErrorObj) {
-            return $node;
-        } elseif ($node instanceof TernaryExpression) {
-            return $this->evalTernaryExpression($node, $env);
-        }
-
-        return EvalError::unknownType($node);
+        return match (get_class($node)) {
+            IntegerLiteral::class => new IntegerObj($node->value),
+            FloatLiteral::class => new FloatObj($node->value),
+            StringLiteral::class => new StringObj($node->value),
+            HtmlStatement::class => new HtmlObj($node->string()),
+            BooleanExpression::class => new BooleanObj($node->value),
+            NullLiteral::class => new NullObj(),
+            Program::class => $this->evalProgram($node, $env),
+            ExpressionStatement::class => $this->eval($node->expression, $env),
+            PrefixExpression::class => $this->evalPrefixExpression($node, $env),
+            InfixExpression::class => $this->evalInfixExpression($node, $env),
+            VariableExpression::class => $this->evalVariableExpression($node, $env),
+            IfExpression::class => $this->evalIfExpression($node, $env),
+            BlockStatement::class => $this->evalBlockStatement($node, $env),
+            LoopExpression::class => $this->evalLoopExpression($node, $env),
+            ErrorObj::class => $node,
+            TernaryExpression::class => $this->evalTernaryExpression($node, $env),
+            default => EvalError::unknownType($node),
+        };
     }
 
     private function evalProgram(Program $program, Env $env): Obj
@@ -93,15 +74,43 @@ readonly class Evaluator
         return new HtmlObj($html);
     }
 
-    private function evalPrefixExpression(string $operator, Obj $right): Obj
+    private function evalPrefixExpression(PrefixExpression $node, Env $env): Obj
     {
-        switch ($operator) {
+        $right = $this->eval($node->right, $env);
+
+        if ($right instanceof ErrorObj) {
+            return $right;
+        }
+
+        switch ($node->operator) {
             case '-':
                 return $this->evalMinusPrefixOperatorExpression($right);
             case '!':
                 return new BooleanObj(!$right->value());
             default:
-                return EvalError::operatorNotAllowed($operator, $right);
+                return EvalError::operatorNotAllowed($node->operator, $right);
+        }
+    }
+
+    private function evalInfixExpression(InfixExpression $node, Env $env): Obj
+    {
+        $right = $this->eval($node->right, $env);
+
+        if ($right instanceof ErrorObj) {
+            return $right;
+        }
+
+        $left = $this->eval($node->left, $env);
+
+        if ($left instanceof ErrorObj) {
+            return $left;
+        }
+
+        switch ($node->operator) {
+            case '.':
+                return new StringObj($left->value() . $right->value());
+            default:
+                return EvalError::operatorNotAllowed($node->operator, $right);
         }
     }
 

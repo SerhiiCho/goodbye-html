@@ -34,6 +34,7 @@ enum TokenType: string
 
     // Infix and Prefix operators
     case MINUS = '-';
+    case CONCAT = '.';
 
     // Delimiters
     case OPENING_BRACES = '{{';

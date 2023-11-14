@@ -6,6 +6,6 @@ namespace Serhii\GoodbyeHtml\Exceptions;
 
 use Exception;
 
-final class EvaluatorException extends Exception
+class EvaluatorException extends Exception
 {
 }

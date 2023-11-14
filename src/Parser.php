@@ -16,7 +16,7 @@ use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
 use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
 use Serhii\GoodbyeHtml\Exceptions\ParserException;
 
-final readonly class Parser
+readonly class Parser
 {
     /**
      * @var string The content that is being parsed

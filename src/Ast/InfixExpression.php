@@ -24,7 +24,7 @@ readonly class InfixExpression implements Expression
     public function string(): string
     {
         return sprintf(
-            '{{ (%s %s %s) }}',
+            '(%s %s %s)',
             $this->left->string(),
             $this->operator,
             $this->right->string(),

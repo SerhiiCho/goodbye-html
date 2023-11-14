@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Ast;
 
-final readonly class Program implements Statement
+readonly class Program implements Statement
 {
     /**
      * @param Statement[] $statements
