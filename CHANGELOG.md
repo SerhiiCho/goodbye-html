@@ -4,7 +4,7 @@
 
 ----
 
-## v2.3.0 (2023-11-13)
+## v2.3.0 (2023-11-14)
 
 - Removed `final` keyword from all the classes to make it easier to extend the package
 - Introduced Pratt Parsing

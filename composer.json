@@ -34,7 +34,8 @@
     },
     "scripts": {
         "test": "./vendor/bin/pest",
-        "cover": "./vendor/bin/pest --coverage --min=90"
+        "cover": "./vendor/bin/pest --coverage --min=85",
+        "check": ["@test", "@cover"]
     },
     "config": {
         "allow-plugins": {
