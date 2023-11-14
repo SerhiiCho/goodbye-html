@@ -7,6 +7,7 @@ use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\NullLiteral;
@@ -263,6 +264,31 @@ test('parsing strings', function () {
     $str = $program->statements[0]->expression;
 
     testString($str, 'hello');
+});
+
+test('parsing concatenation of strings', function () {
+    $input = "{{ 'Serhii' . ' ' . 'Cho' }}";
+
+    $lexer = new Lexer($input);
+    $parser = new CoreParser($lexer);
+
+    $program = $parser->parseProgram();
+
+    checkForErrors($parser, $program->statements, 1);
+
+    /** @var InfixExpression $infix */
+    $infix = $program->statements[0]->expression;
+
+    testString($infix->left, 'Serhii');
+    expect($infix->operator)->toBe('.');
+
+    /** @var InfixExpression $infix */
+    $infix = $infix->right;
+
+    expect($infix)->toBeInstanceOf(InfixExpression::class);
+
+    testString($infix->left, ' ');
+    testString($infix->right, 'Cho');
 });
 
 test('parsing ternary expression', function () {

@@ -12,6 +12,7 @@ use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Ast\NullLiteral;
@@ -31,9 +32,10 @@ class CoreParser
         // TokenType::EQUAL->value => Precedence::EQUALS,
         // TokenType::NOT_EQUAL->value => Precedence::EQUALS,
         // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
+        TokenType::QUESTION_MARK->value => Precedence::TERNARY,
         // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
         // TokenType::PLUS->value => Precedence::SUM,
-        TokenType::QUESTION_MARK->value => Precedence::TERNARY,
+        TokenType::CONCAT->value => Precedence::SUM,
         TokenType::MINUS->value => Precedence::SUM,
         // TokenType::SLASH->value => Precedence::PRODUCT,
         // TokenType::ASTERISK->value => Precedence::PRODUCT,
@@ -74,6 +76,7 @@ class CoreParser
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));
+        $this->registerInfix(TokenType::CONCAT, fn ($l) => $this->parseInfixExpression($l));
     }
 
     public function parseProgram(): Program
@@ -189,6 +192,11 @@ class CoreParser
         return $token === $this->peekToken->type;
     }
 
+    private function currentPrecedence(): Precedence
+    {
+        return self::PRECEDENCES[$this->curToken->type->value] ?? Precedence::LOWEST;
+    }
+
     /**
      * Checks the precedence of the next token
      */
@@ -282,6 +290,27 @@ class CoreParser
             $condition,
             $consequence,
             $alternative,
+        );
+    }
+
+    private function parseInfixExpression(Expression $left): Expression
+    {
+        $token = $this->curToken;
+        $operator = $this->curToken->literal;
+
+        $this->nextToken();
+
+        $precedence = $this->currentPrecedence();
+
+        $right = $this->parseExpression($precedence);
+
+        $this->nextToken();
+
+        return new InfixExpression(
+            token: $token,
+            left: $left,
+            operator: $operator,
+            right: $right,
         );
     }
 
