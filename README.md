@@ -15,7 +15,7 @@ A very simple package for separating PHP logic from HTML or any other text. It a
 This package is useful when you need to separate PHP logic from HTML or any other text. For example if you need to send an email with some dynamic content, you can create a template file with HTML and insert variables, if/else statements, loops and ternary operators into it. Then you can pass this file to the parser and get parsed content of this file as a string. Then you can use this string as a content of your email.
 
 ## What is it not for?
-This package is not for creating a full featured template engine. It's just a simple parser that allows you to insert some PHP logic into any text file. It's not for creating a full featured template engine like [Twig](https://twig.symfony.com/), [Blade](https://laravel.com/docs/8.x/blade), [Smarty](https://www.smarty.net/) or [Latte](https://latte.nette.org/en/). If you need a full featured template engine, you should use one of the mentioned above.
+This package is not for creating a full featured template engine. It's just a simple parser that allows you to insert some PHP logic into any text file. It's not for creating a full featured template engine like [Twig](https://twig.symfony.com/), [Blade](https://laravel.com/docs/8.x/blade) or [Latte](https://latte.nette.org/en/). If you need a full featured template engine, you should use one of the mentioned above.
 
 ## What Goodbye HTML has?
 - [x] Variables
