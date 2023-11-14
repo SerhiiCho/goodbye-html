@@ -53,7 +53,7 @@ function testFloat($float, $val)
     expect($float->value)->toBe($val);
 }
 
-test('parsing variables', function () {
+test('parse variable', function () {
     $input = '{{ $userName }}';
 
     $lexer = new Lexer($input);
@@ -71,7 +71,7 @@ test('parsing variables', function () {
     expect($var->string())->toBe('$userName', "Variable must have string representation '\$userName', got: '{$var->string()}'");
 });
 
-test('parsing html', function () {
+test('parse html', function () {
     $input = '<div class="nice"></div>';
 
     $lexer = new Lexer($input);
@@ -87,7 +87,7 @@ test('parsing html', function () {
     expect($stmt->string())->toBe('<div class="nice"></div>');
 });
 
-test('boolean expressions', function (string $input, string $expect) {
+test('parse boolean expression', function (string $input, string $expect) {
     $lexer = new Lexer($input);
     $parser = new CoreParser($lexer);
 
@@ -109,7 +109,7 @@ dataset('providerForTestBooleanExpressions', function () {
     ];
 });
 
-test('parsing if expression', function () {
+test('parse if expression', function () {
     $input = <<<HTML
     {{ if true }}
         <h1>I'm not a pro but it's only a matter of time</h1>
@@ -134,7 +134,7 @@ test('parsing if expression', function () {
     expect($if->alternative)->toBeNull();
 });
 
-test('parsing nested if statement', function () {
+test('parse nested if expressions', function () {
     $input = <<<HTML
     {{ if \$uses_php }}You are a cool{{ if \$male }}guy{{ end }}{{ end }}
     HTML;
@@ -170,7 +170,7 @@ test('parsing nested if statement', function () {
     testVariable($if->condition, 'male');
 });
 
-test('parsing else statement', function () {
+test('parse else statement', function () {
     $input = <<<HTML
     {{ if \$underAge }}<span>You are too young to be here</span>{{ else }}<span>You can drink beer</span>{{ end }}
     HTML;
@@ -191,7 +191,7 @@ test('parsing else statement', function () {
     expect($if->alternative->string())->toBe("<span>You can drink beer</span>");
 });
 
-test('parsing integer literal', function () {
+test('parse integer literal', function () {
     $input = '{{ 5 }}';
 
     $lexer = new Lexer($input);
@@ -207,7 +207,7 @@ test('parsing integer literal', function () {
     testInteger($stmt->expression, 5);
 });
 
-test('parsing float literal', function () {
+test('parse float literal', function () {
     $input = '{{ 1.40123 }}';
 
     $lexer = new Lexer($input);
@@ -223,7 +223,7 @@ test('parsing float literal', function () {
     testFloat($stmt->expression, 1.40123);
 });
 
-test('parsing loop expression', function () {
+test('parse loop expression', function () {
     $input = <<<HTML
     {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
     HTML;
@@ -250,7 +250,7 @@ test('parsing loop expression', function () {
     expect($stmts[2]->string())->toBe("</a></li>");
 });
 
-test('parsing strings', function () {
+test('parse strings', function () {
     $input = "{{ 'hello' }}";
 
     $lexer = new Lexer($input);
@@ -266,7 +266,7 @@ test('parsing strings', function () {
     testString($str, 'hello');
 });
 
-test('parsing concatenation of strings', function () {
+test('parse string concatenation', function () {
     $input = "{{ 'Serhii' . ' ' . 'Cho' }}";
 
     $lexer = new Lexer($input);
@@ -291,7 +291,7 @@ test('parsing concatenation of strings', function () {
     testString($infix->right, 'Cho');
 });
 
-test('parsing ternary expression', function () {
+test('parse ternary expression', function () {
     $input = "{{ \$hasContainer ? 'container' : '' }}";
 
     $lexer = new Lexer($input);
@@ -311,7 +311,7 @@ test('parsing ternary expression', function () {
     testString($ternary->alternative, '');
 });
 
-test('prefix expressions', function (string $input, string $operator, $expect) {
+test('parse prefix expressions', function (string $input, string $operator, $expect) {
     $lexer = new Lexer($input);
     $parser = new CoreParser($lexer);
 
@@ -335,7 +335,7 @@ dataset('providerForTestPrefixExpressions', function () {
     ];
 });
 
-test('test parsing null', function () {
+test('parse null literal', function () {
     $input = '{{ null }}';
 
     $lexer = new Lexer($input);
