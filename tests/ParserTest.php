@@ -31,17 +31,21 @@ test('parser can parse text directly', function () {
     She is {{ if \$isNice }}nice{{ else }}not nice{{ end }}.
     He has {{ \$cats ? \$cats : 'no' }} cats.
     He is {{ !false ? 'funny' : 'not funny' }}.
+    {{ \$name . ' and ' . 'Shayla' . ' are from the movie ' . \$movie . '!' }}
     TEXT;
 
     $expect = <<<TEXT
     She is nice.
     He has no cats.
     He is funny.
+    Elliot and Shayla are from the movie Mr. Robot!
     TEXT;
 
     $parser = new Parser($input, [
         'isNice' => true,
         'cats' => null,
+        'name' => 'Elliot',
+        'movie' => 'Mr. Robot',
     ]);
 
     expect($parser->parseHtml())->toBe($expect);
