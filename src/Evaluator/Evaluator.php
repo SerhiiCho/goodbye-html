@@ -10,6 +10,7 @@ use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
 use Serhii\GoodbyeHtml\Obj\Env;
@@ -59,6 +60,8 @@ readonly class Evaluator
             }
 
             return $this->evalPrefixExpression($node->operator, $right);
+        } elseif ($node instanceof InfixExpression) {
+            return $this->evalInfixExpression($node, $env);
         } elseif ($node instanceof VariableExpression) {
             return $this->evalVariableExpression($node, $env);
         } elseif ($node instanceof IfExpression) {
@@ -102,6 +105,28 @@ readonly class Evaluator
                 return new BooleanObj(!$right->value());
             default:
                 return EvalError::operatorNotAllowed($operator, $right);
+        }
+    }
+
+    private function evalInfixExpression(InfixExpression $node, Env $env): Obj
+    {
+        $right = $this->eval($node->right, $env);
+
+        if ($right instanceof ErrorObj) {
+            return $right;
+        }
+
+        $left = $this->eval($node->left, $env);
+
+        if ($left instanceof ErrorObj) {
+            return $left;
+        }
+
+        switch ($node->operator) {
+            case '.':
+                return new StringObj($left->value() . $right->value());
+            default:
+                return EvalError::operatorNotAllowed($node->operator, $right);
         }
     }
 

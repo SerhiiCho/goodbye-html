@@ -92,6 +92,7 @@ dataset('providerForTestEvalStringExpression', function () {
         ['{{ "Anna Korotchaeva" }}', 'Anna Korotchaeva'],
         ["{{ 'Anna \'Korotchaeva\'' }}", "Anna 'Korotchaeva'"],
         ['{{ "Serhii \"Cho\"" }}', 'Serhii "Cho"'],
+        ['{{ "Serhii" . " " . "Cho"  }}', 'Serhii Cho'],
     ];
 });
 

@@ -10,6 +10,7 @@
 - Introduced Pratt Parsing
 - Replaced PHPUnit with Pest testing framework
 - Fixed bug with wrong ternary expression precedence. Negation operator (!) was negating the whole ternary expression instead of the boolean part of it. Now, the negation operator (!) will negate only the boolean part of the ternary expression. Before: `(!(true ? 1 : 0))`. After: `((!true) ? 1 : 0)`.
+- Added concatenation for strings. Now you can use it like this: `{{ 'Serhii ' . ' Cho' }}`
 
 ----
 
