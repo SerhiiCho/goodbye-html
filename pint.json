@@ -15,6 +15,9 @@
         "combine_consecutive_unsets": true,
         "no_multiline_whitespace_around_double_arrow": true,
         "fully_qualified_strict_types": true,
+        "curly_braces_position": {
+           "functions_opening_brace": "same_line" 
+        },
         "method_chaining_indentation": true,
         "php_unit_method_casing": {
             "case": "camel_case"

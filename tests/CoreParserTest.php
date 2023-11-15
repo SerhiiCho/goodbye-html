@@ -21,34 +21,29 @@ use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 /**
  * @param ExpressionStatement[] $stmt
  */
-function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
-{
+function checkForErrors(CoreParser $parser, array $stmt, int $statements): void {
     $errors = $parser->errors();
 
     expect($errors)->toBeEmpty(implode("\n", $errors));
     expect($stmt)->toHaveCount($statements, "Program must contain {$statements} statements");
 }
 
-function testVariable($var, string $val)
-{
+function testVariable($var, string $val) {
     expect($var)->toBeInstanceOf(VariableExpression::class);
     expect($var->value)->toBe($val);
 }
 
-function testString($str, string $val)
-{
+function testString($str, string $val) {
     expect($str)->toBeInstanceOf(StringLiteral::class);
     expect($str->value)->toBe($val);
 }
 
-function testInteger($int, $val)
-{
+function testInteger($int, $val) {
     expect($int)->toBeInstanceOf(IntegerLiteral::class);
     expect($int->value)->toBe($val);
 }
 
-function testFloat($float, $val)
-{
+function testFloat($float, $val) {
     expect($float)->toBeInstanceOf(FloatLiteral::class);
     expect($float->value)->toBe($val);
 }
@@ -264,6 +259,27 @@ test('parse strings', function () {
     $str = $program->statements[0]->expression;
 
     testString($str, 'hello');
+});
+
+test('parse infix expressions', function (string $inp, mixed $left, string $operator, mixed $right) {
+    $lexer = new Lexer($inp);
+    $parser = new CoreParser($lexer);
+    $program = $parser->parseProgram();
+
+    checkForErrors($parser, $program->statements, 1);
+
+    /** @var InfixExpression $infix */
+    $infix = $program->statements[0]->expression;
+
+    expect($infix)->toBeInstanceOf(InfixExpression::class);
+
+    // todo: here
+});
+
+dataset('provider for parse infix expression', function () {
+    return [
+        ['{{ 5 + 3 }}', 5, '+', 3],
+    ];
 });
 
 test('parse string concatenation', function () {
