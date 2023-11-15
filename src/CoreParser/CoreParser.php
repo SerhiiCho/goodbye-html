@@ -34,7 +34,7 @@ class CoreParser
         // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
         // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
         TokenType::QUESTION->value => Precedence::TERNARY,
-        TokenType::CONCAT->value => Precedence::SUM,
+        TokenType::PERIOD->value => Precedence::SUM,
         TokenType::PLUS->value => Precedence::SUM,
         TokenType::MINUS->value => Precedence::SUM,
         TokenType::SLASH->value => Precedence::PRODUCT,
@@ -77,7 +77,7 @@ class CoreParser
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION, fn ($l) => $this->parseTernaryExpression($l));
-        $this->registerInfix(TokenType::CONCAT, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::PERIOD, fn ($l) => $this->parseInfixExpression($l));
         $this->registerInfix(TokenType::PLUS, fn ($l) => $this->parseInfixExpression($l));
         $this->registerInfix(TokenType::MINUS, fn ($l) => $this->parseInfixExpression($l));
         $this->registerInfix(TokenType::SLASH, fn ($l) => $this->parseInfixExpression($l));

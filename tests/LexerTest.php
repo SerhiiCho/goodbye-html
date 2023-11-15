@@ -42,7 +42,7 @@ test('lexing strings', function () {
         new Token(TokenType::HTML, "\n"),
         new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::STR, 'Good "luck!"'),
-        new Token(TokenType::CONCAT, "."),
+        new Token(TokenType::PERIOD, "."),
         new Token(TokenType::STR, " Anna"),
         new Token(TokenType::RBRACES, "}}"),
 

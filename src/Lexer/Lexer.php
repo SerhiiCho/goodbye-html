@@ -58,7 +58,7 @@ class Lexer
             '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
             '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
-            '.' => $this->createTokenAndAdvanceChar(TokenType::CONCAT),
+            '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
             default => false,
         };
 

@@ -26,7 +26,7 @@ enum TokenType: string
     case ASTERISK = '*';
     case SLASH = '/';
     case MODULO = '%';
-    case CONCAT = '.';
+    case PERIOD = '.';
     case BANG = "!";
 
     // Delimiters
