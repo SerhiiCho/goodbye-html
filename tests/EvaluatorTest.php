@@ -16,6 +16,21 @@ use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
+function testEval(string $input, ?Env $env = null)
+{
+    $lexer = new Lexer($input);
+    $parser = new CoreParser($lexer);
+    $program = $parser->parseProgram();
+
+    $errors = $parser->errors();
+
+    expect($errors)->toBeEmpty(implode("\n", $errors));
+
+    $evaluator = new Evaluator();
+
+    return $evaluator->eval($program, $env ?? new Env());
+}
+
 test('eval integer expression', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
@@ -246,17 +261,23 @@ test('eval null test', function () {
     expect($evaluated->value())->toBe('<span></span>');
 });
 
-function testEval(string $input, ?Env $env = null)
-{
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-    $program = $parser->parseProgram();
+test('eval infix expressions', function (string $input, string $expected) {
+    $evaluated = testEval($input);
 
-    $errors = $parser->errors();
+    if ($evaluated instanceof ErrorObj) {
+        $this->fail($evaluated->message);
+    }
 
-    expect($errors)->toBeEmpty(implode("\n", $errors));
-
-    $evaluator = new Evaluator();
-
-    return $evaluator->eval($program, $env ?? new Env());
-}
+    expect($evaluated?->value())->toBe($expected);
+})->with(function () {
+    return [
+        ["{{ 51 + 9 }}", '60'],
+        ["{{ 51 - 1 }}", '50'],
+        ["{{ 51 * 2 }}", '102'],
+        ["{{ 100 / 4 }}", '25'],
+        ["{{ 10 % 2 }}", '0'],
+        ["{{ 10 % 3 }}", '1'],
+        ["{{ 100 / 2 * 2 }}", '25'],
+        ["{{ 100 * 2 / 2 - 50 }}", '50'],
+    ];
+});

@@ -109,9 +109,24 @@ readonly class Evaluator
         switch ($node->operator) {
             case '.':
                 return new StringObj($left->value() . $right->value());
+            case '+':
+                return $this->getNumberObject($left->value() + $right->value());
+            case '-':
+                return $this->getNumberObject($left->value() - $right->value());
+            case '*':
+                return $this->getNumberObject($left->value() * $right->value());
+            case '/':
+                return $this->getNumberObject($left->value() / $right->value());
+            case '%':
+                return $this->getNumberObject($left->value() % $right->value());
             default:
                 return EvalError::operatorNotAllowed($node->operator, $right);
         }
+    }
+
+    private function getNumberObject(int|float $num): Obj
+    {
+        return is_int($num) ? new IntegerObj($num) : new FloatObj($num);
     }
 
     private function evalVariableExpression(VariableExpression $node, Env $env): Obj
