@@ -50,7 +50,7 @@ class Lexer
     {
         switch ($this->char) {
             case '-':
-                return $this->createTokenAndAdvanceChar(TokenType::MINUS, $this->char);
+                return $this->createTokenAndAdvanceChar(TokenType::SUB, $this->char);
             case ',':
                 return $this->createTokenAndAdvanceChar(TokenType::COMMA, $this->char);
             case '?':

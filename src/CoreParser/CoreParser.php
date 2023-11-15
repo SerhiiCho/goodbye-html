@@ -36,7 +36,7 @@ class CoreParser
         // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
         // TokenType::PLUS->value => Precedence::SUM,
         TokenType::CONCAT->value => Precedence::SUM,
-        TokenType::MINUS->value => Precedence::SUM,
+        TokenType::SUB->value => Precedence::SUM,
         // TokenType::SLASH->value => Precedence::PRODUCT,
         // TokenType::ASTERISK->value => Precedence::PRODUCT,
         // TokenType::LEFT_PAREN->value => Precedence::CALL,
@@ -72,7 +72,7 @@ class CoreParser
         $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBoolean());
         $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBoolean());
-        $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
+        $this->registerPrefix(TokenType::SUB, fn () => $this->parsePrefixExpression());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));

@@ -33,8 +33,7 @@ enum TokenType: string
     case NOT = "!";
 
     // Infix and Prefix operators
-    case MINUS = '-';
-    case CONCAT = '.';
+    case SUB = '-';
 
     // Delimiters
     case OPENING_BRACES = '{{';

@@ -62,7 +62,7 @@ test('lexing integers', function () {
         new Token(TokenType::CLOSING_BRACES, "}}"),
         new Token(TokenType::HTML, " and "),
         new Token(TokenType::OPENING_BRACES, "{{"),
-        new Token(TokenType::MINUS, "-"),
+        new Token(TokenType::SUB, "-"),
         new Token(TokenType::INTEGER, "4"),
         new Token(TokenType::CLOSING_BRACES, "}}"),
         new Token(TokenType::HTML, "</h1>"),
@@ -82,7 +82,7 @@ test('lexing floats', function () {
         new Token(TokenType::CLOSING_BRACES, "}}"),
         new Token(TokenType::HTML, " and "),
         new Token(TokenType::OPENING_BRACES, "{{"),
-        new Token(TokenType::MINUS, "-"),
+        new Token(TokenType::SUB, "-"),
         new Token(TokenType::FLOAT, "1.3"),
         new Token(TokenType::CLOSING_BRACES, "}}"),
         new Token(TokenType::HTML, "</h1>"),
@@ -339,6 +339,26 @@ test('lexing null', function () {
         new Token(TokenType::NULL, "null"),
         new Token(TokenType::CLOSING_BRACES, "}}"),
         new Token(TokenType::HTML, "</div>"),
+        new Token(TokenType::EOF, ""),
+    ]);
+});
+
+test('lexing math expressions', function () {
+    $input = <<<HTML
+    <h1>{{ 3 }} and {{ -4 }}</h1>
+    HTML;
+
+    tokenizeString($input, [
+        new Token(TokenType::HTML, "<h1>"),
+        new Token(TokenType::OPENING_BRACES, "{{"),
+        new Token(TokenType::INTEGER, "3"),
+        new Token(TokenType::CLOSING_BRACES, "}}"),
+        new Token(TokenType::HTML, " and "),
+        new Token(TokenType::OPENING_BRACES, "{{"),
+        new Token(TokenType::SUB, "-"),
+        new Token(TokenType::INTEGER, "4"),
+        new Token(TokenType::CLOSING_BRACES, "}}"),
+        new Token(TokenType::HTML, "</h1>"),
         new Token(TokenType::EOF, ""),
     ]);
 });
