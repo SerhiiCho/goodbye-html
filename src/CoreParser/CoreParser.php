@@ -32,12 +32,13 @@ class CoreParser
         // TokenType::EQUAL->value => Precedence::EQUALS,
         // TokenType::NOT_EQUAL->value => Precedence::EQUALS,
         // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
-        TokenType::QUESTION->value => Precedence::TERNARY,
         // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
+        TokenType::QUESTION->value => Precedence::TERNARY,
         TokenType::CONCAT->value => Precedence::SUM,
         TokenType::PLUS->value => Precedence::SUM,
         TokenType::MINUS->value => Precedence::SUM,
         TokenType::SLASH->value => Precedence::PRODUCT,
+        TokenType::MODULO->value => Precedence::PRODUCT,
         TokenType::ASTERISK->value => Precedence::PRODUCT,
         // TokenType::LEFT_PAREN->value => Precedence::CALL,
         // TokenType::LEFT_BRACKET->value => Precedence::INDEX,
@@ -77,6 +78,11 @@ class CoreParser
         // Infix operators
         $this->registerInfix(TokenType::QUESTION, fn ($l) => $this->parseTernaryExpression($l));
         $this->registerInfix(TokenType::CONCAT, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::PLUS, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::MINUS, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::SLASH, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::ASTERISK, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::MODULO, fn ($l) => $this->parseInfixExpression($l));
     }
 
     public function parseProgram(): Program

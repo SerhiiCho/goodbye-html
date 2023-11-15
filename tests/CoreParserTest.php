@@ -69,6 +69,7 @@ function testLiteralExpression(Expression $expression, mixed $expected)
         'double' => testFloat($expression, $expected),
         'boolean' => testBoolean($expression, $expected),
         'NULL' => expect($expression)->toBeInstanceOf(NullLiteral::class),
+        default => throw new Exception("Type {$expected} is not handled. Got: {$expected}"),
     };
 }
 
@@ -301,6 +302,11 @@ test('parse infix expressions', function (string $inp, mixed $left, string $oper
 })->with(function () {
     return [
         ['{{ 5 + 3 }}', 5, '+', 3],
+        ['{{ 123 - 23 }}', 123, '-', 23],
+        ['{{ 46 * 7 }}', 46, '*', 7],
+        ['{{ 89 / 1 }}', 89, '/', 1],
+        ['{{ 22 % 2 }}', 22, '%', 2],
+        ['{{ "nice" . "cool" }}', "nice", '.', "cool"],
     ];
 });
 
