@@ -32,7 +32,7 @@ class CoreParser
         // TokenType::EQUAL->value => Precedence::EQUALS,
         // TokenType::NOT_EQUAL->value => Precedence::EQUALS,
         // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
-        TokenType::QUESTION_MARK->value => Precedence::TERNARY,
+        TokenType::QUEST_MARK->value => Precedence::TERNARY,
         // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
         // TokenType::PLUS->value => Precedence::SUM,
         TokenType::CONCAT->value => Precedence::SUM,
@@ -75,7 +75,7 @@ class CoreParser
         $this->registerPrefix(TokenType::SUB, fn () => $this->parsePrefixExpression());
 
         // Infix operators
-        $this->registerInfix(TokenType::QUESTION_MARK, fn ($l) => $this->parseTernaryExpression($l));
+        $this->registerInfix(TokenType::QUEST_MARK, fn ($l) => $this->parseTernaryExpression($l));
         $this->registerInfix(TokenType::CONCAT, fn ($l) => $this->parseInfixExpression($l));
     }
 
@@ -125,7 +125,7 @@ class CoreParser
     {
         return match($this->curToken->type) {
             TokenType::HTML => $this->parseHtmlStatement(),
-            TokenType::OPENING_BRACES => $this->parseExpressionStatement(),
+            TokenType::OPEN_BRACE => $this->parseExpressionStatement(),
             default => null,
         };
     }
@@ -142,7 +142,7 @@ class CoreParser
         $expr = $this->parseExpression(Precedence::LOWEST);
         $result = new ExpressionStatement($this->curToken, $expr);
 
-        if ($this->peekTokenIs(TokenType::CLOSING_BRACES)) {
+        if ($this->peekTokenIs(TokenType::CLOSE_BRACE)) {
             $this->nextToken();
         }
 
@@ -165,7 +165,7 @@ class CoreParser
         $leftExp = $prefix();
 
         while (
-            !$this->peekTokenIs(TokenType::CLOSING_BRACES)
+            !$this->peekTokenIs(TokenType::CLOSE_BRACE)
             && $precedence->value < $this->peekPrecedence()->value
         ) {
             $infix = $this->infixParseFns[$this->peekToken->type->value] ?? null;
@@ -268,7 +268,7 @@ class CoreParser
 
         $condition = $this->parseExpression(Precedence::LOWEST);
 
-        if (!$this->expectPeek(TokenType::CLOSING_BRACES)) {
+        if (!$this->expectPeek(TokenType::CLOSE_BRACE)) {
             return null;
         }
 
@@ -354,7 +354,7 @@ class CoreParser
 
         $to = $this->parseExpression(Precedence::LOWEST);
 
-        if (!$this->expectPeek(TokenType::CLOSING_BRACES)) {
+        if (!$this->expectPeek(TokenType::CLOSE_BRACE)) {
             return null;
         }
 
@@ -366,7 +366,7 @@ class CoreParser
             return null;
         }
 
-        if (!$this->expectPeek(TokenType::CLOSING_BRACES)) { // skip "end"
+        if (!$this->expectPeek(TokenType::CLOSE_BRACE)) { // skip "end"
             return null;
         }
 
@@ -379,7 +379,7 @@ class CoreParser
         $token = $this->curToken;
 
         while (true) {
-            $isOpening = $this->curTokenIs(TokenType::OPENING_BRACES);
+            $isOpening = $this->curTokenIs(TokenType::OPEN_BRACE);
             $isPeekEnd = $this->peekTokenIs(TokenType::END);
             $isPeekElse = $this->peekTokenIs(TokenType::ELSE);
 

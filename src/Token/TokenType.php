@@ -43,9 +43,9 @@ enum TokenType: string
     case MOD = '%';
 
     // Delimiters
-    case OPENING_BRACES = '{{';
-    case CLOSING_BRACES = '}}';
-    case QUESTION_MARK = '?';
+    case OPEN_BRACE = '{{';
+    case CLOSE_BRACE = '}}';
+    case QUEST_MARK = '?';
     case COMMA = ',';
     case COLON = ':';
 

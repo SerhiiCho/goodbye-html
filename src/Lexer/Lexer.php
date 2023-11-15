@@ -29,16 +29,16 @@ class Lexer
 
         if ($this->char === 0) {
             return new Token(TokenType::EOF, '');
-        } elseif ($this->areOpeningBraces()) {
+        } elseif ($this->char === '{' && $this->peekChar() === '{') {
             $this->isHtml = false;
             $this->advanceChar();
             $this->advanceChar();
-            return new Token(TokenType::OPENING_BRACES, '{{');
-        } elseif ($this->areClosingBraces()) {
+            return new Token(TokenType::OPEN_BRACE, '{{');
+        } elseif ($this->char === '}' && $this->peekChar() === '}') {
             $this->isHtml = true;
             $this->advanceChar();
             $this->advanceChar();
-            return new Token(TokenType::CLOSING_BRACES, '}}');
+            return new Token(TokenType::CLOSE_BRACE, '}}');
         }
 
         return $this->isHtml
@@ -54,7 +54,7 @@ class Lexer
             case ',':
                 return $this->createTokenAndAdvanceChar(TokenType::COMMA, $this->char);
             case '?':
-                return $this->createTokenAndAdvanceChar(TokenType::QUESTION_MARK, $this->char);
+                return $this->createTokenAndAdvanceChar(TokenType::QUEST_MARK, $this->char);
             case ':':
                 return $this->createTokenAndAdvanceChar(TokenType::COLON, $this->char);
             case '!':
@@ -122,16 +122,6 @@ class Lexer
         $this->advanceChar();
 
         return $token;
-    }
-
-    private function areOpeningBraces(): bool
-    {
-        return $this->char === '{' && $this->peekChar() === '{';
-    }
-
-    private function areClosingBraces(): bool
-    {
-        return $this->char === '}' && $this->peekChar() === '}';
     }
 
     private function advanceChar(): void
