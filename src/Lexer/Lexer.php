@@ -48,19 +48,22 @@ class Lexer
 
     private function readProgramToken(): Token
     {
-        switch ($this->char) {
-            case '-':
-                return $this->createTokenAndAdvanceChar(TokenType::SUB, $this->char);
-            case ',':
-                return $this->createTokenAndAdvanceChar(TokenType::COMMA, $this->char);
-            case '?':
-                return $this->createTokenAndAdvanceChar(TokenType::QUEST_MARK, $this->char);
-            case ':':
-                return $this->createTokenAndAdvanceChar(TokenType::COLON, $this->char);
-            case '!':
-                return $this->createTokenAndAdvanceChar(TokenType::NOT, $this->char);
-            case '.':
-                return $this->createTokenAndAdvanceChar(TokenType::CONCAT, $this->char);
+        $token = match ($this->char) {
+            '+' => $this->createTokenAndAdvanceChar(TokenType::ADD),
+            '-' => $this->createTokenAndAdvanceChar(TokenType::SUB),
+            '*' => $this->createTokenAndAdvanceChar(TokenType::MUL),
+            '/' => $this->createTokenAndAdvanceChar(TokenType::DIV),
+            '%' => $this->createTokenAndAdvanceChar(TokenType::MOD),
+            ',' => $this->createTokenAndAdvanceChar(TokenType::COMMA),
+            '?' => $this->createTokenAndAdvanceChar(TokenType::QUEST_MARK),
+            ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
+            '!' => $this->createTokenAndAdvanceChar(TokenType::NOT),
+            '.' => $this->createTokenAndAdvanceChar(TokenType::CONCAT),
+            default => false,
+        };
+
+        if ($token) {
+            return $token;
         }
 
         if ($this->isVariableStart()) {
@@ -82,7 +85,7 @@ class Lexer
             return new Token($this->readNumberTokenType($num), $num);
         }
 
-        return $this->createTokenAndAdvanceChar(TokenType::ILLEGAL, $this->char);
+        return $this->createTokenAndAdvanceChar(TokenType::ILLEGAL);
     }
 
     private function isStringStart(): bool
@@ -95,8 +98,9 @@ class Lexer
         return $this->char === '$' && $this->isLetter($this->peekChar());
     }
 
-    private function createTokenAndAdvanceChar(TokenType $type, string $char): Token
+    private function createTokenAndAdvanceChar(TokenType $type, ?string $char = null): Token
     {
+        $char ??= $this->char;
         $this->advanceChar();
         return new Token($type, $char);
     }

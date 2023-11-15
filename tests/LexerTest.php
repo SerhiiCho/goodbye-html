@@ -309,7 +309,7 @@ test('lexing correctly without html', function () {
 
 test('lexing illegal tokens', function () {
     $input = <<<HTML
-    {{ 2.3.4 @ $ % ^ & * ( ) }}
+    {{ 2.3.4 @ $ ^ & ( ) | ~ ` }}
     HTML;
 
     tokenizeString($input, [
@@ -317,12 +317,13 @@ test('lexing illegal tokens', function () {
         new Token(TokenType::ILLEGAL, "2.3.4"),
         new Token(TokenType::ILLEGAL, "@"),
         new Token(TokenType::ILLEGAL, "$"),
-        new Token(TokenType::ILLEGAL, "%"),
         new Token(TokenType::ILLEGAL, "^"),
         new Token(TokenType::ILLEGAL, "&"),
-        new Token(TokenType::ILLEGAL, "*"),
         new Token(TokenType::ILLEGAL, "("),
         new Token(TokenType::ILLEGAL, ")"),
+        new Token(TokenType::ILLEGAL, "|"),
+        new Token(TokenType::ILLEGAL, "~"),
+        new Token(TokenType::ILLEGAL, "`"),
         new Token(TokenType::CLOSE_BRACE, "}}"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -345,20 +346,23 @@ test('lexing null', function () {
 
 test('lexing math expressions', function () {
     $input = <<<HTML
-    <h1>{{ 3 }} and {{ -4 }}</h1>
+    {{ 4 + 5 - 2 * 3 / 4 % 2 }}
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::HTML, "<h1>"),
         new Token(TokenType::OPEN_BRACE, "{{"),
-        new Token(TokenType::INT, "3"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
-        new Token(TokenType::HTML, " and "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
-        new Token(TokenType::SUB, "-"),
         new Token(TokenType::INT, "4"),
+        new Token(TokenType::ADD, "+"),
+        new Token(TokenType::INT, "5"),
+        new Token(TokenType::SUB, "-"),
+        new Token(TokenType::INT, "2"),
+        new Token(TokenType::MUL, "*"),
+        new Token(TokenType::INT, "3"),
+        new Token(TokenType::DIV, "/"),
+        new Token(TokenType::INT, "4"),
+        new Token(TokenType::MOD, "%"),
+        new Token(TokenType::INT, "2"),
         new Token(TokenType::CLOSE_BRACE, "}}"),
-        new Token(TokenType::HTML, "</h1>"),
         new Token(TokenType::EOF, ""),
     ]);
 });
