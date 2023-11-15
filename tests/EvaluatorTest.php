@@ -244,7 +244,7 @@ dataset('providerForTestErrorHandling', function () {
         ],
         [
             '{{ $test }}',
-            EvalError::variableIsUndefined(new VariableExpression(new Token(TokenType::VARIABLE, 'test'), 'test'))->message,
+            EvalError::variableIsUndefined(new VariableExpression(new Token(TokenType::VAR, 'test'), 'test'))->message,
         ],
         [
             '{{ -"hello" }}',

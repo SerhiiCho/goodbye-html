@@ -12,16 +12,16 @@ enum TokenType: string
 
     // Data types
     case HTML = 'HTML';
-    case INTEGER = 'INTEGER';
+    case INT = 'INTEGER';
     case FLOAT = 'FLOAT';
-    case STRING = "string";
+    case STR = "string";
     case TRUE = "true";
     case FALSE = "false";
     case NULL = "null";
 
     // Identifiers
-    case VARIABLE = 'VARIABLE';
-    case IDENTIFIER = 'IDENTIFIER';
+    case VAR = 'VARIABLE';
+    case IDENT = 'IDENTIFIER';
 
     // Control flow keywords
     case IF = 'if';
@@ -61,6 +61,6 @@ enum TokenType: string
 
     public static function lookupIdentifier(string $identifier): self
     {
-        return self::KEYWORDS[$identifier] ?? self::IDENTIFIER;
+        return self::KEYWORDS[$identifier] ?? self::IDENT;
     }
 }

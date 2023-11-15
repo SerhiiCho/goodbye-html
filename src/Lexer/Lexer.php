@@ -65,11 +65,11 @@ class Lexer
 
         if ($this->isVariableStart()) {
             $this->advanceChar();
-            return new Token(TokenType::VARIABLE, $this->readIdentifier());
+            return new Token(TokenType::VAR, $this->readIdentifier());
         }
 
         if ($this->isStringStart()) {
-            return $this->createTokenAndAdvanceChar(TokenType::STRING, $this->readString());
+            return $this->createTokenAndAdvanceChar(TokenType::STR, $this->readString());
         }
 
         if ($this->isLetter($this->char)) {
@@ -108,7 +108,7 @@ class Lexer
             return TokenType::ILLEGAL;
         }
 
-        return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INTEGER;
+        return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INT;
     }
 
     private function readHtmlToken(): Token

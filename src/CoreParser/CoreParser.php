@@ -62,14 +62,14 @@ class CoreParser
         $this->nextToken();
 
         // Prefix operators
-        $this->registerPrefix(TokenType::VARIABLE, fn () => $this->parseVariable());
+        $this->registerPrefix(TokenType::VAR, fn () => $this->parseVariable());
         $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
-        $this->registerPrefix(TokenType::INTEGER, fn () => $this->parseIntegerLiteral());
+        $this->registerPrefix(TokenType::INT, fn () => $this->parseIntegerLiteral());
         $this->registerPrefix(TokenType::NOT, fn () => $this->parsePrefixExpression());
         $this->registerPrefix(TokenType::NULL, fn () => $this->parserNullLiteral());
         $this->registerPrefix(TokenType::FLOAT, fn () => $this->parseFloatLiteral());
-        $this->registerPrefix(TokenType::STRING, fn () => $this->parseStringLiteral());
+        $this->registerPrefix(TokenType::STR, fn () => $this->parseStringLiteral());
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBoolean());
         $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBoolean());
         $this->registerPrefix(TokenType::SUB, fn () => $this->parsePrefixExpression());
