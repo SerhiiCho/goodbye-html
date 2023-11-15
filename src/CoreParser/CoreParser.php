@@ -304,13 +304,11 @@ class CoreParser
         $token = $this->curToken;
         $operator = $this->curToken->literal;
 
-        $this->nextToken();
-
         $precedence = $this->currentPrecedence();
 
-        $right = $this->parseExpression($precedence);
-
         $this->nextToken();
+
+        $right = $this->parseExpression($precedence);
 
         return new InfixExpression(
             token: $token,
