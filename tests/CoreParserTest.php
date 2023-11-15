@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Serhii\GoodbyeHtml\Ast\BooleanExpression;
+use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
@@ -29,28 +30,46 @@ function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
     expect($stmt)->toHaveCount($statements, "Program must contain {$statements} statements");
 }
 
-function testVariable($var, string $val)
+
+function testVariable($var, string $val): void
 {
     expect($var)->toBeInstanceOf(VariableExpression::class);
     expect($var->value)->toBe($val);
 }
 
-function testString($str, string $val)
+function testString($str, string $val): void
 {
     expect($str)->toBeInstanceOf(StringLiteral::class);
     expect($str->value)->toBe($val);
 }
 
-function testInteger($int, $val)
+function testInteger($int, $val): void
 {
     expect($int)->toBeInstanceOf(IntegerLiteral::class);
     expect($int->value)->toBe($val);
 }
 
-function testFloat($float, $val)
+function testFloat($float, $val): void
 {
     expect($float)->toBeInstanceOf(FloatLiteral::class);
     expect($float->value)->toBe($val);
+}
+
+function testBoolean($bool, $val): void
+{
+    expect($bool)->toBeInstanceOf(BooleanExpression::class);
+    expect($bool->value)->toBe($val);
+}
+
+function testLiteralExpression(Expression $expression, mixed $expected)
+{
+    match (gettype($expected)) {
+        'string' => testString($expression, $expected),
+        'integer' => testInteger($expression, $expected),
+        'double' => testFloat($expression, $expected),
+        'boolean' => testBoolean($expression, $expected),
+        'NULL' => expect($expression)->toBeInstanceOf(NullLiteral::class),
+    };
 }
 
 test('parse variable', function () {
@@ -100,9 +119,7 @@ test('parse boolean expression', function (string $input, string $expect) {
 
     expect($prefix)->toBeInstanceOf(BooleanExpression::class);
     expect($prefix->string())->toBe($expect);
-})->with('providerForTestBooleanExpressions');
-
-dataset('providerForTestBooleanExpressions', function () {
+})->with(function () {
     return [
         ['{{ true }}', 'true'],
         ['{{ false }}', 'false'],
@@ -277,11 +294,11 @@ test('parse infix expressions', function (string $inp, mixed $left, string $oper
     $infix = $program->statements[0]->expression;
 
     expect($infix)->toBeInstanceOf(InfixExpression::class);
+    expect($infix->operator)->toBe($operator);
 
-    // todo: here
-});
-
-dataset('provider for parse infix expression', function () {
+    testLiteralExpression($infix->left, $left);
+    testLiteralExpression($infix->right, $right);
+})->with(function () {
     return [
         ['{{ 5 + 3 }}', 5, '+', 3],
     ];
@@ -345,9 +362,7 @@ test('parse prefix expressions', function (string $input, string $operator, $exp
 
     expect($prefix)->toBeInstanceOf(PrefixExpression::class);
     expect($prefix->operator)->toBe($operator);
-})->with('providerForTestPrefixExpressions');
-
-dataset('providerForTestPrefixExpressions', function () {
+})->with(function () {
     return [
         ['{{ -4 }}', '-', 4],
         ['{{ -284 }}', '-', 284],
@@ -384,9 +399,7 @@ test('operator precedence parsing', function (string $input, string $expect) {
     $actual = $program->string();
 
     expect($actual)->toBe($expect, "Expected '{$expect}', got '{$actual}'");
-})->with('providerForTestOperatorPrecedenceParsing');
-
-dataset('providerForTestOperatorPrecedenceParsing', function () {
+})->with(function () {
     return [
         ['{{ !-1 }}', '(!(-1))'],
         ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
