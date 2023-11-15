@@ -35,6 +35,13 @@ enum TokenType: string
     // Infix and Prefix operators
     case SUB = '-';
 
+    // Infix operators
+    case CONCAT = '.';
+    case ADD = '+';
+    case MUL = '*';
+    case DIV = '/';
+    case MOD = '%';
+
     // Delimiters
     case OPENING_BRACES = '{{';
     case CLOSING_BRACES = '}}';
