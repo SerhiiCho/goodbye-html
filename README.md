@@ -20,10 +20,18 @@ This package is not for creating a full featured template engine. It's just a si
 ## What Goodbye HTML has?
 - [x] Variables
 - [x] If/Else statements
-- [x] Ternary operators
+- [x] Ternary expressions
 - [x] Loops
 - [x] Prefix operators
+    - Negation operator (!)
+    - Minus operator (-)
 - [x] String concatenation
+- [x] Math operations
+    - Addition
+    - Subtraction
+    - Multiplication
+    - Division
+    - Modulus
 
 ## Usage
 
