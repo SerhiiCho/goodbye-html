@@ -323,16 +323,16 @@ test('parse string concatenation', function () {
     /** @var InfixExpression $infix */
     $infix = $program->statements[0]->expression;
 
-    testString($infix->left, 'Serhii');
+    testString($infix->right, 'Cho');
     expect($infix->operator)->toBe('.');
 
     /** @var InfixExpression $infix */
-    $infix = $infix->right;
+    $infix = $infix->left;
 
     expect($infix)->toBeInstanceOf(InfixExpression::class);
 
-    testString($infix->left, ' ');
-    testString($infix->right, 'Cho');
+    testString($infix->left, 'Serhii');
+    testString($infix->right, ' ');
 });
 
 test('parse ternary expression', function () {
