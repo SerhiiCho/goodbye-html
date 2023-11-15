@@ -14,9 +14,7 @@ test('parser evaluation', function (string $fileName, array $variables) {
     $expect = file_get_contents(__DIR__ . "/files/expect/{$fileName}.html");
 
     expect($actual)->toBe($expect, "Failed asserting that {$fileName}.html is parsed correctly");
-})->with('providerForTestParserEvaluation');
-
-dataset('providerForTestParserEvaluation', function () {
+})->with(function () {
     return [
         ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
         ['loop', ['to' => 3]],

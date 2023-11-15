@@ -24,9 +24,7 @@ test('eval integer expression', function (string $input, string $expected) {
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalIntegerExpression');
-
-dataset('providerForTestEvalIntegerExpression', function () {
+})->with(function () {
     return [
         ['{{ 5 }}', '5'],
         ['{{ 190 }}', '190'],
@@ -47,9 +45,7 @@ test('eval float expression', function (string $input, string $expected) {
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalFloatExpression');
-
-dataset('providerForTestEvalFloatExpression', function () {
+})->with(function () {
     return [
         ['{{ 3.425 }}', '3.425'],
         ['{{ 1.9 }}', '1.9'],
@@ -65,9 +61,7 @@ test('eval boolean expression', function (string $input, string $expected) {
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalBooleanExpression');
-
-dataset('providerForTestEvalBooleanExpression', function () {
+})->with(function () {
     return [
         ['{{ true }}', '1'], // in PHP true to string is 1
         ['{{ false }}', ''], // in PHP false to string is ''
@@ -84,9 +78,7 @@ test('eval string expression', function (string $input, string $expected) {
     }
 
     expect($evaluated?->value())->toBe($expected);
-})->with('providerForTestEvalStringExpression');
-
-dataset('providerForTestEvalStringExpression', function () {
+})->with(function () {
     return [
         ["{{ 'This is a string' }}", 'This is a string'],
         ['{{ "Anna Korotchaeva" }}', 'Anna Korotchaeva'],
@@ -105,9 +97,7 @@ test('eval variable', function (string $input, mixed $expect_html, ?Env $env = n
 
     expect($evaluated)->not->toBeNull('Evaluated is null');
     expect($evaluated->value())->toBe($expect_html);
-})->with('providerForTestEvalVariable');
-
-dataset('providerForTestEvalVariable', function () {
+})->with(function () {
     return [
         ['{{ $name }}', 'Anna', new Env(['name' => new StringObj('Anna')])],
         ['{{$her_age}}', '23', new Env(['her_age' => new IntegerObj(23)])],
@@ -122,9 +112,7 @@ test('eval if expression', function (string $input, string $expected, ?Env $env 
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalIfExpression');
-
-dataset('providerForTestEvalIfExpression', function () {
+})->with(function () {
     return [
         [
             '{{if $name}}Ann{{end}}',
@@ -161,9 +149,7 @@ test('eval ternary expression', function (string $input, string $expected, Env $
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalTernaryExpression');
-
-dataset('providerForTestEvalTernaryExpression', function () {
+})->with(function () {
     return [
         [
             '{{ $name ? "Ann" : "Sam" }}',
@@ -210,9 +196,7 @@ test('eval loop expression', function (string $input, string $expected, ?Env $en
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalLoopExpression');
-
-dataset('providerForTestEvalLoopExpression', function () {
+})->with(function () {
     return [
         [
             '<ul>{{ loop 1, 4 }}<li>{{ $index }}</li>{{ end }}</ul>',
@@ -230,9 +214,7 @@ test('error handling', function (string $input, string $expectMessage) {
 
     expect($evaluated)->toBeInstanceOf(ErrorObj::class);
     expect($evaluated->value())->toBe($expectMessage);
-})->with('providerForTestErrorHandling');
-
-dataset('providerForTestErrorHandling', function () {
+})->with(function () {
     return [
         [
             '{{ loop "hello", 4 }}loop{{ end }}',
