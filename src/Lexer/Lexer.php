@@ -33,12 +33,12 @@ class Lexer
             $this->isHtml = false;
             $this->advanceChar();
             $this->advanceChar();
-            return new Token(TokenType::OPEN_BRACE, '{{');
+            return new Token(TokenType::LBRACES, '{{');
         } elseif ($this->char === '}' && $this->peekChar() === '}') {
             $this->isHtml = true;
             $this->advanceChar();
             $this->advanceChar();
-            return new Token(TokenType::CLOSE_BRACE, '}}');
+            return new Token(TokenType::RBRACES, '}}');
         }
 
         return $this->isHtml
@@ -49,15 +49,15 @@ class Lexer
     private function readProgramToken(): Token
     {
         $token = match ($this->char) {
-            '+' => $this->createTokenAndAdvanceChar(TokenType::ADD),
-            '-' => $this->createTokenAndAdvanceChar(TokenType::SUB),
-            '*' => $this->createTokenAndAdvanceChar(TokenType::MUL),
-            '/' => $this->createTokenAndAdvanceChar(TokenType::DIV),
-            '%' => $this->createTokenAndAdvanceChar(TokenType::MOD),
+            '+' => $this->createTokenAndAdvanceChar(TokenType::PLUS),
+            '-' => $this->createTokenAndAdvanceChar(TokenType::MINUS),
+            '*' => $this->createTokenAndAdvanceChar(TokenType::ASTERISK),
+            '/' => $this->createTokenAndAdvanceChar(TokenType::SLASH),
+            '%' => $this->createTokenAndAdvanceChar(TokenType::MODULO),
             ',' => $this->createTokenAndAdvanceChar(TokenType::COMMA),
-            '?' => $this->createTokenAndAdvanceChar(TokenType::QUEST_MARK),
+            '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
-            '!' => $this->createTokenAndAdvanceChar(TokenType::NOT),
+            '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
             '.' => $this->createTokenAndAdvanceChar(TokenType::CONCAT),
             default => false,
         };
@@ -77,7 +77,7 @@ class Lexer
 
         if ($this->isLetter($this->char)) {
             $ident = $this->readIdentifier();
-            return new Token(TokenType::lookupIdentifier($ident), $ident);
+            return new Token(TokenType::lookupIdent($ident), $ident);
         }
 
         if ($this->isNumber($this->char)) {

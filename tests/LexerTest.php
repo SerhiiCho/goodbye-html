@@ -32,19 +32,19 @@ test('lexing strings', function () {
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::STR, "Hello world!"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::STR, "Good luck!"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::STR, 'Good "luck!"'),
         new Token(TokenType::CONCAT, "."),
         new Token(TokenType::STR, " Anna"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
 
         new Token(TokenType::EOF, ""),
     ]);
@@ -57,14 +57,14 @@ test('lexing integers', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h1>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::INT, "3"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, " and "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
-        new Token(TokenType::SUB, "-"),
+        new Token(TokenType::LBRACES, "{{"),
+        new Token(TokenType::MINUS, "-"),
         new Token(TokenType::INT, "4"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</h1>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -77,14 +77,14 @@ test('lexing floats', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h1>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::FLOAT, "2.5213"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, " and "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
-        new Token(TokenType::SUB, "-"),
+        new Token(TokenType::LBRACES, "{{"),
+        new Token(TokenType::MINUS, "-"),
         new Token(TokenType::FLOAT, "1.3"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</h1>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -97,18 +97,18 @@ test('lexing booleans', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h1>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, ", "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::FALSE, "false"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, ", "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
-        new Token(TokenType::NOT, "!"),
+        new Token(TokenType::LBRACES, "{{"),
+        new Token(TokenType::BANG, "!"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</h1>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -122,14 +122,14 @@ test('lexing if expressions', function () {
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::IF, "if"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n    <h1>Hello world!</h1>\n"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::END, "end"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::EOF, ""),
     ]);
 });
@@ -145,16 +145,16 @@ test('lexing loop expressions', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<ul>\n    "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::LOOP, "loop"),
         new Token(TokenType::INT, "1"),
         new Token(TokenType::COMMA, ","),
         new Token(TokenType::INT, "4"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n        <li>item</li>\n    "),
-        new Token(TokenType::OPEN_BRACE, '{{'),
+        new Token(TokenType::LBRACES, '{{'),
         new Token(TokenType::END, "end"),
-        new Token(TokenType::CLOSE_BRACE, '}}'),
+        new Token(TokenType::RBRACES, '}}'),
         new Token(TokenType::HTML, "\n</ul>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -167,18 +167,18 @@ test('lexing if else expressions', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h3>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::IF, "if"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "Main page"),
-        new Token(TokenType::OPEN_BRACE, '{{'),
+        new Token(TokenType::LBRACES, '{{'),
         new Token(TokenType::ELSE, "else"),
-        new Token(TokenType::CLOSE_BRACE, '}}'),
+        new Token(TokenType::RBRACES, '}}'),
         new Token(TokenType::HTML, "404"),
-        new Token(TokenType::OPEN_BRACE, '{{'),
+        new Token(TokenType::LBRACES, '{{'),
         new Token(TokenType::END, "end"),
-        new Token(TokenType::CLOSE_BRACE, '}}'),
+        new Token(TokenType::RBRACES, '}}'),
         new Token(TokenType::HTML, "</h3>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -191,13 +191,13 @@ test('lexing ternary expression', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h3>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::QUEST_MARK, "?"),
+        new Token(TokenType::QUESTION, "?"),
         new Token(TokenType::STR, "Main page"),
         new Token(TokenType::COLON, ":"),
         new Token(TokenType::STR, "Secondary page"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</h3>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -211,17 +211,17 @@ test('lexing variables', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h3>My name is "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::VAR, "my_name"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, ", my age is "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::VAR, "myAge"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</h3>\n<h4>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::VAR, "i86"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</h4>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -234,13 +234,13 @@ test('lexing ternary expression inside html attributes', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<h3 class=\""),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::QUEST_MARK, "?"),
+        new Token(TokenType::QUESTION, "?"),
         new Token(TokenType::STR, "main-page"),
         new Token(TokenType::COLON, ":"),
         new Token(TokenType::STR, "secondary-page"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\">Hello world!</h3>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -261,18 +261,18 @@ test('html whitespace is not removed after lexing', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<body>\n    <section>\n        "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::IF, "if"),
         new Token(TokenType::TRUE, "true"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n            <h1>Hello world!</h1>\n        "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::ELSE, "else"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n            <h1>Bye bye!</h1>\n        "),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::END, "end"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n    </section>\n</body>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -285,24 +285,24 @@ test('lexing correctly without html', function () {
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::IF, "if"),
         new Token(TokenType::VAR, "hasName"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::RBRACES, "}}"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::VAR, "name"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::RBRACES, "}}"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::END, "end"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "\n"), // <-- The only HTML token
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::VAR, "isAdult"),
-        new Token(TokenType::QUEST_MARK, "?"),
+        new Token(TokenType::QUESTION, "?"),
         new Token(TokenType::STR, "Adult"),
         new Token(TokenType::COLON, ":"),
         new Token(TokenType::STR, "Child"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::EOF, ""),
     ]);
 });
@@ -313,7 +313,7 @@ test('lexing illegal tokens', function () {
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::ILLEGAL, "2.3.4"),
         new Token(TokenType::ILLEGAL, "@"),
         new Token(TokenType::ILLEGAL, "$"),
@@ -324,7 +324,7 @@ test('lexing illegal tokens', function () {
         new Token(TokenType::ILLEGAL, "|"),
         new Token(TokenType::ILLEGAL, "~"),
         new Token(TokenType::ILLEGAL, "`"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::EOF, ""),
     ]);
 });
@@ -336,9 +336,9 @@ test('lexing null', function () {
 
     tokenizeString($input, [
         new Token(TokenType::HTML, "<div>"),
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::NULL, "null"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::HTML, "</div>"),
         new Token(TokenType::EOF, ""),
     ]);
@@ -350,19 +350,19 @@ test('lexing math expressions', function () {
     HTML;
 
     tokenizeString($input, [
-        new Token(TokenType::OPEN_BRACE, "{{"),
+        new Token(TokenType::LBRACES, "{{"),
         new Token(TokenType::INT, "4"),
-        new Token(TokenType::ADD, "+"),
+        new Token(TokenType::PLUS, "+"),
         new Token(TokenType::INT, "5"),
-        new Token(TokenType::SUB, "-"),
+        new Token(TokenType::MINUS, "-"),
         new Token(TokenType::INT, "2"),
-        new Token(TokenType::MUL, "*"),
+        new Token(TokenType::ASTERISK, "*"),
         new Token(TokenType::INT, "3"),
-        new Token(TokenType::DIV, "/"),
+        new Token(TokenType::SLASH, "/"),
         new Token(TokenType::INT, "4"),
-        new Token(TokenType::MOD, "%"),
+        new Token(TokenType::MODULO, "%"),
         new Token(TokenType::INT, "2"),
-        new Token(TokenType::CLOSE_BRACE, "}}"),
+        new Token(TokenType::RBRACES, "}}"),
         new Token(TokenType::EOF, ""),
     ]);
 });
