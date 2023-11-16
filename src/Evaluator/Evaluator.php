@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\Evaluator;
 
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
-use Serhii\GoodbyeHtml\Ast\BooleanLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
-use Serhii\GoodbyeHtml\Ast\FloatLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
-use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopStatement;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Node;
-use Serhii\GoodbyeHtml\Ast\NullLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
-use Serhii\GoodbyeHtml\Ast\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Obj\BlockObj;
@@ -40,19 +40,19 @@ readonly class Evaluator
             IntegerLiteral::class => new IntegerObj($node->value),
             FloatLiteral::class => new FloatObj($node->value),
             StringLiteral::class => new StringObj($node->value),
-            HtmlStatement::class => new HtmlObj($node->string()),
             BooleanLiteral::class => new BooleanObj($node->value),
             NullLiteral::class => new NullObj(),
-            Program::class => $this->evalProgram($node, $env),
+            HtmlStatement::class => new HtmlObj($node->string()),
+            IfStatement::class => $this->evalIfStatement($node, $env),
+            BlockStatement::class => $this->evalBlockStatement($node, $env),
+            LoopStatement::class => $this->evalLoopStatement($node, $env),
             ExpressionStatement::class => $this->eval($node->expression, $env),
             PrefixExpression::class => $this->evalPrefixExpression($node, $env),
             InfixExpression::class => $this->evalInfixExpression($node, $env),
             VariableExpression::class => $this->evalVariableExpression($node, $env),
-            IfStatement::class => $this->evalIfStatement($node, $env),
-            BlockStatement::class => $this->evalBlockStatement($node, $env),
-            LoopStatement::class => $this->evalLoopStatement($node, $env),
-            ErrorObj::class => $node,
             TernaryExpression::class => $this->evalTernaryExpression($node, $env),
+            Program::class => $this->evalProgram($node, $env),
+            ErrorObj::class => $node,
             default => EvalError::unknownType($node),
         };
     }

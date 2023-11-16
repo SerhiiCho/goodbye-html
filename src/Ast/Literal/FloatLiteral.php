@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Ast;
+namespace Serhii\GoodbyeHtml\Ast\Literal;
 
+use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class FloatLiteral implements Expression

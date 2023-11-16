@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use Serhii\GoodbyeHtml\Ast\BooleanLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
-use Serhii\GoodbyeHtml\Ast\FloatLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
-use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopStatement;
-use Serhii\GoodbyeHtml\Ast\NullLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
-use Serhii\GoodbyeHtml\Ast\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Literal\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\VariableExpression;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
