@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Evaluator;
 
-use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\BooleanLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Expressions\InfixExpression;
-use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
-use Serhii\GoodbyeHtml\Obj\Env;
-use Serhii\GoodbyeHtml\Obj\Obj;
-use Serhii\GoodbyeHtml\Ast\Node;
-use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\PrefixExpression;
-use Serhii\GoodbyeHtml\Ast\Statements\Program;
-use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
+use Serhii\GoodbyeHtml\Ast\Literals\BooleanLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Node;
+use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\Program;
 use Serhii\GoodbyeHtml\Obj\BlockObj;
 use Serhii\GoodbyeHtml\Obj\BooleanObj;
+use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\FloatObj;
 use Serhii\GoodbyeHtml\Obj\HtmlObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
 use Serhii\GoodbyeHtml\Obj\NullObj;
+use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
 
@@ -82,14 +82,11 @@ readonly class Evaluator
             return $right;
         }
 
-        switch ($node->operator) {
-            case '-':
-                return $this->evalMinusPrefixOperatorExpression($right);
-            case '!':
-                return new BooleanObj(!$right->value());
-            default:
-                return EvalError::operatorNotAllowed($node->operator, $right);
-        }
+        return match ($node->operator) {
+            '-' => $this->evalMinusPrefixOperatorExpression($right),
+            '!' => new BooleanObj(! $right->value()),
+            default => EvalError::operatorNotAllowed($node->operator, $right),
+        };
     }
 
     private function evalInfixExpression(InfixExpression $node, Env $env): Obj
@@ -126,11 +123,7 @@ readonly class Evaluator
     {
         $val = $env->get($node->value);
 
-        if ($val !== null) {
-            return $val;
-        }
-
-        return EvalError::variableIsUndefined($node);
+        return $val ?? EvalError::variableIsUndefined($node);
     }
 
     private function evalIfStatement(IfStatement $node, Env $env): Obj

@@ -29,12 +29,16 @@ class Lexer
 
         if ($this->char === 0) {
             return new Token(TokenType::EOF, '');
-        } elseif ($this->char === '{' && $this->peekChar() === '{') {
+        }
+
+        if ($this->char === '{' && $this->peekChar() === '{') {
             $this->isHtml = false;
             $this->advanceChar();
             $this->advanceChar();
             return new Token(TokenType::LBRACES, '{{');
-        } elseif ($this->char === '}' && $this->peekChar() === '}') {
+        }
+
+        if ($this->char === '}' && $this->peekChar() === '}') {
             $this->isHtml = true;
             $this->advanceChar();
             $this->advanceChar();
@@ -137,7 +141,7 @@ class Lexer
         }
 
         $this->position = $this->nextPosition;
-        $this->nextPosition += 1;
+        ++$this->nextPosition;
     }
 
     private function peekChar(): string|int
@@ -165,10 +169,10 @@ class Lexer
             return false;
         }
 
-        return preg_match('/[0-9]/', $number) === 1;
+        return preg_match('/\d/', $number) === 1;
     }
 
-    private function isNumber(string $number): bool
+    private function isNumber(string|int $number): bool
     {
         if ($number === 0) {
             return false;
@@ -257,8 +261,6 @@ class Lexer
         $result = substr($this->input, $position, $this->position - $position);
 
         // remove slashes before quotes
-        $result = str_replace('\\' . $quote, $quote, $result);
-
-        return $result;
+        return str_replace('\\' . $quote, $quote, $result);
     }
 }

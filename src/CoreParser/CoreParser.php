@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\CoreParser;
 
 use Closure;
-use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\Expression;
-use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Expressions\InfixExpression;
-use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\PrefixExpression;
-use Serhii\GoodbyeHtml\Ast\Statements\Program;
-use Serhii\GoodbyeHtml\Ast\Statements\Statement;
-use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
+use Serhii\GoodbyeHtml\Ast\Literals\BooleanLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\Program;
+use Serhii\GoodbyeHtml\Ast\Statements\Statement;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
@@ -54,7 +54,7 @@ class CoreParser
      */
     private array $errors = [];
 
-    public function __construct(private Lexer $lexer)
+    public function __construct(private readonly Lexer $lexer)
     {
         $this->curToken = Token::illegal('');
         $this->peekToken = Token::illegal('');
