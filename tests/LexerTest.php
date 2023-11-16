@@ -114,7 +114,7 @@ test('lexing booleans', function () {
     ]);
 });
 
-test('lexing if expressions', function () {
+test('lexing if statements', function () {
     $input = <<<HTML
     {{ if true }}
         <h1>Hello world!</h1>
@@ -134,7 +134,7 @@ test('lexing if expressions', function () {
     ]);
 });
 
-test('lexing loop expressions', function () {
+test('lexing loop statements', function () {
     $input = <<<HTML
     <ul>
         {{ loop 1, 4 }}

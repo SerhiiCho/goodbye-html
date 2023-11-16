@@ -12,7 +12,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\LoopStatement;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Node;
@@ -50,7 +50,7 @@ readonly class Evaluator
             VariableExpression::class => $this->evalVariableExpression($node, $env),
             IfStatement::class => $this->evalIfStatement($node, $env),
             BlockStatement::class => $this->evalBlockStatement($node, $env),
-            LoopExpression::class => $this->evalLoopExpression($node, $env),
+            LoopStatement::class => $this->evalLoopStatement($node, $env),
             ErrorObj::class => $node,
             TernaryExpression::class => $this->evalTernaryExpression($node, $env),
             default => EvalError::unknownType($node),
@@ -181,7 +181,7 @@ readonly class Evaluator
         return new BlockObj($elements);
     }
 
-    private function evalLoopExpression(LoopExpression $node, Env $env): Obj
+    private function evalLoopStatement(LoopStatement $node, Env $env): Obj
     {
         $html = '';
 

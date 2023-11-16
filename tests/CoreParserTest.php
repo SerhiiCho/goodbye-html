@@ -10,7 +10,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\LoopStatement;
 use Serhii\GoodbyeHtml\Ast\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\StringLiteral;
@@ -127,7 +127,7 @@ test('parse boolean expression', function (string $input, string $expect) {
     ];
 });
 
-test('parse if expression', function () {
+test('parse if statement', function () {
     $input = <<<HTML
     {{ if true }}
         <h1>I'm not a pro but it's only a matter of time</h1>
@@ -141,18 +141,15 @@ test('parse if expression', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var IfStatement */
-    $if = $stmt->expression;
+    /** @var IfStatement $if */
+    $if = $program->statements[0];
 
     expect($if->consequence->string())->toBe("\n    <h1>I'm not a pro but it's only a matter of time</h1>\n");
     expect($if->condition->string())->toBe('true');
     expect($if->alternative)->toBeNull();
 });
 
-test('parse nested if expressions', function () {
+test('parse nested if statements', function () {
     $input = <<<HTML
     {{ if \$uses_php }}You are a cool{{ if \$male }}guy{{ end }}{{ end }}
     HTML;
@@ -164,21 +161,17 @@ test('parse nested if expressions', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
     /** @var IfStatement */
-    $if = $stmt->expression;
+    $if = $program->statements[0];
 
     testVariable($if->condition, 'uses_php');
 
     expect($if->consequence->statements)->toHaveCount(2, 'Consequence must contain 2 statements');
     expect($if->consequence->statements[0])->toBeInstanceOf(HtmlStatement::class);
-    expect($if->consequence->statements[1])->toBeInstanceOf(ExpressionStatement::class);
+    expect($if->consequence->statements[1])->toBeInstanceOf(IfStatement::class);
     expect($if->alternative)->toBeNull();
 
-    /** @var IfStatement $if */
-    $if = $if->consequence->statements[1]->expression;
+    $if = $if->consequence->statements[1];
 
     expect($if->consequence->statements)->toHaveCount(1, 'Consequence must contain 1 statement');
     expect($if->consequence->statements[0])->toBeInstanceOf(HtmlStatement::class);
@@ -201,7 +194,7 @@ test('parse else statement', function () {
     checkForErrors($parser, $program->statements, 1);
 
     /** @var IfStatement */
-    $if = $program->statements[0]->expression;
+    $if = $program->statements[0];
 
     testVariable($if->condition, 'underAge');
 
@@ -241,7 +234,7 @@ test('parse float literal', function () {
     testFloat($stmt->expression, 1.40123);
 });
 
-test('parse loop expression', function () {
+test('parse loop statement', function () {
     $input = <<<HTML
     {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
     HTML;
@@ -253,13 +246,14 @@ test('parse loop expression', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var LoopExpression $loop */
-    $loop = $program->statements[0]->expression;
+    /** @var LoopStatement $loop */
+    $loop = $program->statements[0];
 
     testVariable($loop->from, 'fr');
     testInteger($loop->to, 5);
 
     expect($loop->body->statements)->toHaveCount(3, 'Loop body must contain 3 statements');
+
 
     $stmts = $loop->body->statements;
 

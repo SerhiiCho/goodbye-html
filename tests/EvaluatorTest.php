@@ -119,7 +119,7 @@ test('eval variable', function (string $input, mixed $expect_html, ?Env $env = n
     ];
 });
 
-test('eval if expression', function (string $input, string $expected, ?Env $env = null) {
+test('eval if statement', function (string $input, string $expected, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
@@ -203,7 +203,7 @@ test('eval html statement', function () {
     expect($evaluated->value())->toBe($input);
 });
 
-test('eval loop expression', function (string $input, string $expected, ?Env $env = null) {
+test('eval loop statement', function (string $input, string $expected, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {

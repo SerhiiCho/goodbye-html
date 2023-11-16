@@ -43,10 +43,10 @@ class Lexer
 
         return $this->isHtml
             ? $this->readHtmlToken()
-            : $this->readProgramToken();
+            : $this->readEmbeddedCodeToken();
     }
 
-    private function readProgramToken(): Token
+    private function readEmbeddedCodeToken(): Token
     {
         $token = match ($this->char) {
             '+' => $this->createTokenAndAdvanceChar(TokenType::PLUS),

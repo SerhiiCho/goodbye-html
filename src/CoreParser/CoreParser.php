@@ -14,7 +14,7 @@ use Serhii\GoodbyeHtml\Ast\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\LoopExpression;
+use Serhii\GoodbyeHtml\Ast\LoopStatement;
 use Serhii\GoodbyeHtml\Ast\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Program;
@@ -64,8 +64,6 @@ class CoreParser
 
         // Prefix operators
         $this->registerPrefix(TokenType::VAR, fn () => $this->parseVariable());
-        $this->registerPrefix(TokenType::IF, fn () => $this->parseIfStatement());
-        $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INT, fn () => $this->parseIntegerLiteral());
         $this->registerPrefix(TokenType::BANG, fn () => $this->parsePrefixExpression());
         $this->registerPrefix(TokenType::NULL, fn () => $this->parseNullLiteral());
@@ -174,14 +172,27 @@ class CoreParser
      * <statement>
      *   : <html-statement>
      *   | <expression-statement>
+     *   | <if-statement>
+     *   | <loop-statement>
      *   ;
      */
     private function parseStatement(): Statement|null
     {
         return match($this->curToken->type) {
             TokenType::HTML => $this->parseHtmlStatement(),
-            TokenType::LBRACES => $this->parseExpressionStatement(),
+            TokenType::LBRACES => $this->parseEmbeddedCode(),
             default => null,
+        };
+    }
+
+    private function parseEmbeddedCode(): Statement|null
+    {
+        $this->nextToken();
+
+        return match ($this->curToken->type) {
+            TokenType::IF => $this->parseIfStatement(),
+            TokenType::LOOP => $this->parseLoopStatement(),
+            default => $this->parseExpressionStatement(),
         };
     }
 
@@ -202,8 +213,6 @@ class CoreParser
      */
     private function parseExpressionStatement(): ExpressionStatement
     {
-        $this->nextToken();
-
         $expr = $this->parseExpression(Precedence::LOWEST);
         $result = new ExpressionStatement($this->curToken, $expr);
 
@@ -351,7 +360,7 @@ class CoreParser
      *   | "{{" "if" <expression> "}}" <block-statement> "{{" "else" "}}" <block-statement> "{{" "end" "}}"
      *   ;
      */
-    private function parseIfStatement(): Expression|null
+    private function parseIfStatement(): Statement|null
     {
         $this->nextToken(); // skip "{{"
 
@@ -436,11 +445,11 @@ class CoreParser
     }
 
     /**
-     * <loop-expression>
+     * <loop-statement>
      *   : "{{" "loop" <expression> "," <expression> "}}" <block-statement> "{{" "end" "}}"
      *   ;
      */
-    private function parseLoopExpression(): Expression|null
+    private function parseLoopStatement(): Statement|null
     {
         $token = $this->curToken;
 
@@ -472,7 +481,7 @@ class CoreParser
             return null;
         }
 
-        return new LoopExpression($token, $from, $to, $body);
+        return new LoopStatement($token, $from, $to, $body);
     }
 
     /**

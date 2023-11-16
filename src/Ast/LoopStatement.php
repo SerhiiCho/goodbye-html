@@ -6,7 +6,7 @@ namespace Serhii\GoodbyeHtml\Ast;
 
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class LoopExpression implements Expression
+readonly class LoopStatement implements Statement
 {
     public function __construct(
         public Token $token,

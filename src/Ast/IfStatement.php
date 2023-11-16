@@ -6,7 +6,7 @@ namespace Serhii\GoodbyeHtml\Ast;
 
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class IfStatement implements Expression
+readonly class IfStatement implements Statement
 {
     public function __construct(
         public Token $token,
