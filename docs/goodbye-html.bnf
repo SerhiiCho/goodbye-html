@@ -1,0 +1,109 @@
+<digit>
+    : "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+    ;
+
+<char>
+    : <any character except double and single quote>
+    ;
+
+<identifier>
+    : <char> <identifier>
+    | <char>
+    ;
+
+<integer-literal>
+    : <digit>
+    | <digit> <integer-literal>
+    ;
+
+<float-literal>
+    : <integer-literal> . <integer-literal>
+    ;
+
+<boolean-literal>
+    : true
+    | false
+    ;
+
+<null-literal>
+    : null
+    ;
+
+<string-literal-content>
+    : <char> <string-literal-content>
+    | <char>
+    ;
+
+<string-literal>
+    : "\"" <string-literal-content> "\""
+    | "'" <string-literal-content> "'"
+    ;
+
+<program>
+    : <statement>*
+    ;
+
+<html-statement>
+    : <string-literal>
+    ;
+
+<expression-statement>
+    : <expression>
+    ;
+
+<ternary-expression>
+    : <expression> ? <expression> : <expression>
+    ;
+
+<infix-operator>
+    : "+" | "-" | "*" | "/" | "%"
+    ;
+
+<infix-expression>
+    : <expression> <infix-operator> <expression>
+    ;
+
+<prefix-operator>
+    : "-" | "!"
+    ;
+
+<prefix-expression>
+    : <prefix-operator> <expression>
+    ;
+
+<variable-expression>
+    : "$" <identifier>
+    ;
+
+<expression>
+    : <variable-expression>
+    | <integer-literal>
+    | <prefix-expression>
+    | <infix-expression>
+    | <null-literal>
+    | <float-literal>
+    | <string-literal>
+    | <boolean-literal>
+    | <ternary-expression>
+    ;
+
+<block-statement>
+    : <statement>*
+    ;
+
+<loop-statement>
+    : "{{" "loop" <expression> "," <expression> "}}" <block-statement>* "{{" "end" "}}"
+    ;
+
+<if-statement>
+    : "{{" "if" <expression> "}}" <block-statement>* "{{" "end" "}}" 
+    | "{{" "if" <expression> "}}" <block-statement>* "{{" "else" "}}" <block-statement>* "{{" "end" "}}"
+    ;
+
+<statement>
+    : <html-statement>
+    | <expression-statement>
+    | <if-statement>
+    | <loop-statement>
+    | <block-statement>
+    ;
