@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Serhii\GoodbyeHtml\Ast\VariableExpression;
+use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
 use Serhii\GoodbyeHtml\Evaluator\EvalError;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;

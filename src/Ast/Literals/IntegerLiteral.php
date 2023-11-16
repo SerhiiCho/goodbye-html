@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Serhii\GoodbyeHtml\Ast\Literals;
 
-use Serhii\GoodbyeHtml\Ast\Expression;
+use Serhii\GoodbyeHtml\Ast\Expressions\Expression;
 use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class IntegerLiteral implements Expression
