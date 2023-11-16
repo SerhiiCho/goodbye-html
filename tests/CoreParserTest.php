@@ -7,7 +7,7 @@ use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
@@ -144,7 +144,7 @@ test('parse if expression', function () {
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
-    /** @var IfExpression */
+    /** @var IfStatement */
     $if = $stmt->expression;
 
     expect($if->consequence->string())->toBe("\n    <h1>I'm not a pro but it's only a matter of time</h1>\n");
@@ -167,7 +167,7 @@ test('parse nested if expressions', function () {
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
-    /** @var IfExpression */
+    /** @var IfStatement */
     $if = $stmt->expression;
 
     testVariable($if->condition, 'uses_php');
@@ -177,7 +177,7 @@ test('parse nested if expressions', function () {
     expect($if->consequence->statements[1])->toBeInstanceOf(ExpressionStatement::class);
     expect($if->alternative)->toBeNull();
 
-    /** @var IfExpression $if */
+    /** @var IfStatement $if */
     $if = $if->consequence->statements[1]->expression;
 
     expect($if->consequence->statements)->toHaveCount(1, 'Consequence must contain 1 statement');
@@ -200,7 +200,7 @@ test('parse else statement', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var IfExpression */
+    /** @var IfStatement */
     $if = $program->statements[0]->expression;
 
     testVariable($if->condition, 'underAge');

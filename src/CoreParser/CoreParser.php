@@ -11,7 +11,7 @@ use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
@@ -64,7 +64,7 @@ class CoreParser
 
         // Prefix operators
         $this->registerPrefix(TokenType::VAR, fn () => $this->parseVariable());
-        $this->registerPrefix(TokenType::IF, fn () => $this->parseIfExpression());
+        $this->registerPrefix(TokenType::IF, fn () => $this->parseIfStatement());
         $this->registerPrefix(TokenType::LOOP, fn () => $this->parseLoopExpression());
         $this->registerPrefix(TokenType::INT, fn () => $this->parseIntegerLiteral());
         $this->registerPrefix(TokenType::BANG, fn () => $this->parsePrefixExpression());
@@ -346,12 +346,12 @@ class CoreParser
     }
 
     /**
-     * <if-expression>
+     * <if-statement>
      *   : "{{" "if" <expression> "}}" <block-statement> "{{" "end" "}}"
      *   | "{{" "if" <expression> "}}" <block-statement> "{{" "else" "}}" <block-statement> "{{" "end" "}}"
      *   ;
      */
-    private function parseIfExpression(): Expression|null
+    private function parseIfStatement(): Expression|null
     {
         $this->nextToken(); // skip "{{"
 
@@ -374,7 +374,7 @@ class CoreParser
             $alternative = $this->parseBlockStatement();
         }
 
-        return new IfExpression(
+        return new IfStatement(
             $this->curToken,
             $condition,
             $consequence,

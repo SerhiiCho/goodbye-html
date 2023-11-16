@@ -9,7 +9,7 @@ use Serhii\GoodbyeHtml\Ast\BooleanExpression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\IfExpression;
+use Serhii\GoodbyeHtml\Ast\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\LoopExpression;
@@ -48,7 +48,7 @@ readonly class Evaluator
             PrefixExpression::class => $this->evalPrefixExpression($node, $env),
             InfixExpression::class => $this->evalInfixExpression($node, $env),
             VariableExpression::class => $this->evalVariableExpression($node, $env),
-            IfExpression::class => $this->evalIfExpression($node, $env),
+            IfStatement::class => $this->evalIfStatement($node, $env),
             BlockStatement::class => $this->evalBlockStatement($node, $env),
             LoopExpression::class => $this->evalLoopExpression($node, $env),
             ErrorObj::class => $node,
@@ -133,7 +133,7 @@ readonly class Evaluator
         return EvalError::variableIsUndefined($node);
     }
 
-    private function evalIfExpression(IfExpression $node, Env $env): Obj
+    private function evalIfStatement(IfStatement $node, Env $env): Obj
     {
         $condition = $this->eval($node->condition, $env);
 
