@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Ast\Literal;
+namespace Serhii\GoodbyeHtml\Ast\Literals;
 
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class StringLiteral implements Expression
+readonly class FloatLiteral implements Expression
 {
-    public function __construct(public Token $token, public string $value)
+    public function __construct(public Token $token, public float $value)
     {
     }
 
@@ -20,6 +20,6 @@ readonly class StringLiteral implements Expression
 
     public function string(): string
     {
-        return '"' . $this->value . '"';
+        return (string) $this->value;
     }
 }
