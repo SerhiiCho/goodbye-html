@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use Serhii\GoodbyeHtml\Ast\Literal\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\Expression;
-use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Literal\FloatLiteral;
-use Serhii\GoodbyeHtml\Ast\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\IfStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\Literal\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\LoopStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
 use Serhii\GoodbyeHtml\Ast\Literal\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Literal\StringLiteral;

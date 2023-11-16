@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Ast;
+namespace Serhii\GoodbyeHtml\Ast\Statements;
 
 readonly class Program implements Statement
 {

@@ -7,7 +7,7 @@ namespace Serhii\GoodbyeHtml;
 use Exception;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\Obj;
-use Serhii\GoodbyeHtml\Ast\Program;
+use Serhii\GoodbyeHtml\Ast\Statements\Program;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
