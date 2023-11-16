@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Serhii\GoodbyeHtml\Ast\BooleanExpression;
+use Serhii\GoodbyeHtml\Ast\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
@@ -57,7 +57,7 @@ function testFloat($float, $val): void
 
 function testBoolean($bool, $val): void
 {
-    expect($bool)->toBeInstanceOf(BooleanExpression::class);
+    expect($bool)->toBeInstanceOf(BooleanLiteral::class);
     expect($bool->value)->toBe($val);
 }
 
@@ -107,7 +107,7 @@ test('parse html', function () {
     expect($stmt->string())->toBe('<div class="nice"></div>');
 });
 
-test('parse boolean expression', function (string $input, string $expect) {
+test('parse boolean literal', function (string $input, string $expect) {
     $lexer = new Lexer($input);
     $parser = new CoreParser($lexer);
 
@@ -115,10 +115,10 @@ test('parse boolean expression', function (string $input, string $expect) {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var BooleanExpression $prefix */
+    /** @var BooleanLiteral $prefix */
     $prefix = $program->statements[0]->expression;
 
-    expect($prefix)->toBeInstanceOf(BooleanExpression::class);
+    expect($prefix)->toBeInstanceOf(BooleanLiteral::class);
     expect($prefix->string())->toBe($expect);
 })->with(function () {
     return [

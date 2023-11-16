@@ -6,7 +6,7 @@ namespace Serhii\GoodbyeHtml\CoreParser;
 
 use Closure;
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
-use Serhii\GoodbyeHtml\Ast\BooleanExpression;
+use Serhii\GoodbyeHtml\Ast\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\Expression;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
@@ -348,7 +348,7 @@ class CoreParser
      */
     private function parseBoolean(): Expression
     {
-        return new BooleanExpression(
+        return new BooleanLiteral(
             token: $this->curToken,
             value: $this->curToken->literal === 'true',
         );

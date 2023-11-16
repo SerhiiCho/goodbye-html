@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\Evaluator;
 
 use Serhii\GoodbyeHtml\Ast\BlockStatement;
-use Serhii\GoodbyeHtml\Ast\BooleanExpression;
+use Serhii\GoodbyeHtml\Ast\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\HtmlStatement;
@@ -41,7 +41,7 @@ readonly class Evaluator
             FloatLiteral::class => new FloatObj($node->value),
             StringLiteral::class => new StringObj($node->value),
             HtmlStatement::class => new HtmlObj($node->string()),
-            BooleanExpression::class => new BooleanObj($node->value),
+            BooleanLiteral::class => new BooleanObj($node->value),
             NullLiteral::class => new NullObj(),
             Program::class => $this->evalProgram($node, $env),
             ExpressionStatement::class => $this->eval($node->expression, $env),

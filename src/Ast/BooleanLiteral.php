@@ -6,7 +6,7 @@ namespace Serhii\GoodbyeHtml\Ast;
 
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class BooleanExpression implements Expression
+readonly class BooleanLiteral implements Expression
 {
     public function __construct(public Token $token, public bool $value)
     {

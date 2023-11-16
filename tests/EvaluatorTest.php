@@ -68,7 +68,7 @@ test('eval float expression', function (string $input, string $expected) {
     ];
 });
 
-test('eval boolean expression', function (string $input, string $expected) {
+test('eval boolean literal', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
