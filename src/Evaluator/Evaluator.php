@@ -84,7 +84,7 @@ readonly class Evaluator
 
         return match ($node->operator) {
             '-' => $this->evalMinusPrefixOperatorExpression($right),
-            '!' => new BooleanObj(! $right->value()),
+            '!' => new BooleanObj(!$right->value()),
             default => EvalError::operatorNotAllowed($node->operator, $right),
         };
     }
