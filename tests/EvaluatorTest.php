@@ -3,20 +3,21 @@
 declare(strict_types=1);
 
 use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
+use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\Evaluator\EvalError;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
+use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
-use Serhii\GoodbyeHtml\CoreParser\CoreParser;
-use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
-function testEval(string $input, ?Env $env = null)
+function testEval(string $input, ?Env $env = null): Obj
 {
     $lexer = new Lexer($input);
     $parser = new CoreParser($lexer);
@@ -26,9 +27,7 @@ function testEval(string $input, ?Env $env = null)
 
     expect($errors)->toBeEmpty(implode("\n", $errors));
 
-    $evaluator = new Evaluator();
-
-    return $evaluator->eval($program, $env ?? new Env());
+    return (new Evaluator())->eval($program, $env ?? new Env());
 }
 
 test('eval integer expression', function (string $input, string $expected) {
@@ -92,7 +91,7 @@ test('eval string expression', function (string $input, string $expected) {
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated?->value())->toBe($expected);
+    expect($evaluated->value())->toBe($expected);
 })->with(function () {
     return [
         ["{{ 'This is a string' }}", 'This is a string'],
@@ -110,8 +109,11 @@ test('eval variable', function (string $input, mixed $expect_html, ?Env $env = n
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated)->not->toBeNull('Evaluated is null');
-    expect($evaluated->value())->toBe($expect_html);
+    expect($evaluated)
+        ->not
+        ->toBeNull('Evaluated is null')
+        ->and($evaluated->value())
+        ->toBe($expect_html);
 })->with(function () {
     return [
         ['{{ $name }}', 'Anna', new Env(['name' => new StringObj('Anna')])],
@@ -227,8 +229,10 @@ test('eval loop statement', function (string $input, string $expected, ?Env $env
 test('error handling', function (string $input, string $expectMessage) {
     $evaluated = testEval($input);
 
-    expect($evaluated)->toBeInstanceOf(ErrorObj::class);
-    expect($evaluated->value())->toBe($expectMessage);
+    expect($evaluated)
+        ->toBeInstanceOf(ErrorObj::class)
+        ->and($evaluated->value())
+        ->toBe($expectMessage);
 })->with(function () {
     return [
         [
@@ -257,8 +261,11 @@ test('eval null test', function () {
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated)->not->toBeNull('Evaluated is null');
-    expect($evaluated->value())->toBe('<span></span>');
+    expect($evaluated)
+        ->not
+        ->toBeNull('Evaluated is null')
+        ->and($evaluated->value())
+        ->toBe('<span></span>');
 });
 
 test('eval infix expressions', function (string $input, string $expected) {
@@ -268,7 +275,7 @@ test('eval infix expressions', function (string $input, string $expected) {
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated?->value())->toBe($expected);
+    expect($evaluated->value())->toBe($expected);
 })->with(function () {
     return [
         ["{{ 51 + 9 }}", '60'],

@@ -9,11 +9,15 @@ test('parser evaluation', function (string $fileName, array $variables) {
 
     $parser = new Parser($fileToParse, $variables);
 
-    $actual = $parser->parseHtml();
+    try {
+        $actual = $parser->parseHtml();
 
-    $expect = file_get_contents(__DIR__ . "/files/expect/{$fileName}.html");
+        $expect = file_get_contents(__DIR__ . "/files/expect/{$fileName}.html");
 
-    expect($actual)->toBe($expect, "Failed asserting that {$fileName}.html is parsed correctly");
+        expect($actual)->toBe($expect, "Failed asserting that {$fileName}.html is parsed correctly");
+    } catch (Throwable $e) {
+        $this->fail($e->getMessage());
+    }
 })->with(function () {
     return [
         ['if', ['isSecondary' => 3, 'title' => 'Pretty title', 'showList' => 2]],
@@ -46,5 +50,9 @@ test('parser can parse text directly', function () {
         'movie' => 'Mr. Robot',
     ]);
 
-    expect($parser->parseHtml())->toBe($expect);
+    try {
+        expect($parser->parseHtml())->toBe($expect);
+    } catch (Throwable $e) {
+        $this->fail($e->getMessage());
+    }
 });

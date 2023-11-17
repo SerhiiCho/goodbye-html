@@ -13,14 +13,18 @@ function tokenizeString(string $input, array $expect): void
     foreach ($expect as $key => $expectToken) {
         $actualToken = $lexer->nextToken();
 
-        $msg = sprintf(
-            "Expected token type: \n%s\ngot: \n%s\nCase #%d",
-            json_encode($expectToken, JSON_PRETTY_PRINT),
-            json_encode($actualToken, JSON_PRETTY_PRINT),
-            $key + 1,
-        );
+        try {
+            $msg = sprintf(
+                "Expected token type: \n%s\ngot: \n%s\nCase #%d",
+                json_encode($expectToken, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
+                json_encode($actualToken, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
+                $key + 1,
+            );
 
-        expect($actualToken)->toEqual($expectToken, $msg);
+            expect($actualToken)->toEqual($expectToken, $msg);
+        } catch (JsonException $e) {
+            echo $e->getMessage();
+        }
     }
 }
 
