@@ -1,82 +1,50 @@
-<digit>
-    : "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-    ;
+<program> ::= <statement>*
 
-<char>
-    : <any character except double and single quote>
-    ;
+<statement>
+    ::= <html-statement>
+    | <expression-statement>
+    | <if-statement>
+    | <loop-statement>
+    | <block-statement>
 
-<identifier>
-    : <char> <identifier>
-    | <char>
-    ;
+<digit> ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-<integer-literal>
-    : <digit>
-    | <digit> <integer-literal>
-    ;
+<char> ::= <any character except double and single quote>
 
-<float-literal>
-    : <integer-literal> . <integer-literal>
-    ;
+<identifier> ::= <char> <identifier> | <char>
 
-<boolean-literal>
-    : true
-    | false
-    ;
+<integer-literal> ::= <digit> | <digit> <integer-literal>
 
-<null-literal>
-    : null
-    ;
+<float-literal> ::= <integer-literal> "." <integer-literal>
 
-<string-literal-content>
-    : <char> <string-literal-content>
-    | <char>
-    ;
+<boolean-literal> ::= "true" | "false"
+
+<null-literal> ::= null
+
+<string-literal-content> ::= <char> <string-literal-content> | <char>
 
 <string-literal>
-    : "\"" <string-literal-content> "\""
+    ::= "\"" <string-literal-content> "\""
     | "'" <string-literal-content> "'"
-    ;
 
-<program>
-    : <statement>*
-    ;
+<html-statement> ::= <string-literal>
 
-<html-statement>
-    : <string-literal>
-    ;
+<expression-statement> ::= <expression>
 
-<expression-statement>
-    : <expression>
-    ;
+<ternary-expression> ::= <expression> "?" <expression> ":" <expression>
 
-<ternary-expression>
-    : <expression> ? <expression> : <expression>
-    ;
+<infix-operator> ::= "+" | "-" | "*" | "/" | "%"
 
-<infix-operator>
-    : "+" | "-" | "*" | "/" | "%"
-    ;
+<infix-expression> ::= <expression> <infix-operator> <expression>
 
-<infix-expression>
-    : <expression> <infix-operator> <expression>
-    ;
+<prefix-operator> ::= "-" | "!"
 
-<prefix-operator>
-    : "-" | "!"
-    ;
+<prefix-expression> ::= <prefix-operator> <expression>
 
-<prefix-expression>
-    : <prefix-operator> <expression>
-    ;
-
-<variable-expression>
-    : "$" <identifier>
-    ;
+<variable-expression> ::= "$" <identifier>
 
 <expression>
-    : <variable-expression>
+    ::= <variable-expression>
     | <integer-literal>
     | <prefix-expression>
     | <infix-expression>
@@ -85,25 +53,12 @@
     | <string-literal>
     | <boolean-literal>
     | <ternary-expression>
-    ;
 
-<block-statement>
-    : <statement>*
-    ;
+<block-statement> ::= <statement>*
 
 <loop-statement>
-    : "{{" "loop" <expression> "," <expression> "}}" <block-statement>* "{{" "end" "}}"
-    ;
+    ::= "{{" "loop" <expression> "," <expression> "}}" <block-statement>* "{{" "end" "}}"
 
 <if-statement>
-    : "{{" "if" <expression> "}}" <block-statement>* "{{" "end" "}}" 
+    ::= "{{" "if" <expression> "}}" <block-statement>* "{{" "end" "}}"
     | "{{" "if" <expression> "}}" <block-statement>* "{{" "else" "}}" <block-statement>* "{{" "end" "}}"
-    ;
-
-<statement>
-    : <html-statement>
-    | <expression-statement>
-    | <if-statement>
-    | <loop-statement>
-    | <block-statement>
-    ;
