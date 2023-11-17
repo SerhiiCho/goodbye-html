@@ -34,8 +34,9 @@
     },
     "scripts": {
         "test": "./vendor/bin/pest",
+        "pint": "./vendor/bin/pint",
         "cover": "./vendor/bin/pest --coverage --min=80",
-        "check": ["@test", "@cover"]
+        "check": ["@test", "@pint", "@cover"]
     },
     "config": {
         "allow-plugins": {
