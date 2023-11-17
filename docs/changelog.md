@@ -2,7 +2,7 @@
 
 ----
 
-## v2.4.0 (2023-11-15)
+## v2.4.0 (2023-11-17)
 
 - Added support for math expressions: add (+), subtract (-), multiply (*), divide (/), modulo (%). Now you can use it like this: `{{ 1 + 2 }}`, `{{ 1 - 2 }}`, `{{ 1 * 2 }}`, `{{ 1 / 2 }}`, `{{ 1 % 2 }}`
 - Added BNF (Backus-Naur Form) grammar

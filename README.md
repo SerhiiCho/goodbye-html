@@ -7,8 +7,8 @@
 
 A very simple package for separating PHP logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file.
 
-- [Release notes](https://github.com/SerhiiCho/goodbye-html/blob/main/docs/changelog.md)
-- [BNF grammar](https://github.com/SerhiiCho/goodbye-html/blob/main/docs/goodbye-html.bnf)
+- [📝 Release notes](https://github.com/SerhiiCho/goodbye-html/blob/main/docs/changelog.md)
+- [✏️ BNF grammar](https://github.com/SerhiiCho/goodbye-html/blob/main/docs/goodbye-html.bnf)
 
 ## Supported PHP versions
 - ✅ 8.2
@@ -18,7 +18,7 @@ A very simple package for separating PHP logic from HTML or any other text. It a
 This package is useful when you need to separate PHP logic from HTML or any other text. For example if you need to send an email with some dynamic content, you can create a template file with HTML and insert variables, if/else statements, loops and ternary operators into it. Then you can pass this file to the parser and get parsed content of this file as a string. Then you can use this string as a content of your email.
 
 ## What is it not for?
-This package is not for creating a full featured template engine. It's just a simple parser that allows you to insert some PHP logic into any text file. It's not for creating a full featured template engine like [Twig](https://twig.symfony.com/), [Blade](https://laravel.com/docs/8.x/blade) or [Latte](https://latte.nette.org/en/). If you need a full featured template engine, you should use one of the mentioned above.
+This package is not for creating a full-featured template engine. It's just a simple parser that allows you to insert some PHP logic into any text file. It's not for creating a full-featured template engine like [Twig](https://twig.symfony.com/), [Blade](https://laravel.com/docs/8.x/blade) or [Latte](https://latte.nette.org/en/). If you need a full-featured template engine, you should use one of the mentioned above.
 
 ## What Goodbye HTML has?
 - [x] Variables
@@ -74,7 +74,7 @@ HTML file content with 2 php variables before parsing it
     </nav>
 
     {{ if $uses_php_3_years }}
-        <h1>I'm not a pro but it's only a matter of time</h1>
+        <h1>I'm not a pro, but it's only a matter of time</h1>
     {{ end }}
 </body>
 </html>
@@ -102,7 +102,7 @@ Parsed HTML to a PHP string
     </nav>
 
     
-        <h1>I'm not a pro but it's only a matter of time</h1>
+        <h1>I'm not a pro, but it's only a matter of time</h1>
     
 </body>
 </html>
@@ -128,22 +128,35 @@ function shortcode_callback() {
 
 Types that you can pass to the parser to include them in the `html/text` file. Note that not all PHP types are supported for know. More types will be added in next releases.
 
-| PHP Type    | Value example |
-| ----------- | ------------- |
-| bool        | true          |
-| string      | 'Is title'    |
-| int         | 24            |
-| float       | 3.1415        |
-| null        | null          |
+| PHP Type | Value example |
+|----------|---------------|
+| bool     | true          |
+| string   | 'Is title'    |
+| int      | 24            |
+| float    | 3.1415        |
+| null     | null          |
 
 ## Supported prefix operators
 
 Prefix operators are used to change the value of the variable. For example if you have a variable `$is_smoking` and you want to check if it's false, you can use `!` prefix operator to change the value of the variable to false. Or if you have a variable `$age` and you want to make it negative, you can use `-` prefix operator to change the value of the variable to negative.
 
-| Prefix name | Prefix value  | Example     | Supported types for prefix |
-| ----------- | ------------- | ----------- | -------------------------- |
-| NOT         | !             | !true       | all the types              |
-| MINUS       | -             | -24         | int, float                 |
+| Prefix name | Prefix value | Example | Supported types for prefix |
+|-------------|--------------|---------|----------------------------|
+| Not         | !            | !true   | all the types              |
+| Minus       | -            | -24     | int, float                 |
+
+## Supported infix operators
+
+Infix operators are used to perform math operations or string concatenation. For example if you have a variable `$age` and you want to add 1 to it, you can use `+` infix operator to add 1 to the variable. Or if you have a variable `$first_name` and you want to concatenate it with `$last_name`, you can use `.` infix operator to concatenate these 2 variables.
+
+| Operator name | Operator literal | Example            | Supported types for prefix |
+|---------------|------------------|--------------------|----------------------------|
+| Plus          | +                | 3 + 4              | int, float                 |
+| Minus         | -                | 5 - 4              | int, float                 |
+| Multiply      | *                | 3 * 4              | int, float                 |
+| Divide        | /                | 6 / 3              | int, float                 |
+| Modulo        | %                | 5 % 2              | int, float                 |
+| Concatenate   | .                | 'Hello' . ' world' | string                     |
 
 ## All the available syntax in html/text file
 
@@ -258,7 +271,7 @@ Prefix operators are used to change the value of the variable. For example if yo
 
 #### Loops
 
-Loop takes 2 integer arguments. The first argument is from what number start looping, and the second argument is where to stop. For example if you start from 1 to 4, it's gonna result 4 repeated blocks. Inside each loop you can use $index variable that is going to have a value of current iteration number.
+Loop takes 2 integer arguments. The first argument is from what number start looping, and the second argument is where to stop. For example if you start from 1 to 4, it's going to result 4 repeated blocks. Inside each loop you can use $index variable that is going to have a value of current iteration number.
 
 ```html
 <!-- Block syntax -->
