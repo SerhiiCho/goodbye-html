@@ -137,8 +137,11 @@ test('parse boolean literal', function (string $input, string $expect) {
 
     checkForErrors($parser, $program->statements, 1);
 
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
+
     /** @var BooleanLiteral $prefix */
-    $prefix = $program->statements[0]->expression;
+    $prefix = $stmt->expression;
 
     expect($prefix)
         ->toBeInstanceOf(BooleanLiteral::class)
@@ -225,13 +228,15 @@ test('parse else statement', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var IfStatement */
+    /** @var IfStatement $if */
     $if = $program->statements[0];
 
     testVariable($if->condition, 'underAge');
 
-    expect($if->consequence->string())->toBe("<span>You are too young to be here</span>");
-    expect($if->alternative->string())->toBe("<span>You can drink beer</span>");
+    expect($if->consequence->string())
+        ->toBe("<span>You are too young to be here</span>")
+        ->and($if->alternative->string())
+        ->toBe("<span>You can drink beer</span>");
 });
 
 test('parse integer literal', function () {
@@ -286,12 +291,15 @@ test('parse loop statement', function () {
 
     expect($loop->body->statements)->toHaveCount(3, 'Loop body must contain 3 statements');
 
-
+    /** @var array<int,HtmlStatement|ExpressionStatement> $stmts */
     $stmts = $loop->body->statements;
 
-    expect($stmts[0]->string())->toBe('<li><a href="#">Link - ');
     testVariable($stmts[1]->expression, 'index');
-    expect($stmts[2]->string())->toBe("</a></li>");
+
+    expect($stmts[0]->string())
+        ->toBe('<li><a href="#">Link - ')
+        ->and($stmts[2]->string())
+        ->toBe("</a></li>");
 });
 
 test('parse strings', function () {
@@ -304,10 +312,10 @@ test('parse strings', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var StringLiteral $var */
-    $str = $program->statements[0]->expression;
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
 
-    testString($str, 'hello');
+    testString($stmt->expression, 'hello');
 });
 
 test('parse infix expressions', function (string $inp, mixed $left, string $operator, mixed $right) {
@@ -317,11 +325,16 @@ test('parse infix expressions', function (string $inp, mixed $left, string $oper
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var InfixExpression $infix */
-    $infix = $program->statements[0]->expression;
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
 
-    expect($infix)->toBeInstanceOf(InfixExpression::class);
-    expect($infix->operator)->toBe($operator);
+    /** @var InfixExpression $infix */
+    $infix = $stmt->expression;
+
+    expect($infix)
+        ->toBeInstanceOf(InfixExpression::class)
+        ->and($infix->operator)
+        ->toBe($operator);
 
     testLiteralExpression($infix->left, $left);
     testLiteralExpression($infix->right, $right);
@@ -346,8 +359,11 @@ test('parse string concatenation', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
+
     /** @var InfixExpression $infix */
-    $infix = $program->statements[0]->expression;
+    $infix = $stmt->expression;
 
     testString($infix->right, 'Cho');
     expect($infix->operator)->toBe('.');
@@ -371,8 +387,11 @@ test('parse ternary expression', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
+
     /** @var TernaryExpression $ternary */
-    $ternary = $program->statements[0]->expression;
+    $ternary = $stmt->expression;
 
     expect($ternary)->toBeInstanceOf(TernaryExpression::class);
 
@@ -389,17 +408,24 @@ test('parse prefix expressions', function (string $input, string $operator, $exp
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var PrefixExpression $prefix */
-    $prefix = $program->statements[0]->expression;
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
 
-    expect($prefix)->toBeInstanceOf(PrefixExpression::class);
-    expect($prefix->operator)->toBe($operator);
+    /** @var PrefixExpression $prefix */
+    $prefix = $stmt->expression;
+
+    expect($prefix)
+        ->toBeInstanceOf(PrefixExpression::class)
+        ->and($prefix->operator)
+        ->toBe($operator)
+        ->and($prefix->right->value ?? '')
+        ->toBe($expect);
 })->with(function () {
     return [
         ['{{ -4 }}', '-', 4],
         ['{{ -284 }}', '-', 284],
-        ['{{ !true }}', '!', false],
-        ['{{ !false }}', '!', true],
+        ['{{ !true }}', '!', true],
+        ['{{ !false }}', '!', false],
     ];
 });
 
@@ -413,11 +439,16 @@ test('parse null literal', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var NullLiteral $null */
-    $null = $program->statements[0]->expression;
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
 
-    expect($null)->toBeInstanceOf(NullLiteral::class);
-    expect($null->token->literal)->toBe('null');
+    /** @var NullLiteral $null */
+    $null = $stmt->expression;
+
+    expect($null)
+        ->toBeInstanceOf(NullLiteral::class)
+        ->and($null->token->literal)
+        ->toBe('null');
 });
 
 test('operator precedence parsing', function (string $input, string $expect) {
