@@ -12,6 +12,9 @@ abstract readonly class Obj
 
     abstract public function value(): int|string|bool|float|null;
 
+    /**
+     * @throws ParserException
+     */
     public static function fromNative(mixed $value, string $name): self
     {
         $type = gettype($value);

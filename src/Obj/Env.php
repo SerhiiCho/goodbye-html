@@ -11,10 +11,11 @@ class Env
      */
     public function __construct(
         private array $store = [],
-        private ?self $outer = null,
+        private readonly ?self $outer = null,
     ) {
     }
 
+    // todo: it's going to be used in the next version when I implement scopes
     public static function newEnclosedEnv(Env $outer): self
     {
         return new self([], $outer);
@@ -26,11 +27,7 @@ class Env
             return $this->store[$key];
         }
 
-        if ($this->outer !== null) {
-            return $this->outer->get($key);
-        }
-
-        return null;
+        return $this->outer?->get($key);
     }
 
     public function set(string $key, Obj $value): void

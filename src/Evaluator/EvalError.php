@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml\Evaluator;
 
 use Serhii\GoodbyeHtml\Ast\Node;
-use Serhii\GoodbyeHtml\Ast\VariableExpression;
+use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;

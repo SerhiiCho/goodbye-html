@@ -2,19 +2,33 @@
 
 declare(strict_types=1);
 
-use Serhii\GoodbyeHtml\Ast\VariableExpression;
+use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
+use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\Evaluator\EvalError;
 use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Obj\Env;
 use Serhii\GoodbyeHtml\Obj\ErrorObj;
 use Serhii\GoodbyeHtml\Obj\IntegerObj;
+use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Obj\ObjType;
 use Serhii\GoodbyeHtml\Obj\StringObj;
-use Serhii\GoodbyeHtml\CoreParser\CoreParser;
-use Serhii\GoodbyeHtml\Obj\BooleanObj;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
+
+function testEval(string $input, ?Env $env = null): Obj
+{
+    $lexer = new Lexer($input);
+    $parser = new CoreParser($lexer);
+    $program = $parser->parseProgram();
+
+    $errors = $parser->errors();
+
+    expect($errors)->toBeEmpty(implode("\n", $errors));
+
+    return (new Evaluator())->eval($program, $env ?? new Env());
+}
 
 test('eval integer expression', function (string $input, string $expected) {
     $evaluated = testEval($input);
@@ -24,9 +38,7 @@ test('eval integer expression', function (string $input, string $expected) {
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalIntegerExpression');
-
-dataset('providerForTestEvalIntegerExpression', function () {
+})->with(function () {
     return [
         ['{{ 5 }}', '5'],
         ['{{ 190 }}', '190'],
@@ -47,9 +59,7 @@ test('eval float expression', function (string $input, string $expected) {
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalFloatExpression');
-
-dataset('providerForTestEvalFloatExpression', function () {
+})->with(function () {
     return [
         ['{{ 3.425 }}', '3.425'],
         ['{{ 1.9 }}', '1.9'],
@@ -57,7 +67,7 @@ dataset('providerForTestEvalFloatExpression', function () {
     ];
 });
 
-test('eval boolean expression', function (string $input, string $expected) {
+test('eval boolean literal', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
@@ -65,9 +75,7 @@ test('eval boolean expression', function (string $input, string $expected) {
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalBooleanExpression');
-
-dataset('providerForTestEvalBooleanExpression', function () {
+})->with(function () {
     return [
         ['{{ true }}', '1'], // in PHP true to string is 1
         ['{{ false }}', ''], // in PHP false to string is ''
@@ -83,10 +91,8 @@ test('eval string expression', function (string $input, string $expected) {
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated?->value())->toBe($expected);
-})->with('providerForTestEvalStringExpression');
-
-dataset('providerForTestEvalStringExpression', function () {
+    expect($evaluated->value())->toBe($expected);
+})->with(function () {
     return [
         ["{{ 'This is a string' }}", 'This is a string'],
         ['{{ "Anna Korotchaeva" }}', 'Anna Korotchaeva'],
@@ -103,18 +109,19 @@ test('eval variable', function (string $input, mixed $expect_html, ?Env $env = n
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated)->not->toBeNull('Evaluated is null');
-    expect($evaluated->value())->toBe($expect_html);
-})->with('providerForTestEvalVariable');
-
-dataset('providerForTestEvalVariable', function () {
+    expect($evaluated)
+        ->not
+        ->toBeNull('Evaluated is null')
+        ->and($evaluated->value())
+        ->toBe($expect_html);
+})->with(function () {
     return [
         ['{{ $name }}', 'Anna', new Env(['name' => new StringObj('Anna')])],
         ['{{$her_age}}', '23', new Env(['her_age' => new IntegerObj(23)])],
     ];
 });
 
-test('eval if expression', function (string $input, string $expected, ?Env $env = null) {
+test('eval if statement', function (string $input, string $expected, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
@@ -122,9 +129,7 @@ test('eval if expression', function (string $input, string $expected, ?Env $env 
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalIfExpression');
-
-dataset('providerForTestEvalIfExpression', function () {
+})->with(function () {
     return [
         [
             '{{if $name}}Ann{{end}}',
@@ -161,9 +166,7 @@ test('eval ternary expression', function (string $input, string $expected, Env $
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalTernaryExpression');
-
-dataset('providerForTestEvalTernaryExpression', function () {
+})->with(function () {
     return [
         [
             '{{ $name ? "Ann" : "Sam" }}',
@@ -202,7 +205,7 @@ test('eval html statement', function () {
     expect($evaluated->value())->toBe($input);
 });
 
-test('eval loop expression', function (string $input, string $expected, ?Env $env = null) {
+test('eval loop statement', function (string $input, string $expected, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
@@ -210,9 +213,7 @@ test('eval loop expression', function (string $input, string $expected, ?Env $en
     }
 
     expect($evaluated->value())->toBe($expected);
-})->with('providerForTestEvalLoopExpression');
-
-dataset('providerForTestEvalLoopExpression', function () {
+})->with(function () {
     return [
         [
             '<ul>{{ loop 1, 4 }}<li>{{ $index }}</li>{{ end }}</ul>',
@@ -228,11 +229,11 @@ dataset('providerForTestEvalLoopExpression', function () {
 test('error handling', function (string $input, string $expectMessage) {
     $evaluated = testEval($input);
 
-    expect($evaluated)->toBeInstanceOf(ErrorObj::class);
-    expect($evaluated->value())->toBe($expectMessage);
-})->with('providerForTestErrorHandling');
-
-dataset('providerForTestErrorHandling', function () {
+    expect($evaluated)
+        ->toBeInstanceOf(ErrorObj::class)
+        ->and($evaluated->value())
+        ->toBe($expectMessage);
+})->with(function () {
     return [
         [
             '{{ loop "hello", 4 }}loop{{ end }}',
@@ -244,7 +245,7 @@ dataset('providerForTestErrorHandling', function () {
         ],
         [
             '{{ $test }}',
-            EvalError::variableIsUndefined(new VariableExpression(new Token(TokenType::VARIABLE, 'test'), 'test'))->message,
+            EvalError::variableIsUndefined(new VariableExpression(new Token(TokenType::VAR, 'test'), 'test'))->message,
         ],
         [
             '{{ -"hello" }}',
@@ -260,21 +261,35 @@ test('eval null test', function () {
         $this->fail($evaluated->message);
     }
 
-    expect($evaluated)->not->toBeNull('Evaluated is null');
-    expect($evaluated->value())->toBe('<span></span>');
+    expect($evaluated)
+        ->not
+        ->toBeNull('Evaluated is null')
+        ->and($evaluated->value())
+        ->toBe('<span></span>');
 });
 
-function testEval(string $input, ?Env $env = null)
-{
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-    $program = $parser->parseProgram();
+test('eval infix expressions', function (string $input, string $expected) {
+    $evaluated = testEval($input);
 
-    $errors = $parser->errors();
+    if ($evaluated instanceof ErrorObj) {
+        $this->fail($evaluated->message);
+    }
 
-    expect($errors)->toBeEmpty(implode("\n", $errors));
-
-    $evaluator = new Evaluator();
-
-    return $evaluator->eval($program, $env ?? new Env());
-}
+    expect($evaluated->value())->toBe($expected);
+})->with(function () {
+    return [
+        ["{{ 51 + 9 }}", '60'],
+        ["{{ 51 - 1 }}", '50'],
+        ["{{ 51 * 2 }}", '102'],
+        ["{{ 100 / 4 }}", '25'],
+        ["{{ 1 / 4 }}", '0.25'],
+        ["{{ 10 % 2 }}", '0'],
+        ["{{ 10 % 3 }}", '1'],
+        ["{{ 100 / 2 * 2 }}", '100'],
+        ["{{ 100 * 2 / 2 + 50 }}", '150'],
+        ["{{ 234.5 + 0.5 }}", '235'],
+        ["{{ 5 + 10 / 2 }}", '10'],
+        ["{{ 'anna ' . 'is pretty' }}", 'anna is pretty'],
+        ["{{ 'She\'s ' . 25 }}", "She's 25"],
+    ];
+});

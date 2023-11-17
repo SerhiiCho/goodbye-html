@@ -29,52 +29,59 @@ class Lexer
 
         if ($this->char === 0) {
             return new Token(TokenType::EOF, '');
-        } elseif ($this->areOpeningBraces()) {
+        }
+
+        if ($this->char === '{' && $this->peekChar() === '{') {
             $this->isHtml = false;
             $this->advanceChar();
             $this->advanceChar();
-            return new Token(TokenType::OPENING_BRACES, '{{');
-        } elseif ($this->areClosingBraces()) {
+            return new Token(TokenType::LBRACES, '{{');
+        }
+
+        if ($this->char === '}' && $this->peekChar() === '}') {
             $this->isHtml = true;
             $this->advanceChar();
             $this->advanceChar();
-            return new Token(TokenType::CLOSING_BRACES, '}}');
+            return new Token(TokenType::RBRACES, '}}');
         }
 
         return $this->isHtml
             ? $this->readHtmlToken()
-            : $this->readProgramToken();
+            : $this->readEmbeddedCodeToken();
     }
 
-    private function readProgramToken(): Token
+    private function readEmbeddedCodeToken(): Token
     {
-        switch ($this->char) {
-            case '-':
-                return $this->createTokenAndAdvanceChar(TokenType::MINUS, $this->char);
-            case ',':
-                return $this->createTokenAndAdvanceChar(TokenType::COMMA, $this->char);
-            case '?':
-                return $this->createTokenAndAdvanceChar(TokenType::QUESTION_MARK, $this->char);
-            case ':':
-                return $this->createTokenAndAdvanceChar(TokenType::COLON, $this->char);
-            case '!':
-                return $this->createTokenAndAdvanceChar(TokenType::NOT, $this->char);
-            case '.':
-                return $this->createTokenAndAdvanceChar(TokenType::CONCAT, $this->char);
+        $token = match ($this->char) {
+            '+' => $this->createTokenAndAdvanceChar(TokenType::PLUS),
+            '-' => $this->createTokenAndAdvanceChar(TokenType::MINUS),
+            '*' => $this->createTokenAndAdvanceChar(TokenType::ASTERISK),
+            '/' => $this->createTokenAndAdvanceChar(TokenType::SLASH),
+            '%' => $this->createTokenAndAdvanceChar(TokenType::MODULO),
+            ',' => $this->createTokenAndAdvanceChar(TokenType::COMMA),
+            '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
+            ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
+            '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
+            '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
+            default => false,
+        };
+
+        if ($token) {
+            return $token;
         }
 
         if ($this->isVariableStart()) {
             $this->advanceChar();
-            return new Token(TokenType::VARIABLE, $this->readIdentifier());
+            return new Token(TokenType::VAR, $this->readIdentifier());
         }
 
         if ($this->isStringStart()) {
-            return $this->createTokenAndAdvanceChar(TokenType::STRING, $this->readString());
+            return $this->createTokenAndAdvanceChar(TokenType::STR, $this->readString());
         }
 
         if ($this->isLetter($this->char)) {
             $ident = $this->readIdentifier();
-            return new Token(TokenType::lookupIdentifier($ident), $ident);
+            return new Token(TokenType::lookupIdent($ident), $ident);
         }
 
         if ($this->isNumber($this->char)) {
@@ -82,7 +89,7 @@ class Lexer
             return new Token($this->readNumberTokenType($num), $num);
         }
 
-        return $this->createTokenAndAdvanceChar(TokenType::ILLEGAL, $this->char);
+        return $this->createTokenAndAdvanceChar(TokenType::ILLEGAL);
     }
 
     private function isStringStart(): bool
@@ -95,8 +102,9 @@ class Lexer
         return $this->char === '$' && $this->isLetter($this->peekChar());
     }
 
-    private function createTokenAndAdvanceChar(TokenType $type, string $char): Token
+    private function createTokenAndAdvanceChar(TokenType $type, ?string $char = null): Token
     {
+        $char ??= $this->char;
         $this->advanceChar();
         return new Token($type, $char);
     }
@@ -108,7 +116,7 @@ class Lexer
             return TokenType::ILLEGAL;
         }
 
-        return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INTEGER;
+        return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INT;
     }
 
     private function readHtmlToken(): Token
@@ -124,16 +132,6 @@ class Lexer
         return $token;
     }
 
-    private function areOpeningBraces(): bool
-    {
-        return $this->char === '{' && $this->peekChar() === '{';
-    }
-
-    private function areClosingBraces(): bool
-    {
-        return $this->char === '}' && $this->peekChar() === '}';
-    }
-
     private function advanceChar(): void
     {
         if ($this->nextPosition >= strlen($this->input)) {
@@ -143,7 +141,7 @@ class Lexer
         }
 
         $this->position = $this->nextPosition;
-        $this->nextPosition += 1;
+        ++$this->nextPosition;
     }
 
     private function peekChar(): string|int
@@ -171,10 +169,10 @@ class Lexer
             return false;
         }
 
-        return preg_match('/[0-9]/', $number) === 1;
+        return preg_match('/\d/', $number) === 1;
     }
 
-    private function isNumber(string $number): bool
+    private function isNumber(string|int $number): bool
     {
         if ($number === 0) {
             return false;
@@ -263,8 +261,6 @@ class Lexer
         $result = substr($this->input, $position, $this->position - $position);
 
         // remove slashes before quotes
-        $result = str_replace('\\' . $quote, $quote, $result);
-
-        return $result;
+        return str_replace('\\' . $quote, $quote, $result);
     }
 }

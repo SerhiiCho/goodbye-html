@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Ast;
+namespace Serhii\GoodbyeHtml\Ast\Literals;
 
+use Serhii\GoodbyeHtml\Ast\Expressions\Expression;
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class VariableExpression implements Expression
+readonly class StringLiteral implements Expression
 {
     public function __construct(public Token $token, public string $value)
     {
@@ -19,6 +20,6 @@ readonly class VariableExpression implements Expression
 
     public function string(): string
     {
-        return '$' . $this->value;
+        return '"' . $this->value . '"';
     }
 }

@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Ast;
+namespace Serhii\GoodbyeHtml\Ast\Statements;
 
+use Serhii\GoodbyeHtml\Ast\Expressions\Expression;
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class LoopExpression implements Expression
+readonly class LoopStatement implements Statement
 {
     public function __construct(
         public Token $token,

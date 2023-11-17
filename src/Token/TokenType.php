@@ -7,41 +7,43 @@ namespace Serhii\GoodbyeHtml\Token;
 enum TokenType: string
 {
     // Special tokens
-    case EOF = 'EOF';
     case ILLEGAL = 'ILLEGAL';
-
-    // Data types
-    case HTML = 'HTML';
-    case INTEGER = 'INTEGER';
-    case FLOAT = 'FLOAT';
-    case STRING = "string";
-    case TRUE = "true";
-    case FALSE = "false";
-    case NULL = "null";
+    case EOF = 'EOF';
 
     // Identifiers
-    case VARIABLE = 'VARIABLE';
-    case IDENTIFIER = 'IDENTIFIER';
+    case VAR = 'VARIABLE';
+    case IDENT = 'IDENTIFIER';
 
-    // Control flow keywords
-    case IF = 'if';
-    case ELSE = 'else';
-    case LOOP = 'loop';
-    case END = 'end';
+    // Literals
+    case HTML = 'HTML'; // <div>
+    case INT = 'INTEGER'; // 123
+    case FLOAT = 'FLOAT'; // 1.2
+    case STR = "STRING"; // 'foobar'
 
-    // Prefix operators
-    case NOT = "!";
-
-    // Infix and Prefix operators
+    // Operators
+    case PLUS = '+';
     case MINUS = '-';
-    case CONCAT = '.';
+    case ASTERISK = '*';
+    case SLASH = '/';
+    case MODULO = '%';
+    case PERIOD = '.';
+    case BANG = "!";
 
     // Delimiters
-    case OPENING_BRACES = '{{';
-    case CLOSING_BRACES = '}}';
-    case QUESTION_MARK = '?';
-    case COMMA = ',';
+    case LBRACES = '{{';
+    case RBRACES = '}}';
+    case QUESTION = '?';
     case COLON = ':';
+    case COMMA = ',';
+
+    // Keywords
+    case IF = 'IF';
+    case ELSE = 'ELSE';
+    case END = 'END';
+    case LOOP = 'LOOP';
+    case TRUE = 'TRUE';
+    case FALSE = 'FALSE';
+    case NULL = "NULL";
 
     private const KEYWORDS = [
         'if' => self::IF,
@@ -53,8 +55,8 @@ enum TokenType: string
         'null' => self::NULL,
     ];
 
-    public static function lookupIdentifier(string $identifier): self
+    public static function lookupIdent(string $identifier): self
     {
-        return self::KEYWORDS[$identifier] ?? self::IDENTIFIER;
+        return self::KEYWORDS[$identifier] ?? self::IDENT;
     }
 }

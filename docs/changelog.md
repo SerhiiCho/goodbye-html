@@ -1,6 +1,13 @@
-[<< Go back to home](https://github.com/SerhiiCho/goodbye-html/blob/master/README.md)
-
 # Release Notes
+
+----
+
+## v2.4.0 (2023-11-17)
+
+- Added support for math expressions: add (+), subtract (-), multiply (*), divide (/), modulo (%). Now you can use it like this: `{{ 1 + 2 }}`, `{{ 1 - 2 }}`, `{{ 1 * 2 }}`, `{{ 1 / 2 }}`, `{{ 1 % 2 }}`
+- Added BNF (Backus-Naur Form) grammar
+- Changed `if` and `loop` expression to statements
+- Refactored and restructured AST nodes for better readability
 
 ----
 
@@ -113,5 +120,3 @@
 ##  v1.0 (2019-09-24)
 
 - First ever version
-
-----

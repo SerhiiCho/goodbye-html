@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Serhii\GoodbyeHtml\Ast;
+namespace Serhii\GoodbyeHtml\Ast\Statements;
 
 use Serhii\GoodbyeHtml\Token\Token;
 
-readonly class NullLiteral implements Expression
+readonly class HtmlStatement implements Statement
 {
     public function __construct(public Token $token)
     {
@@ -19,6 +19,6 @@ readonly class NullLiteral implements Expression
 
     public function string(): string
     {
-        return '';
+        return $this->token->literal;
     }
 }
