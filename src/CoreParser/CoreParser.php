@@ -85,10 +85,6 @@ class CoreParser
 
     /**
      * Main entry point of the parser
-     *
-     * <program>
-     *   : <statement>*
-     *   ;
      */
     public function parseProgram(): Program
     {
