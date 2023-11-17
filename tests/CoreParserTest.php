@@ -2,66 +2,82 @@
 
 declare(strict_types=1);
 
-use Serhii\GoodbyeHtml\Ast\Literals\BooleanLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\Expression;
-use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
-use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Expressions\InfixExpression;
-use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
-use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
-use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\PrefixExpression;
-use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\Expressions\TernaryExpression;
 use Serhii\GoodbyeHtml\Ast\Expressions\VariableExpression;
-use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Ast\Literals\BooleanLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
+use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\Statement;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
+use Serhii\GoodbyeHtml\Lexer\Lexer;
 
 /**
- * @param ExpressionStatement[] $stmt
+ * @param Statement[] $stmt
  */
 function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
 {
     $errors = $parser->errors();
 
-    expect($errors)->toBeEmpty(implode("\n", $errors));
-    expect($stmt)->toHaveCount($statements, "Program must contain {$statements} statements");
+    expect($errors)
+        ->toBeEmpty(implode("\n", $errors))
+        ->and($stmt)
+        ->toHaveCount($statements, "Program must contain {$statements} statements");
 }
 
 
 function testVariable($var, string $val): void
 {
-    expect($var)->toBeInstanceOf(VariableExpression::class);
-    expect($var->value)->toBe($val);
+    expect($var)
+        ->toBeInstanceOf(VariableExpression::class)
+        ->and($var->value)
+        ->toBe($val);
 }
 
 function testString($str, string $val): void
 {
-    expect($str)->toBeInstanceOf(StringLiteral::class);
-    expect($str->value)->toBe($val);
+    expect($str)
+        ->toBeInstanceOf(StringLiteral::class)
+        ->and($str->value)
+        ->toBe($val);
 }
 
 function testInteger($int, $val): void
 {
-    expect($int)->toBeInstanceOf(IntegerLiteral::class);
-    expect($int->value)->toBe($val);
+    expect($int)
+        ->toBeInstanceOf(IntegerLiteral::class)
+        ->and($int->value)
+        ->toBe($val);
 }
 
 function testFloat($float, $val): void
 {
-    expect($float)->toBeInstanceOf(FloatLiteral::class);
-    expect($float->value)->toBe($val);
+    expect($float)
+        ->toBeInstanceOf(FloatLiteral::class)
+        ->and($float->value)
+        ->toBe($val);
 }
 
 function testBoolean($bool, $val): void
 {
-    expect($bool)->toBeInstanceOf(BooleanLiteral::class);
-    expect($bool->value)->toBe($val);
+    expect($bool)
+        ->toBeInstanceOf(BooleanLiteral::class)
+        ->and($bool->value)
+        ->toBe($val);
 }
 
-function testLiteralExpression(Expression $expression, mixed $expected)
+/**
+ * @throws Exception
+ */
+function testLiteralExpression(Expression $expression, mixed $expected): void
 {
     match (gettype($expected)) {
         'string' => testString($expression, $expected),
