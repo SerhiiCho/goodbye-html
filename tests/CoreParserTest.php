@@ -99,12 +99,18 @@ test('parse variable', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
+    /** @var ExpressionStatement $stmt */
+    $stmt = $program->statements[0];
+
     /** @var VariableExpression $var */
-    $var = $program->statements[0]->expression;
+    $var = $stmt->expression;
 
     testVariable($var, 'userName');
-    expect($var->tokenLiteral())->toBe('userName', "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'");
-    expect($var->string())->toBe('$userName', "Variable must have string representation '\$userName', got: '{$var->string()}'");
+
+    expect($var->tokenLiteral())
+        ->toBe('userName', "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'")
+        ->and($var->string())
+        ->toBe('$userName', "Variable must have string representation '\$userName', got: '{$var->string()}'");
 });
 
 test('parse html', function () {
@@ -134,8 +140,10 @@ test('parse boolean literal', function (string $input, string $expect) {
     /** @var BooleanLiteral $prefix */
     $prefix = $program->statements[0]->expression;
 
-    expect($prefix)->toBeInstanceOf(BooleanLiteral::class);
-    expect($prefix->string())->toBe($expect);
+    expect($prefix)
+        ->toBeInstanceOf(BooleanLiteral::class)
+        ->and($prefix->string())
+        ->toBe($expect);
 })->with(function () {
     return [
         ['{{ true }}', 'true'],
@@ -146,7 +154,7 @@ test('parse boolean literal', function (string $input, string $expect) {
 test('parse if statement', function () {
     $input = <<<HTML
     {{ if true }}
-        <h1>I'm not a pro but it's only a matter of time</h1>
+        <h1>I'm not a pro, but it's only a matter of time</h1>
     {{ end }}
     HTML;
 
@@ -160,9 +168,10 @@ test('parse if statement', function () {
     /** @var IfStatement $if */
     $if = $program->statements[0];
 
-    expect($if->consequence->string())->toBe("\n    <h1>I'm not a pro but it's only a matter of time</h1>\n");
-    expect($if->condition->string())->toBe('true');
-    expect($if->alternative)->toBeNull();
+    expect($if->consequence->string())
+        ->toBe("\n    <h1>I'm not a pro, but it's only a matter of time</h1>\n")
+        ->and($if->condition->string())->toBe('true')
+        ->and($if->alternative)->toBeNull();
 });
 
 test('parse nested if statements', function () {
@@ -177,22 +186,29 @@ test('parse nested if statements', function () {
 
     checkForErrors($parser, $program->statements, 1);
 
-    /** @var IfStatement */
+    /** @var IfStatement $if */
     $if = $program->statements[0];
 
     testVariable($if->condition, 'uses_php');
 
-    expect($if->consequence->statements)->toHaveCount(2, 'Consequence must contain 2 statements');
-    expect($if->consequence->statements[0])->toBeInstanceOf(HtmlStatement::class);
-    expect($if->consequence->statements[1])->toBeInstanceOf(IfStatement::class);
-    expect($if->alternative)->toBeNull();
+    expect($if->consequence->statements)
+        ->toHaveCount(2, 'Consequence must contain 2 statements')
+        ->and($if->consequence->statements[0])
+        ->toBeInstanceOf(HtmlStatement::class)
+        ->and($if->consequence->statements[1])
+        ->toBeInstanceOf(IfStatement::class)
+        ->and($if->alternative)->toBeNull();
 
+    /** @var IfStatement $if */
     $if = $if->consequence->statements[1];
 
-    expect($if->consequence->statements)->toHaveCount(1, 'Consequence must contain 1 statement');
-    expect($if->consequence->statements[0])->toBeInstanceOf(HtmlStatement::class);
-    expect($if->consequence->statements[0]->string())->toBe('guy');
-    expect($if->alternative)->toBeNull();
+    expect($if->consequence->statements)
+        ->toHaveCount(1, 'Consequence must contain 1 statement')
+        ->and($if->consequence->statements[0])
+        ->toBeInstanceOf(HtmlStatement::class)
+        ->and($if->consequence->statements[0]->string())
+        ->toBe('guy')
+        ->and($if->alternative)->toBeNull();
 
     testVariable($if->condition, 'male');
 });
