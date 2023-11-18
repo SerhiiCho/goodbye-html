@@ -26,11 +26,11 @@ function testEval(string $input, ?Env $env = null): Obj
     return (new Evaluator())->eval($program, $env ?? new Env());
 }
 
-test('eval integer expression', function (string $input, string $expected) {
+it('evaluates integer expression', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -47,11 +47,11 @@ test('eval integer expression', function (string $input, string $expected) {
     ];
 });
 
-test('eval float expression', function (string $input, string $expected) {
+it('evaluates float expression', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -63,11 +63,11 @@ test('eval float expression', function (string $input, string $expected) {
     ];
 });
 
-test('eval boolean literal', function (string $input, string $expected) {
+it('evaluates boolean literal', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -80,11 +80,11 @@ test('eval boolean literal', function (string $input, string $expected) {
     ];
 });
 
-test('eval string expression', function (string $input, string $expected) {
+it('evaluates) string expression', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -98,11 +98,11 @@ test('eval string expression', function (string $input, string $expected) {
     ];
 });
 
-test('eval variable', function (string $input, mixed $expect_html, ?Env $env = null) {
+it('evaluates variable', function (string $input, mixed $expect_html, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated)
@@ -117,11 +117,11 @@ test('eval variable', function (string $input, mixed $expect_html, ?Env $env = n
     ];
 });
 
-test('eval if statement', function (string $input, string $expected, ?Env $env = null) {
+it('evaluates if statement', function (string $input, string $expected, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -154,11 +154,11 @@ test('eval if statement', function (string $input, string $expected, ?Env $env =
     ];
 });
 
-test('eval ternary expression', function (string $input, string $expected, Env $env) {
+it('evaluates ternary expression', function (string $input, string $expected, Env $env) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -182,7 +182,7 @@ test('eval ternary expression', function (string $input, string $expected, Env $
     ];
 });
 
-test('eval html statement', function () {
+it('evaluates html statement', function () {
     $input = <<<HTML
     <body>
         <main>
@@ -195,17 +195,17 @@ test('eval html statement', function () {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($input);
 });
 
-test('eval loop statement', function (string $input, string $expected, ?Env $env = null) {
+it('evaluates loop statement', function (string $input, string $expected, ?Env $env = null) {
     $evaluated = testEval($input, $env);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
@@ -222,7 +222,7 @@ test('eval loop statement', function (string $input, string $expected, ?Env $env
     ];
 });
 
-test('error handling', function (string $input, string $expectMessage) {
+it('has a proper error handling', function (string $input, string $expectMessage) {
     $evaluated = testEval($input);
 
     expect($evaluated)
@@ -250,11 +250,11 @@ test('error handling', function (string $input, string $expectMessage) {
     ];
 });
 
-test('eval null test', function () {
+it('evaluates null test', function () {
     $evaluated = testEval('<span>{{ null }}</span>');
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated)
@@ -264,11 +264,11 @@ test('eval null test', function () {
         ->toBe('<span></span>');
 });
 
-test('eval infix expressions', function (string $input, string $expected) {
+it('evaluates infix expressions', function (string $input, string $expected) {
     $evaluated = testEval($input);
 
     if ($evaluated instanceof ErrorObj) {
-        $this->fail($evaluated->message);
+        throw new Error($evaluated->message);
     }
 
     expect($evaluated->value())->toBe($expected);
