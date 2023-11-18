@@ -8,6 +8,7 @@
 - Added **PHP Stan** static analysis tool
 - Added **CS Fixer** code style fixer
 - Bug fixes in the `Parser.php` class related to readonly properties being set later in the code
+- Improved error handling
 
 ----
 
