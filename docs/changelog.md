@@ -2,6 +2,15 @@
 
 ----
 
+## v2.5.0 (2023-11-18)
+
+- Added support for `elseif (<expression>)` and `else if (<expression>)` statements like we have in PHP. You can use them like this: `{{ if true }}<h1>True</h1>{{ elseif false }}<h1>False</h1>{{ else }}<h1>Something else</h1>{{ endif }}`
+- Added **PHP Stan** static analysis tool
+- Added **CS Fixer** code style fixer
+- Bug fixes in the `Parser.php` class related to readonly properties being set later in the code
+
+----
+
 ## v2.4.0 (2023-11-17)
 
 - Added support for math expressions: add (+), subtract (-), multiply (*), divide (/), modulo (%). Now you can use it like this: `{{ 1 + 2 }}`, `{{ 1 - 2 }}`, `{{ 1 * 2 }}`, `{{ 1 / 2 }}`, `{{ 1 % 2 }}`
@@ -98,7 +107,7 @@
 ## v1.4 (2019-10-22)
 
 - Added support for php7.1 in composer.json
-- Connected to github actions
+- Connected to GitHub actions
 
 ----
 

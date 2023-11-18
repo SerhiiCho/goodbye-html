@@ -14,7 +14,7 @@ class Lexer
     private readonly string $input;
     private int $position = 0;
     private int $nextPosition = 0;
-    private string $char = self::LAST_CHAR;
+    private string $char = '';
     private bool $isHtml = true;
 
     public function __construct(string $input)

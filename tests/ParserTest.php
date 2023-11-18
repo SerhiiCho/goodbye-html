@@ -11,7 +11,6 @@ test('parser evaluation', function (string $fileName, array $variables) {
 
     try {
         $actual = $parser->parseHtml();
-
         $expect = file_get_contents(__DIR__ . "/files/expect/{$fileName}.html");
 
         expect($actual)->toBe($expect, "Failed asserting that {$fileName}.html is parsed correctly");

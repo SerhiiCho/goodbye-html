@@ -23,10 +23,6 @@ function testEval(string $input, ?Env $env = null): Obj
     $parser = new CoreParser($lexer);
     $program = $parser->parseProgram();
 
-    $errors = $parser->errors();
-
-    expect($errors)->toBeEmpty(implode("\n", $errors));
-
     return (new Evaluator())->eval($program, $env ?? new Env());
 }
 

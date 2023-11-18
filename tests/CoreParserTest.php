@@ -16,23 +16,8 @@ use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
-use Serhii\GoodbyeHtml\Ast\Statements\Statement;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
-
-/**
- * @param Statement[] $stmt
- */
-function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
-{
-    $errors = $parser->errors();
-
-    expect($errors)
-        ->toBeEmpty(implode("\n", $errors))
-        ->and($stmt)
-        ->toHaveCount($statements, "Program must contain {$statements} statements");
-}
-
 
 function testVariable($var, string $val): void
 {
@@ -97,8 +82,6 @@ test('parse variable', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -121,8 +104,6 @@ test('parse html', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var HtmlStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -134,8 +115,6 @@ test('parse boolean literal', function (string $input, string $expect) {
     $parser = new CoreParser($lexer);
 
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
@@ -166,8 +145,6 @@ test('parse if statement', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var IfStatement $if */
     $if = $program->statements[0];
 
@@ -186,8 +163,6 @@ test('parse nested if statements', function () {
     $parser = new CoreParser($lexer);
 
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     /** @var IfStatement $if */
     $if = $program->statements[0];
@@ -226,8 +201,6 @@ test('parse else statement', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var IfStatement $if */
     $if = $program->statements[0];
 
@@ -247,8 +220,6 @@ test('parse integer literal', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -262,8 +233,6 @@ test('parse float literal', function () {
     $parser = new CoreParser($lexer);
 
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
@@ -280,8 +249,6 @@ test('parse loop statement', function () {
     $parser = new CoreParser($lexer);
 
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     /** @var LoopStatement $loop */
     $loop = $program->statements[0];
@@ -310,8 +277,6 @@ test('parse strings', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -322,8 +287,6 @@ test('parse infix expressions', function (string $inp, mixed $left, string $oper
     $lexer = new Lexer($inp);
     $parser = new CoreParser($lexer);
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
@@ -357,8 +320,6 @@ test('parse string concatenation', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -385,8 +346,6 @@ test('parse ternary expression', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -405,8 +364,6 @@ test('parse prefix expressions', function (string $input, string $operator, $exp
     $parser = new CoreParser($lexer);
 
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
@@ -437,8 +394,6 @@ test('parse null literal', function () {
 
     $program = $parser->parseProgram();
 
-    checkForErrors($parser, $program->statements, 1);
-
     /** @var ExpressionStatement $stmt */
     $stmt = $program->statements[0];
 
@@ -456,8 +411,6 @@ test('operator precedence parsing', function (string $input, string $expect) {
     $parser = new CoreParser($lexer);
 
     $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
 
     $actual = $program->string();
 

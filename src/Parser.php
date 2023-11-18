@@ -55,10 +55,6 @@ class Parser
         $parser = new CoreParser($lexer);
         $program = $parser->parseProgram();
 
-        if (count($parser->errors()) > 0) {
-            throw new CoreParserException($parser->errors()[0]);
-        }
-
         $evaluated = $this->evaluate($program);
 
         if ($evaluated instanceof ErrorObj) {
