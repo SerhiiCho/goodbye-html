@@ -30,13 +30,15 @@
     "require-dev": {
         "symfony/var-dumper": "^5.0@dev",
         "laravel/pint": "dev-main",
-        "pestphp/pest": "2.x-dev"
+        "pestphp/pest": "2.x-dev",
+        "phpstan/phpstan": "1.11.x-dev"
     },
     "scripts": {
         "test": "./vendor/bin/pest",
         "pint": "./vendor/bin/pint",
         "cover": "./vendor/bin/pest --coverage --min=80",
-        "check": ["@test", "@pint", "@cover"]
+        "stan": "./vendor/bin/phpstan analyse",
+        "check": ["@test", "@pint", "@stan", "@cover"]
     },
     "config": {
         "allow-plugins": {
