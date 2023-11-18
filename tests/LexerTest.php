@@ -6,6 +6,9 @@ use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
 
+/**
+ * @param array<int,Token> $expect
+ */
 function tokenizeString(string $input, array $expect): void
 {
     $lexer = new Lexer($input);

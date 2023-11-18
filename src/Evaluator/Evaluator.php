@@ -103,14 +103,35 @@ readonly class Evaluator
             return $left;
         }
 
-        return match ($node->operator) {
-            '.' => new StringObj($left->value() . $right->value()),
-            '+' => $this->numberObject($left->value() + $right->value()),
-            '-' => $this->numberObject($left->value() - $right->value()),
-            '*' => $this->numberObject($left->value() * $right->value()),
-            '/' => $this->numberObject($left->value() / $right->value()),
-            '%' => $this->numberObject($left->value() % $right->value()),
-            default => EvalError::operatorNotAllowed($node->operator, $right),
+        return $this->calculateBinaryExpression($left, $right, $node->operator);
+
+        return EvalError::operatorNotAllowed($node->operator, $right);
+    }
+
+    private function calculateBinaryExpression(Obj $left, Obj $right, string $operator): Obj
+    {
+        $leftValue = $left->value();
+        $rightValue = $right->value();
+
+        if ($left instanceof StringObj || $right instanceof StringObj) {
+            return new StringObj($left->value() . $right->value());
+        }
+
+        if (!is_numeric($leftValue)) {
+            return EvalError::infixExpressionMustBeBetweenNumbers('left', $operator, $left);
+        }
+
+        if (!is_numeric($rightValue)) {
+            return EvalError::infixExpressionMustBeBetweenNumbers('right', $operator, $right);
+        }
+
+        return match($operator) {
+            '+' => $this->numberObject($leftValue + $rightValue),
+            '-' => $this->numberObject($leftValue - $rightValue),
+            '*' => $this->numberObject($leftValue * $rightValue),
+            '/' => $this->numberObject($leftValue / $rightValue),
+            '%' => $this->numberObject($leftValue % $rightValue),
+            default => EvalError::operatorNotAllowed($operator, $right),
         };
     }
 
