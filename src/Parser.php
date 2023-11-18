@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Serhii\GoodbyeHtml;
 
 use Exception;
-use Serhii\GoodbyeHtml\Obj\Env;
-use Serhii\GoodbyeHtml\Obj\Obj;
 use Serhii\GoodbyeHtml\Ast\Statements\Program;
-use Serhii\GoodbyeHtml\Lexer\Lexer;
-use Serhii\GoodbyeHtml\Obj\ErrorObj;
-use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
-use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
+use Serhii\GoodbyeHtml\Evaluator\Evaluator;
 use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
+use Serhii\GoodbyeHtml\Exceptions\EvaluatorException;
 use Serhii\GoodbyeHtml\Exceptions\ParserException;
+use Serhii\GoodbyeHtml\Lexer\Lexer;
+use Serhii\GoodbyeHtml\Obj\Env;
+use Serhii\GoodbyeHtml\Obj\ErrorObj;
+use Serhii\GoodbyeHtml\Obj\Obj;
 
-readonly class Parser
+class Parser
 {
     /**
      * @var string The content that is being parsed
@@ -25,12 +25,13 @@ readonly class Parser
 
     /**
      * @param string $file_path Absolute file path or the file content itself
-     * @param string[]|null $variables Associative array ['var_name' => 'will be inserted']
+     * @param array<string,mixed>|null $variables Associative array ['var_name' => 'will be inserted']
      */
     public function __construct(
-        private string $file_path,
-        private array|null $variables = null,
+        private readonly string $file_path,
+        private readonly array|null $variables = null,
     ) {
+        $this->html_content = '';
     }
 
     /**
@@ -64,7 +65,7 @@ readonly class Parser
             throw new EvaluatorException($evaluated->value());
         }
 
-        return $evaluated->value();
+        return (string) $evaluated->value();
     }
 
     /**
@@ -99,7 +100,7 @@ readonly class Parser
     {
         $envVariables = [];
 
-        foreach ($this->variables as $name => $value) {
+        foreach ($this->variables ?? [] as $name => $value) {
             $envVariables[$name] = Obj::fromNative($value, $name);
         }
 

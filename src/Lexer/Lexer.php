@@ -9,10 +9,12 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 
 class Lexer
 {
+    private const LAST_CHAR = 'ø';
+
     private readonly string $input;
     private int $position = 0;
     private int $nextPosition = 0;
-    private string|int $char = '';
+    private string $char = self::LAST_CHAR;
     private bool $isHtml = true;
 
     public function __construct(string $input)
@@ -27,7 +29,7 @@ class Lexer
             $this->skipWhitespace();
         }
 
-        if ($this->char === 0) {
+        if ($this->char === self::LAST_CHAR) {
             return new Token(TokenType::EOF, '');
         }
 
@@ -121,7 +123,7 @@ class Lexer
 
     private function readHtmlToken(): Token
     {
-        if ($this->char === 0) {
+        if ($this->char === self::LAST_CHAR) {
             $token = new Token(TokenType::EOF, 'EOF');
         } else {
             $token = new Token(TokenType::HTML, $this->readHtml());
@@ -135,7 +137,7 @@ class Lexer
     private function advanceChar(): void
     {
         if ($this->nextPosition >= strlen($this->input)) {
-            $this->char = 0;
+            $this->char = self::LAST_CHAR;
         } else {
             $this->char = $this->input[$this->nextPosition];
         }
@@ -144,10 +146,10 @@ class Lexer
         ++$this->nextPosition;
     }
 
-    private function peekChar(): string|int
+    private function peekChar(): string
     {
         if ($this->nextPosition >= strlen($this->input)) {
-            return 0;
+            return self::LAST_CHAR;
         }
 
         return $this->input[$this->nextPosition];
@@ -158,23 +160,23 @@ class Lexer
         return preg_match('/[_a-zA-Z]/', $letter) === 1;
     }
 
-    private function isInteger(int|string $number): bool
+    private function isInteger(string $number): bool
     {
-        if ($number === 0) {
+        if ($number === self::LAST_CHAR) {
             return false;
         }
 
         // The number must not contain a dot
-        if (str_contains((string) $number, '.')) {
+        if (str_contains($number, '.')) {
             return false;
         }
 
         return preg_match('/\d/', $number) === 1;
     }
 
-    private function isNumber(string|int $number): bool
+    private function isNumber(string $number): bool
     {
-        if ($number === 0) {
+        if ($number === self::LAST_CHAR) {
             return false;
         }
 
@@ -208,7 +210,7 @@ class Lexer
         $result = '';
 
         while ($this->isHtml && ($this->char !== '{' && $this->peekChar() !== '{')) {
-            if ($this->char === 0) {
+            if ($this->char === self::LAST_CHAR) {
                 break;
             }
 
@@ -217,7 +219,7 @@ class Lexer
             $this->advanceChar();
         }
 
-        if ($this->char !== 0) {
+        if ($this->char !== self::LAST_CHAR) {
             $result .= $this->char;
         }
 
