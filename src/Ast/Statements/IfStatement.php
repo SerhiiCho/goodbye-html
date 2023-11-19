@@ -16,7 +16,7 @@ readonly class IfStatement implements Statement
         public Token $token,
         public Expression $condition,
         public BlockStatement $consequence,
-        public ?BlockStatement $alternative,
+        public ?BlockStatement $alternative = null,
         public array $elseIfs = [],
     ) {
     }

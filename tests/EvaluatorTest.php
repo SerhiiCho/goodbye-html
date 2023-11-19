@@ -184,6 +184,10 @@ class EvaluatorTest extends TestCase
                 'Yes',
             ],
             ['{{ if false }}No{{ end }}', ''],
+            ['{{ if true }}1{{ elseif false }}2{{ else if false }}3{{ else }}4{{ end }}', '1'],
+            ['{{ if false }}1{{ elseif true }}2{{ else if false }}3{{ else }}4{{ end }}', '2'],
+            ['{{ if false }}1{{ elseif false }}2{{ else if true }}3{{ else }}4{{ end }}', '3'],
+            ['{{ if false }}1{{ elseif false }}2{{ else if false }}3{{ else }}4{{ end }}', '4'],
         ];
     }
 

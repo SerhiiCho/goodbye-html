@@ -159,6 +159,21 @@ readonly class Evaluator
             return $this->eval($node->consequence, $env);
         }
 
+        // Evaluate else if statements
+        foreach ($node->elseIfs as $elseIf) {
+            $condition = $this->eval($elseIf->condition, $env);
+
+            if ($condition instanceof ErrorObj) {
+                return $condition;
+            }
+
+            $isTrue = $condition->value();
+
+            if ($isTrue) {
+                return $this->eval($elseIf->consequence, $env);
+            }
+        }
+
         if ($node->alternative !== null) {
             return $this->eval($node->alternative, $env);
         }
