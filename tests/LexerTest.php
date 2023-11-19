@@ -174,7 +174,7 @@ class LexerTest extends TestCase
         ]);
     }
 
-    public function testLexingIfElseStatements(): void
+    public function testLexingElseStatements(): void
     {
         $input = <<<HTML
         <h3>{{if true}}Main page{{else}}404{{end}}</h3>
@@ -195,6 +195,35 @@ class LexerTest extends TestCase
             new Token(TokenType::END, "end"),
             new Token(TokenType::RBRACES, '}}'),
             new Token(TokenType::HTML, "</h3>"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
+
+    public function testLexingElseIfStatements(): void
+    {
+        $input = <<<HTML
+        {{if true}}1{{elseif 2}}2{{else if 3}}3{{end}}
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::LBRACES, "{{"),
+            new Token(TokenType::IF, "if"),
+            new Token(TokenType::TRUE, "true"),
+            new Token(TokenType::RBRACES, "}}"),
+            new Token(TokenType::HTML, "1"),
+            new Token(TokenType::LBRACES, '{{'),
+            new Token(TokenType::ELSEIF, "elseif"),
+            new Token(TokenType::INT, "2"),
+            new Token(TokenType::RBRACES, '}}'),
+            new Token(TokenType::HTML, "2"),
+            new Token(TokenType::LBRACES, '{{'),
+            new Token(TokenType::ELSEIF, "else if"),
+            new Token(TokenType::INT, "3"),
+            new Token(TokenType::RBRACES, '}}'),
+            new Token(TokenType::HTML, "3"),
+            new Token(TokenType::LBRACES, '{{'),
+            new Token(TokenType::END, "end"),
+            new Token(TokenType::RBRACES, '}}'),
             new Token(TokenType::EOF, ""),
         ]);
     }

@@ -39,6 +39,7 @@ enum TokenType: string
     // Keywords
     case IF = 'IF';
     case ELSE = 'ELSE';
+    case ELSEIF = 'ELSEIF';
     case END = 'END';
     case LOOP = 'LOOP';
     case TRUE = 'TRUE';
@@ -48,6 +49,7 @@ enum TokenType: string
     private const KEYWORDS = [
         'if' => self::IF,
         'else' => self::ELSE,
+        'elseif' => self::ELSEIF,
         'end' => self::END,
         'loop' => self::LOOP,
         'true' => self::TRUE,
