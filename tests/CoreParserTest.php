@@ -275,7 +275,7 @@ class CoreParserTest extends TestCase
         $this->testString($ternary->consequence, 'container');
         $this->testString($ternary->alternative, '');
     }
-    
+
     public function testParsingStringConcatenation(): void
     {
         $input = "{{ 'Serhii' . ' ' . 'Cho' }}";

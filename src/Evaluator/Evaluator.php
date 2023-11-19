@@ -104,8 +104,6 @@ readonly class Evaluator
         }
 
         return $this->calculateBinaryExpression($left, $right, $node->operator);
-
-        return EvalError::operatorNotAllowed($node->operator, $right);
     }
 
     private function calculateBinaryExpression(Obj $left, Obj $right, string $operator): Obj
@@ -125,7 +123,7 @@ readonly class Evaluator
             return EvalError::infixExpressionMustBeBetweenNumbers('right', $operator, $right);
         }
 
-        return match($operator) {
+        return match ($operator) {
             '+' => $this->numberObject($leftValue + $rightValue),
             '-' => $this->numberObject($leftValue - $rightValue),
             '*' => $this->numberObject($leftValue * $rightValue),
@@ -155,11 +153,17 @@ readonly class Evaluator
             return $condition;
         }
 
-        if ($condition->value()) {
+        $isTrue = $condition->value();
+
+        if ($isTrue) {
             return $this->eval($node->consequence, $env);
         }
 
-        return $this->eval($node->alternative, $env);
+        if ($node->alternative !== null) {
+            return $this->eval($node->alternative, $env);
+        }
+
+        return new NullObj();
     }
 
     private function evalTernaryExpression(TernaryExpression $node, Env $env): Obj
@@ -228,9 +232,11 @@ readonly class Evaluator
 
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj
     {
-        return match ($right->type()) {
-            ObjType::INTEGER_OBJ => new IntegerObj(-$right->value()),
-            ObjType::FLOAT_OBJ => new FloatObj(-$right->value()),
+        $value = $right->value();
+
+        return match (gettype($value)) {
+            'integer' => new IntegerObj(-$value),
+            'double' => new FloatObj(-$value),
             default => EvalError::operatorNotAllowed('-', $right),
         };
     }

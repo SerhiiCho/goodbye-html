@@ -30,13 +30,16 @@
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0@dev",
-        "laravel/pint": "dev-main"
+        "laravel/pint": "dev-main",
+        "phpstan/phpstan": "1.11.x-dev",
+        "squizlabs/php_codesniffer": "4.0.x-dev"
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",
         "pint": "./vendor/bin/pint",
         "cover": "./vendor/bin/phpunit --coverage --min=80",
         "stan": "./vendor/bin/phpstan analyse",
-        "check": ["@test", "@pint", "@stan", "@cover"]
+        "cs": "./vendor/bin/phpcs src --colors -p",
+        "check": ["@test", "@pint", "@stan", "@cs", "@cover"]
     }
 }

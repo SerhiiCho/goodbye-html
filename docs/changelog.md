@@ -7,9 +7,11 @@
 - Added support for `elseif (<expression>)` and `else if (<expression>)` statements like we have in PHP. You can use them like this: `{{ if true }}<h1>True</h1>{{ elseif false }}<h1>False</h1>{{ else }}<h1>Something else</h1>{{ endif }}`
 - Added **PHP Stan** static analysis tool
 - Added **CS Fixer** code style fixer
-- Bug fixes in the `Parser.php` class related to readonly properties being set later in the code
+- 🐛 Bug fixes in the `Parser.php` class related to readonly properties being set later in the code
 - Improved error handling
 - Changed tests back to PHPUnit from Pest, because Pest is kinda sucks and doesn't work as I want. It lacks of error descriptive error messages when tests fail. It's hard to debug. So, I decided to go back to PHPUnit
+- 🐛 Bug fix of the error that was happening when you condition of the if statement was false
+- Installed `CS Fixer` to the project
 
 ----
 
@@ -27,7 +29,7 @@
 - Removed `final` keyword from all the classes to make it easier to extend the package
 - Introduced Pratt Parsing
 - Replaced PHPUnit with Pest testing framework
-- Fixed bug with wrong ternary expression precedence. Negation operator (!) was negating the whole ternary expression instead of the boolean part of it. Now, the negation operator (!) will negate only the boolean part of the ternary expression. Before: `(!(true ? 1 : 0))`. After: `((!true) ? 1 : 0)`.
+- 🐛 Fixed bug with wrong ternary expression precedence. Negation operator (!) was negating the whole ternary expression instead of the boolean part of it. Now, the negation operator (!) will negate only the boolean part of the ternary expression. Before: `(!(true ? 1 : 0))`. After: `((!true) ? 1 : 0)`.
 - Added concatenation for strings. Now you can use it like this: `{{ 'Serhii ' . ' Cho' }}`
 
 ----
@@ -45,7 +47,7 @@
 - Changed the first parameter of the `Parser` class. Now, it accepts absolute path to the template file or a string with template content. Before, it was accepting only the path
 - Improved code readability to refactoring the `Parser` class
 - Added support for `floats`. Now you can use `floats` like this: `{{ if 1.2 }}`
-- Bug fix, when you pass a relative path as a first argument to the `Parser` class. Now, it will throw an exception with a descriptive message
+- 🐛 Bug fix, when you pass a relative path as a first argument to the `Parser` class. Now, it will throw an exception with a descriptive message
 
 ----
 

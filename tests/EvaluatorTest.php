@@ -183,6 +183,7 @@ class EvaluatorTest extends TestCase
                 '{{ if false }}Not{{ else }}Yes{{ end }}',
                 'Yes',
             ],
+            ['{{ if false }}No{{ end }}', ''],
         ];
     }
 
@@ -295,7 +296,18 @@ class EvaluatorTest extends TestCase
                 '{{ -"hello" }}',
                 EvalError::operatorNotAllowed('-', new StringObj('hello'))->message,
             ],
-            // todo: add test for infix expression like 4 + "hello" and so on
+            [
+                '{{ 5 + "hello" }}',
+                EvalError::infixExpressionMustBeBetweenNumbers('right', '+', new StringObj('hello'))->message,
+            ],
+            [
+                '{{ "nice" - 24 }}',
+                EvalError::infixExpressionMustBeBetweenNumbers('left', '-', new StringObj('nice'))->message,
+            ],
+            [
+                '{{ false / true }}',
+                EvalError::infixExpressionMustBeBetweenNumbers('left', '/', new BooleanObj(false))->message,
+            ],
         ];
     }
 
@@ -314,7 +326,7 @@ class EvaluatorTest extends TestCase
     #[DataProvider('providerForTestEvalInfixExpressions')]
     public function testEvalInfixExpressions(string $input, string $expected): void
     {
-       $evaluated = $this->testEval($input);
+        $evaluated = $this->testEval($input);
 
         if ($evaluated instanceof ErrorObj) {
             $this->fail($evaluated->message);
@@ -342,4 +354,3 @@ class EvaluatorTest extends TestCase
         ];
     }
 }
-

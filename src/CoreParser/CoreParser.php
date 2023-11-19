@@ -170,7 +170,7 @@ class CoreParser
      */
     private function parseStatement(): Statement|null
     {
-        return match($this->curToken->type) {
+        return match ($this->curToken->type) {
             TokenType::HTML => $this->parseHtmlStatement(),
             TokenType::LBRACES => $this->parseEmbeddedCode(),
             default => null,
