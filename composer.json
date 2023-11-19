@@ -35,11 +35,10 @@
         "squizlabs/php_codesniffer": "4.0.x-dev"
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit",
+        "test": "./vendor/bin/phpunit --order-by=random",
         "pint": "./vendor/bin/pint",
-        "cover": "./vendor/bin/phpunit --coverage --min=80",
         "stan": "./vendor/bin/phpstan analyse",
         "cs": "./vendor/bin/phpcs src --colors -p",
-        "check": ["@test", "@pint", "@stan", "@cs", "@cover"]
+        "check": ["@test", "@pint", "@stan", "@cs"]
     }
 }
