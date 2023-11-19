@@ -190,10 +190,10 @@ readonly class Evaluator
         }
 
         if ($condition->value()) {
-            return $this->eval($node->consequence, $env);
+            return $this->eval($node->trueExpression, $env);
         }
 
-        return $this->eval($node->alternative, $env);
+        return $this->eval($node->falseExpression, $env);
     }
 
     private function evalBlockStatement(BlockStatement $node, Env $env): Obj

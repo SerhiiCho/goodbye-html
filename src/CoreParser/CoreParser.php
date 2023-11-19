@@ -390,9 +390,7 @@ class CoreParser
 
         return new TernaryExpression(
             token: $this->curToken,
-            condition: $left,
-            consequence: $consequence,
-            alternative: $alternative,
+            condition: $left, trueExpression: $consequence, falseExpression: $alternative,
         );
     }
 

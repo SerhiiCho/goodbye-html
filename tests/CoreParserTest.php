@@ -308,8 +308,8 @@ class CoreParserTest extends TestCase
         $this->assertInstanceOf(TernaryExpression::class, $ternary);
 
         $this->testVariable($ternary->condition, 'hasContainer');
-        $this->testString($ternary->consequence, 'container');
-        $this->testString($ternary->alternative, '');
+        $this->testString($ternary->trueExpression, 'container');
+        $this->testString($ternary->falseExpression, '');
     }
 
     public function testParsingStringConcatenation(): void
