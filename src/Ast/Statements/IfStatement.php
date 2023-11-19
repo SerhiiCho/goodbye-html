@@ -9,11 +9,15 @@ use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class IfStatement implements Statement
 {
+    /**
+     * @param array<int,IfStatement> $elseIfs
+     */
     public function __construct(
         public Token $token,
         public Expression $condition,
         public BlockStatement $consequence,
         public ?BlockStatement $alternative,
+        public array $elseIfs = [],
     ) {
     }
 

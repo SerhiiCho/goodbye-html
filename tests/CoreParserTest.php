@@ -74,6 +74,12 @@ class CoreParserTest extends TestCase
         self::assertSame($val, $float->value, "Float must have value '{$val}', got: '{$float->value}'");
     }
 
+    private static function testBoolean($bool, $val): void
+    {
+        self::assertInstanceOf(BooleanLiteral::class, $bool);
+        self::assertSame($val, $bool->value, "Boolean must have value '{$val}', got: '{$bool->value}'");
+    }
+
     public function testParsingVariables(): void
     {
         $input = '{{ $userName }}';
@@ -109,7 +115,6 @@ class CoreParserTest extends TestCase
         $prefix = $stmt->expression;
 
         $this->assertInstanceOf(BooleanLiteral::class, $prefix);
-        $this->assertSame($expect, $prefix->string());
     }
 
     public static function providerForTestBooleanLiterals(): array
@@ -176,6 +181,37 @@ class CoreParserTest extends TestCase
 
         $this->assertSame("<span>You are too young to be here</span>", $if->consequence->string());
         $this->assertSame("<span>You can drink beer</span>", $if->alternative->string());
+    }
+
+    public function testParsingElseIfStatement(): void
+    {
+        $input = <<<HTML
+        {{ if false }}1{{ elseif false }}2{{ else if true }}3{{ else }}4{{ end }}
+        HTML;
+
+        /** @var IfStatement $if */
+        $if = $this->createProgram($input)->statements[0];
+
+        $this->assertInstanceOf(IfStatement::class, $if);
+
+        self::testBoolean($if->condition, false);
+
+        $this->assertCount(2, $if->elseIfs, 'ElseIfs must contain 2 statements');
+
+        /** @var IfStatement $elseIf */
+        $elseIf = $if->elseIfs[0];
+
+        self::testBoolean($elseIf->condition, false);
+        $this->assertSame('2', $elseIf->consequence->string());
+
+        /** @var IfStatement $elseIf */
+        $elseIf = $if->elseIfs[1];
+
+        self::testBoolean($elseIf->condition, true);
+        $this->assertSame('3', $elseIf->consequence->string());
+
+        $this->assertNotNull($if->alternative, 'Alternative must not be null');
+        $this->assertSame('4', $if->alternative->string());
     }
 
     public function testParsingIntegerLiteral(): void

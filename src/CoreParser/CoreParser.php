@@ -307,9 +307,9 @@ class CoreParser
     /**
      * @throws CoreParserException
      */
-    private function parseIfStatement(): Statement
+    private function parseIfStatement(): IfStatement
     {
-        $this->nextToken(); // skip "if"
+        $this->nextToken(); // skip "if" or "elseif"
 
         $condition = $this->parseExpression(Precedence::LOWEST);
 
@@ -318,7 +318,21 @@ class CoreParser
         $this->nextToken(); // skip "}}"
 
         $consequence = $this->parseBlockStatement();
+
         $alternative = null;
+        $elseIfs = [];
+
+        while ($this->peekTokenIs(TokenType::ELSEIF)) {
+            $this->nextToken(); // skip "{{"
+            $this->nextToken(); // skip "elseif"
+
+            $elseIfs[] = new IfStatement(
+                token: $this->curToken,
+                condition: $this->parseExpression(Precedence::LOWEST),
+                consequence: $this->parseBlockStatement(),
+                alternative: null,
+            );
+        }
 
         if ($this->peekTokenIs(TokenType::ELSE)) {
             $this->nextToken(); // skip "{{"
@@ -329,10 +343,11 @@ class CoreParser
         }
 
         return new IfStatement(
-            $this->curToken,
-            $condition,
-            $consequence,
-            $alternative,
+            token: $this->curToken,
+            condition: $condition,
+            consequence: $consequence,
+            alternative: $alternative,
+            elseIfs: $elseIfs,
         );
     }
 
@@ -386,7 +401,7 @@ class CoreParser
     /**
      * @throws CoreParserException
      */
-    private function parseLoopStatement(): Statement
+    private function parseLoopStatement(): LoopStatement
     {
         $token = $this->curToken;
 
@@ -421,8 +436,9 @@ class CoreParser
             $isOpening = $this->curTokenIs(TokenType::LBRACES);
             $isPeekEnd = $this->peekTokenIs(TokenType::END);
             $isPeekElse = $this->peekTokenIs(TokenType::ELSE);
+            $isPeekElseIf = $this->peekTokenIs(TokenType::ELSEIF);
 
-            if ($isOpening && ($isPeekEnd || $isPeekElse)) {
+            if ($isOpening && ($isPeekEnd || $isPeekElse || $isPeekElseIf)) {
                 break;
             }
 
