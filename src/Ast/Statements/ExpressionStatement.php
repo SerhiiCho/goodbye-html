@@ -9,7 +9,7 @@ use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class ExpressionStatement implements Statement
 {
-    public function __construct(public Token $token, public Expression|null $expression)
+    public function __construct(public Token $token, public Expression $expression)
     {
     }
 
@@ -20,10 +20,6 @@ readonly class ExpressionStatement implements Statement
 
     public function string(): string
     {
-        if (!$this->expression) {
-            return '';
-        }
-
         return $this->expression->string();
     }
 }

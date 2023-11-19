@@ -7,7 +7,7 @@ namespace Serhii\GoodbyeHtml\Obj;
 class Env
 {
     /**
-     * @param array<int,Obj> $store
+     * @param array<string,Obj> $store
      */
     public function __construct(
         private array $store = [],
@@ -36,7 +36,7 @@ class Env
     }
 
     /**
-     * @param array<int,mixed> $arr
+     * @param array<string,mixed> $arr
      */
     public static function fromArray(array $arr): self
     {

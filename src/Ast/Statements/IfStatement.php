@@ -9,11 +9,15 @@ use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class IfStatement implements Statement
 {
+    /**
+     * @param array<int,IfStatement> $elseIfBlocks
+     */
     public function __construct(
         public Token $token,
         public Expression $condition,
-        public BlockStatement $consequence,
-        public ?BlockStatement $alternative,
+        public BlockStatement $block,
+        public ?BlockStatement $elseBlock = null,
+        public array $elseIfBlocks = [],
     ) {
     }
 
@@ -24,14 +28,18 @@ readonly class IfStatement implements Statement
 
     public function string(): string
     {
-        $result = sprintf("{{ if %s }}\n", $this->condition->string());
+        $result = sprintf("{{ %s %s }}\n", $this->tokenLiteral(), $this->condition->string());
 
-        $result .= $this->consequence->string();
+        $result .= $this->block->string();
 
-        if ($this->alternative) {
+        foreach ($this->elseIfBlocks as $elseIfBlock) {
+            $result .= $elseIfBlock->string();
+        }
+
+        if ($this->elseBlock) {
             $result .= "{{ else }}\n";
 
-            $result .= $this->alternative->string();
+            $result .= $this->elseBlock->string();
         }
 
         return "{$result}{{ end }}\n";

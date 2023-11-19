@@ -11,8 +11,8 @@ readonly class TernaryExpression implements Expression
     public function __construct(
         public Token $token,
         public Expression $condition,
-        public Expression $consequence,
-        public Expression $alternative,
+        public Expression $trueExpression,
+        public Expression $falseExpression,
     ) {
     }
 
@@ -26,8 +26,8 @@ readonly class TernaryExpression implements Expression
         return sprintf(
             '(%s ? %s : %s)',
             $this->condition->string(),
-            $this->consequence->string(),
-            $this->alternative->string(),
+            $this->trueExpression->string(),
+            $this->falseExpression->string(),
         );
     }
 }

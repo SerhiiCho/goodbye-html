@@ -13,7 +13,11 @@
             <p>
                 {{ if $isSecondary }}
                     This is a secondary section.
-                {{ else}}
+                {{ elseif false }}
+                    Nothing to see here.
+                {{ else if false }}
+                    Also nothing to see here.
+                {{ else }}
                     This is a primary section.
                 {{ end }}
             </p>

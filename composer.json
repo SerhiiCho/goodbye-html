@@ -1,7 +1,7 @@
 {
     "name": "serhii/goodbye-html",
     "description": "Simple html parser for parsing html files into a string",
-    "homepage": "https://github.com/SerhiiCho/html-parser",
+    "homepage": "https://github.com/SerhiiCho/goodbye-html",
     "keywords": ["parser", "library", "html"],
     "type": "library",
     "license": "MIT",
@@ -21,26 +21,24 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Serhii\\Tests\\": "tests"
+            "Serhii\\GoodbyeHtml\\": "tests"
         }
     },
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "phpunit/phpunit": "^11.0@dev"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0@dev",
         "laravel/pint": "dev-main",
-        "pestphp/pest": "2.x-dev"
+        "phpstan/phpstan": "1.11.x-dev",
+        "squizlabs/php_codesniffer": "4.0.x-dev"
     },
     "scripts": {
-        "test": "./vendor/bin/pest",
+        "test": "./vendor/bin/phpunit --order-by=random",
         "pint": "./vendor/bin/pint",
-        "cover": "./vendor/bin/pest --coverage --min=80",
-        "check": ["@test", "@pint", "@cover"]
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
+        "stan": "./vendor/bin/phpstan analyse",
+        "cs": "./vendor/bin/phpcs src --colors -p",
+        "check": ["@test", "@pint", "@stan", "@cs"]
     }
 }

@@ -22,6 +22,7 @@ use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\Program;
 use Serhii\GoodbyeHtml\Ast\Statements\Statement;
+use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 use Serhii\GoodbyeHtml\Token\Token;
 use Serhii\GoodbyeHtml\Token\TokenType;
@@ -46,13 +47,16 @@ class CoreParser
 
     private Token $curToken;
     private Token $peekToken;
-    private array $prefixParseFns = [];
-    private array $infixParseFns = [];
 
     /**
-     * @var string[]
+     * @var array<string,Closure>
      */
-    private array $errors = [];
+    private array $prefixParseFns = [];
+
+    /**
+     * @var array<string,Closure>
+     */
+    private array $infixParseFns = [];
 
     public function __construct(private readonly Lexer $lexer)
     {
@@ -85,6 +89,8 @@ class CoreParser
 
     /**
      * Main entry point of the parser
+     *
+     * @throws CoreParserException
      */
     public function parseProgram(): Program
     {
@@ -94,22 +100,14 @@ class CoreParser
         while (!$this->curTokenIs(TokenType::EOF)) {
             $stmt = $this->parseStatement();
 
-            if ($stmt) {
-                $statements[] = $stmt;
+            if ($stmt !== null) {
+                $statements[] =  $stmt;
             }
 
             $this->nextToken();
         }
 
         return new Program($statements);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function errors(): array
-    {
-        return $this->errors;
     }
 
     private function curTokenIs(TokenType $token): bool
@@ -148,32 +146,37 @@ class CoreParser
         $this->infixParseFns[$token->value] = $fn;
     }
 
-    private function expectPeek(TokenType $token): bool
+    /**
+     * @throws CoreParserException
+     */
+    private function expectPeek(TokenType $token): void
     {
         if ($this->peekTokenIs($token)) {
             $this->nextToken();
-            return true;
+            return;
         }
 
-        $this->errors[] = sprintf(
-            "expected next token to be %s, got %s instead",
-            $token->value,
-            $this->peekToken->type->value,
+        throw new CoreParserException(
+            ParserError::expectNextTokenToBeDifferent($token, $this->peekToken),
         );
-
-        return false;
     }
 
+    /**
+     * @throws CoreParserException
+     */
     private function parseStatement(): Statement|null
     {
-        return match($this->curToken->type) {
+        return match ($this->curToken->type) {
             TokenType::HTML => $this->parseHtmlStatement(),
             TokenType::LBRACES => $this->parseEmbeddedCode(),
             default => null,
         };
     }
 
-    private function parseEmbeddedCode(): Statement|null
+    /**
+     * @throws CoreParserException
+     */
+    private function parseEmbeddedCode(): Statement
     {
         $this->nextToken();
 
@@ -189,6 +192,9 @@ class CoreParser
         return new HtmlStatement($this->curToken);
     }
 
+    /**
+     * @throws CoreParserException
+     */
     private function parseExpressionStatement(): ExpressionStatement
     {
         $expr = $this->parseExpression(Precedence::LOWEST);
@@ -201,17 +207,15 @@ class CoreParser
         return $result;
     }
 
-    private function parseExpression(Precedence $precedence): Expression|null
+    /**
+     * @throws CoreParserException
+     */
+    private function parseExpression(Precedence $precedence): Expression
     {
         $prefix = $this->prefixParseFns[$this->curToken->type->value] ?? null;
 
-        if (!$prefix) {
-            $this->errors[] = sprintf(
-                '[PARSER_ERROR] no prefix parse function for character "%s" found',
-                $this->curToken->literal,
-            );
-
-            return null;
+        if ($prefix === null) {
+            throw new CoreParserException(ParserError::noPrefixParseFunction($this->curToken));
         }
 
         $leftExp = $prefix();
@@ -271,6 +275,9 @@ class CoreParser
         );
     }
 
+    /**
+     * @throws CoreParserException
+     */
     private function parsePrefixExpression(): Expression
     {
         $token = $this->curToken;
@@ -291,37 +298,60 @@ class CoreParser
         );
     }
 
-    private function parseIfStatement(): Statement|null
+    /**
+     * @throws CoreParserException
+     */
+    private function parseIfStatement(): IfStatement
     {
-        $this->nextToken(); // skip "if"
+        $this->nextToken(); // skip "if" or "elseif"
 
         $condition = $this->parseExpression(Precedence::LOWEST);
 
-        if (!$this->expectPeek(TokenType::RBRACES)) {
-            return null;
-        }
+        $this->expectPeek(TokenType::RBRACES);
 
         $this->nextToken(); // skip "}}"
 
-        $consequence = $this->parseBlockStatement();
-        $alternative = null;
+        $ifBlock = $this->parseBlockStatement();
+
+        $elseBlock = null;
+        $elseIfBlocks = [];
+
+        while ($this->peekTokenIs(TokenType::ELSEIF)) {
+            $this->nextToken(); // skip "{{"
+            $this->nextToken(); // skip "elseif"
+
+            $elseIfBlocks[] = new IfStatement(
+                token: $this->curToken,
+                condition: $this->parseExpression(Precedence::LOWEST),
+                block: $this->parseBlockStatement(),
+                elseBlock: null,
+            );
+        }
 
         if ($this->peekTokenIs(TokenType::ELSE)) {
             $this->nextToken(); // skip "{{"
             $this->nextToken(); // skip "else"
             $this->nextToken(); // skip "}}"
 
-            $alternative = $this->parseBlockStatement();
+            $elseBlock = $this->parseBlockStatement();
+        }
+
+        if ($this->peekTokenIs(TokenType::ELSEIF)) {
+            throw new CoreParserException(ParserError::elseIfBlockWrongPlace());
         }
 
         return new IfStatement(
-            $this->curToken,
-            $condition,
-            $consequence,
-            $alternative,
+            token: $this->curToken,
+            condition: $condition,
+            block: $ifBlock,
+            elseBlock: $elseBlock,
+            elseIfBlocks: $elseIfBlocks,
         );
     }
 
+    /**
+     * @throws CoreParserException
+     */
     private function parseInfixExpression(Expression $left): Expression
     {
         $token = $this->curToken;
@@ -341,31 +371,35 @@ class CoreParser
         );
     }
 
-    private function parseTernaryExpression(Expression $left): Expression|null
+    /**
+     * @throws CoreParserException
+     */
+    private function parseTernaryExpression(Expression $left): Expression
     {
         $this->nextToken(); // skip "?"
 
-        $consequence = $this->parseExpression(Precedence::TERNARY);
+        $trueExpression = $this->parseExpression(Precedence::TERNARY);
 
-        if (!$this->expectPeek(TokenType::COLON)) {
-            return null;
-        }
+        $this->expectPeek(TokenType::COLON);
 
         $this->nextToken(); // skip ":"
 
-        $alternative = $this->parseExpression(Precedence::LOWEST);
+        $falseExpression = $this->parseExpression(Precedence::LOWEST);
 
-        $this->nextToken(); // skip alternative
+        $this->nextToken(); // skip falseExpression
 
         return new TernaryExpression(
             token: $this->curToken,
             condition: $left,
-            consequence: $consequence,
-            alternative: $alternative,
+            trueExpression: $trueExpression,
+            falseExpression: $falseExpression,
         );
     }
 
-    private function parseLoopStatement(): Statement|null
+    /**
+     * @throws CoreParserException
+     */
+    private function parseLoopStatement(): LoopStatement
     {
         $token = $this->curToken;
 
@@ -373,33 +407,24 @@ class CoreParser
 
         $from = $this->parseExpression(Precedence::LOWEST);
 
-        if (!$this->expectPeek(TokenType::COMMA)) {
-            return null;
-        }
+        $this->expectPeek(TokenType::COMMA);
 
         $this->nextToken();
 
         $to = $this->parseExpression(Precedence::LOWEST);
 
-        if (!$this->expectPeek(TokenType::RBRACES)) {
-            return null;
-        }
+        $this->expectPeek(TokenType::RBRACES);
 
         $this->nextToken();
 
         $body = $this->parseBlockStatement();
 
-        if (!$this->expectPeek(TokenType::END)) { // skip "{{"
-            return null;
-        }
-
-        if (!$this->expectPeek(TokenType::RBRACES)) { // skip "end"
-            return null;
-        }
-
         return new LoopStatement($token, $from, $to, $body);
     }
 
+    /**
+     * @throws CoreParserException
+     */
     private function parseBlockStatement(): BlockStatement
     {
         $statements = [];
@@ -409,14 +434,15 @@ class CoreParser
             $isOpening = $this->curTokenIs(TokenType::LBRACES);
             $isPeekEnd = $this->peekTokenIs(TokenType::END);
             $isPeekElse = $this->peekTokenIs(TokenType::ELSE);
+            $isPeekElseIf = $this->peekTokenIs(TokenType::ELSEIF);
 
-            if ($isOpening && ($isPeekEnd || $isPeekElse)) {
+            if ($isOpening && ($isPeekEnd || $isPeekElse || $isPeekElseIf)) {
                 break;
             }
 
             $stmt = $this->parseStatement();
 
-            if ($stmt) {
+            if ($stmt !== null) {
                 $statements[] = $stmt;
             }
 

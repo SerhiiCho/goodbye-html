@@ -22,7 +22,7 @@ This package is not for creating a full-featured template engine. It's just a si
 
 ## What Goodbye HTML has?
 - [x] Variables
-- [x] If/Else statements
+- [x] If/Else-If/Else statements
 - [x] Ternary expressions
 - [x] Loops
 - [x] Prefix operators
@@ -190,23 +190,7 @@ Infix operators are used to perform math operations or string concatenation. For
 </h1>
 ```
 
-```html
-<!-- Variable inside block syntax -->
-<section>
-    {{ if $drinks_lots_of_water }}
-        <h1>{{ $water_benefits }}</h1>
-    {{ end }}
-</section>
-```
-
-```html
-<!-- Variable inside inline syntax -->
-<h1 class="{{if $is_smoking}}{{ $harm_description }}{{end}}">
-    This package is cool
-</h1>
-```
-
-#### If / else statements
+#### If/Else statements
 
 ```html
 <!-- Block syntax -->
@@ -226,21 +210,29 @@ Infix operators are used to perform math operations or string concatenation. For
 </section>
 ```
 
+#### If/Else-If/Else statements
+
+> Similar to PHP, you can write `elseif` or `else if` in the same way.
+
 ```html
-<!-- Variable inside block syntax -->
+<!-- Block syntax -->
 <section>
-    {{ if $animal }}
-        <h1>{{ $tiger_var }}</h1>
+    {{ if $likes_bread }}
+        <h1>I like bread</h1>
+    {{ else if $likes_cake }}
+        <h1>I like cake</h1>
+    {{ elseif $likes_pizza }}
+        <h1>I like pizza</h1>
     {{ else }}
-        <h1>{{ $fish_var }}</h1>
+        <h1>I don't really like anything</h1>
     {{ end }}
 </section>
 ```
 
 ```html
-<!-- Variable inside inline syntax -->
+<!-- Inline syntax -->
 <section>
-    <h1>{{ if $is_cat }}{{ $cat_var }}{{ else }}{{ $dog_var }}{{ end }}</h1>
+    <h1>I like {{ if $likes_bread }}bread{{ else if $likes_cake }}cake{{ else }}just water{{ end }}</h1>
 </section>
 ```
 

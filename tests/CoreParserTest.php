@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-use Serhii\GoodbyeHtml\Ast\Expressions\Expression;
+namespace Serhii\GoodbyeHtml;
+
+use PHPUnit\Framework\Attributes\DataProvider;
 use Serhii\GoodbyeHtml\Ast\Expressions\InfixExpression;
 use Serhii\GoodbyeHtml\Ast\Expressions\PrefixExpression;
 use Serhii\GoodbyeHtml\Ast\Expressions\TernaryExpression;
@@ -16,456 +18,387 @@ use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\Program;
 use Serhii\GoodbyeHtml\Ast\Statements\Statement;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
+use Serhii\GoodbyeHtml\CoreParser\ParserError;
+use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 
-/**
- * @param Statement[] $stmt
- */
-function checkForErrors(CoreParser $parser, array $stmt, int $statements): void
+class CoreParserTest extends TestCase
 {
-    $errors = $parser->errors();
+    /**
+     * @throws CoreParserException
+     */
+    private function createProgram(string $input): Program
+    {
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
 
-    expect($errors)
-        ->toBeEmpty(implode("\n", $errors))
-        ->and($stmt)
-        ->toHaveCount($statements, "Program must contain {$statements} statements");
+        $program = $parser->parseProgram();
+
+        $this->assertOneStatement($parser, $program->statements);
+
+        return $program;
+    }
+
+    /**
+     * @param Statement[] $stmt
+     */
+    private function assertOneStatement(CoreParser $parser, array $stmt): void
+    {
+        $this->assertCount(1, $stmt, "Program must contain 1 statements");
+    }
+
+    private static function testVariable($var, string $val): void
+    {
+        self::assertInstanceOf(VariableExpression::class, $var);
+        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
+    }
+
+    private static function testString($str, string $val): void
+    {
+        self::assertInstanceOf(StringLiteral::class, $str);
+        self::assertSame($val, $str->value, "String must have value '{$val}', got: '{$str->value}'");
+    }
+
+    private static function testInteger($int, $val): void
+    {
+        self::assertInstanceOf(IntegerLiteral::class, $int);
+        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
+    }
+
+    private static function testFloat($float, $val): void
+    {
+        self::assertInstanceOf(FloatLiteral::class, $float);
+        self::assertSame($val, $float->value, "Float must have value '{$val}', got: '{$float->value}'");
+    }
+
+    private static function testBoolean($bool, $val): void
+    {
+        self::assertInstanceOf(BooleanLiteral::class, $bool);
+        self::assertSame($val, $bool->value, "Boolean must have value '{$val}', got: '{$bool->value}'");
+    }
+
+    public function testParsingVariables(): void
+    {
+        $input = '{{ $userName }}';
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var VariableExpression $var */
+        $var = $stmt->expression;
+
+        self::testVariable($var, 'userName');
+        $this->assertSame('userName', $var->tokenLiteral(), "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'");
+        $this->assertSame('$userName', $var->string(), "Variable must have string representation '\$userName', got: '{$var->string()}'");
+    }
+
+    public function testParsingHtml(): void
+    {
+        $input = '<div class="nice"></div>';
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        $this->assertSame('<div class="nice"></div>', $stmt->string());
+    }
+
+    #[DataProvider('providerForTestBooleanLiterals')]
+    public function testBooleanLiterals(string $input, string $expect): void
+    {
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var BooleanLiteral $prefix */
+        $prefix = $stmt->expression;
+
+        $this->assertInstanceOf(BooleanLiteral::class, $prefix);
+    }
+
+    public static function providerForTestBooleanLiterals(): array
+    {
+        return [
+            ['{{ true }}', 'true'],
+            ['{{ false }}', 'false'],
+        ];
+    }
+
+    public function testParsingIfStatement(): void
+    {
+        $input = <<<HTML
+        {{ if true }}
+            <h1>I'm not a pro, but it's only a matter of time</h1>
+        {{ end }}
+        HTML;
+
+        /** @var IfStatement $if */
+        $if = $this->createProgram($input)->statements[0];
+
+        $this->assertSame("\n    <h1>I'm not a pro, but it's only a matter of time</h1>\n", $if->block->string());
+        $this->assertSame('true', $if->condition->string());
+        $this->assertNull($if->elseBlock);
+    }
+
+    public function testParsingNestedIfStatement(): void
+    {
+        $input = <<<HTML
+        {{ if \$uses_php }}You are a cool{{ if \$male }}guy{{ end }}{{ end }}
+        HTML;
+
+        /** @var IfStatement $if */
+        $if = $this->createProgram($input)->statements[0];
+
+        self::testVariable($if->condition, 'uses_php');
+
+        $this->assertCount(2, $if->block->statements, 'Consequence must contain 2 statements');
+        $this->assertInstanceOf(HtmlStatement::class, $if->block->statements[0]);
+        $this->assertInstanceOf(IfStatement::class, $if->block->statements[1]);
+        $this->assertNull($if->elseBlock);
+
+        /** @var IfStatement $if */
+        $if = $if->block->statements[1];
+
+        $this->assertCount(1, $if->block->statements, 'Consequence must contain 1 statement');
+        $this->assertInstanceOf(HtmlStatement::class, $if->block->statements[0]);
+        $this->assertSame('guy', $if->block->statements[0]->string());
+        $this->assertNull($if->elseBlock);
+
+        self::testVariable($if->condition, 'male');
+    }
+
+    public function testParsingElseStatement(): void
+    {
+        $input = <<<HTML
+        {{ if \$underAge }}<span>You are too young to be here</span>{{ else }}<span>You can drink beer</span>{{ end }}
+        HTML;
+
+        /** @var IfStatement $if */
+        $if = $this->createProgram($input)->statements[0];
+
+        self::testVariable($if->condition, 'underAge');
+
+        $this->assertSame("<span>You are too young to be here</span>", $if->block->string());
+        $this->assertSame("<span>You can drink beer</span>", $if->elseBlock->string());
+    }
+
+    public function testParsingElseIfStatement(): void
+    {
+        $input = <<<HTML
+        {{ if false }}1{{ elseif false }}2{{ else if true }}3{{ else }}4{{ end }}
+        HTML;
+
+        /** @var IfStatement $if */
+        $if = $this->createProgram($input)->statements[0];
+
+        $this->assertInstanceOf(IfStatement::class, $if);
+
+        self::testBoolean($if->condition, false);
+
+        $this->assertCount(2, $if->elseIfBlocks, 'ElseIfs must contain 2 statements');
+
+        /** @var IfStatement $elseIf */
+        $elseIf = $if->elseIfBlocks[0];
+
+        self::testBoolean($elseIf->condition, false);
+        $this->assertSame('2', $elseIf->block->string());
+
+        /** @var IfStatement $elseIf */
+        $elseIf = $if->elseIfBlocks[1];
+
+        self::testBoolean($elseIf->condition, true);
+        $this->assertSame('3', $elseIf->block->string());
+
+        $this->assertNotNull($if->elseBlock, 'Alternative must not be null');
+        $this->assertSame('4', $if->elseBlock->string());
+    }
+
+    public function testParsingIntegerLiteral(): void
+    {
+        $input = '{{ 5 }}';
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        $this->testInteger($stmt->expression, 5);
+    }
+
+    public function testParsingFloatLiteral(): void
+    {
+        $input = '{{ 1.40123 }}';
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        $this->testFloat($stmt->expression, 1.40123);
+    }
+
+    public function testParsingLoopStatement(): void
+    {
+        $input = <<<HTML
+        {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
+        HTML;
+
+        /** @var LoopStatement $loop */
+        $loop = $this->createProgram($input)->statements[0];
+
+        $this->testVariable($loop->from, 'fr');
+        $this->testInteger($loop->to, 5);
+
+        $this->assertCount(3, $loop->body->statements, 'Loop body must contain 3 statements');
+
+        /** @var array<int,HtmlStatement|ExpressionStatement> $stmts */
+        $stmts = $loop->body->statements;
+
+        $this->testVariable($stmts[1]->expression, 'index');
+
+        $this->assertSame('<li><a href="#">Link - ', $stmts[0]->string());
+        $this->assertSame("</a></li>", $stmts[2]->string());
+    }
+
+    public function testParsingStrings(): void
+    {
+        $input = "{{ 'hello' }}";
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var StringLiteral $var */
+        $str = $stmt->expression;
+
+        $this->testString($str, 'hello');
+    }
+
+    #[DataProvider('providerForTestParsingInfixExpressions')]
+    public function testParsingInfixExpressions(string $input, mixed $left, string $operator, mixed $right): void
+    {
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var InfixExpression $infix */
+        $infix = $stmt->expression;
+
+        $this->assertInstanceOf(InfixExpression::class, $infix);
+        $this->assertSame($operator, $infix->operator);
+    }
+
+    public static function providerForTestParsingInfixExpressions(): array
+    {
+        return [
+            ['{{ 5 + 3 }}', 5, '+', 3],
+            ['{{ 123 - 23 }}', 123, '-', 23],
+            ['{{ 46 * 7 }}', 46, '*', 7],
+            ['{{ 89 / 1 }}', 89, '/', 1],
+            ['{{ 22 % 2 }}', 22, '%', 2],
+            ['{{ "nice" . "cool" }}', "nice", '.', "cool"],
+        ];
+    }
+
+    public function testParsingTernaryExpression(): void
+    {
+        $input = "{{ \$hasContainer ? 'container' : '' }}";
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var TernaryExpression $ternary */
+        $ternary = $stmt->expression;
+
+        $this->assertInstanceOf(TernaryExpression::class, $ternary);
+
+        $this->testVariable($ternary->condition, 'hasContainer');
+        $this->testString($ternary->trueExpression, 'container');
+        $this->testString($ternary->falseExpression, '');
+    }
+
+    public function testParsingStringConcatenation(): void
+    {
+        $input = "{{ 'Serhii' . ' ' . 'Cho' }}";
+
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        $program = $parser->parseProgram();
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[0];
+
+        /** @var InfixExpression $infix */
+        $infix = $stmt->expression;
+
+        $this->testString($infix->right, 'Cho');
+        $this->assertSame('.', $infix->operator);
+
+        /** @var InfixExpression $infix */
+        $infix = $infix->left;
+
+        $this->assertInstanceOf(InfixExpression::class, $infix);
+
+        $this->testString($infix->left, 'Serhii');
+        $this->testString($infix->right, ' ');
+        $this->assertSame('.', $infix->operator);
+    }
+
+    #[DataProvider('providerForTestPrefixExpressions')]
+    public function testPrefixExpressions(string $input, string $operator, $expect): void
+    {
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var PrefixExpression $prefix */
+        $prefix = $stmt->expression;
+
+        $this->assertInstanceOf(PrefixExpression::class, $prefix);
+        $this->assertSame($operator, $prefix->operator);
+    }
+
+    public static function providerForTestPrefixExpressions(): array
+    {
+        return [
+            ['{{ -4 }}', '-', 4],
+            ['{{ -284 }}', '-', 284],
+            ['{{ !true }}', '!', false],
+            ['{{ !false }}', '!', true],
+        ];
+    }
+
+    public function testParsingNull(): void
+    {
+        $input = '{{ null }}';
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var NullLiteral $null */
+        $null = $stmt->expression;
+
+        self::assertInstanceOf(NullLiteral::class, $null);
+        self::assertSame('null', $null->token->literal);
+    }
+
+    #[DataProvider('providerForTestOperatorPrecedenceParsing')]
+    public function testOperatorPrecedenceParsing(string $input, string $expect): void
+    {
+        $actual = $this->createProgram($input)->string();
+
+        $this->assertSame($expect, $actual, "Expected '{$expect}', got '{$actual}'");
+    }
+
+    public static function providerForTestOperatorPrecedenceParsing(): array
+    {
+        return [
+            ['{{ !-1 }}', '(!(-1))'],
+            ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
+            ['{{ !true ? 1 : true ? 3 : 5 }}', '((!true) ? 1 : (true ? 3 : 5))'],
+        ];
+    }
+
+    public function testWhenParsingIfStatementWithElseBlockBeforeElseIfBlockGivesError(): void
+    {
+        $this->expectException(CoreParserException::class);
+        $this->expectExceptionMessage(ParserError::elseIfBlockWrongPlace());
+
+        $this->createProgram("{{ if true }}1{{ else }}2{{ elseif true }}3{{ end }}");
+    }
 }
-
-
-function testVariable($var, string $val): void
-{
-    expect($var)
-        ->toBeInstanceOf(VariableExpression::class)
-        ->and($var->value)
-        ->toBe($val);
-}
-
-function testString($str, string $val): void
-{
-    expect($str)
-        ->toBeInstanceOf(StringLiteral::class)
-        ->and($str->value)
-        ->toBe($val);
-}
-
-function testInteger($int, $val): void
-{
-    expect($int)
-        ->toBeInstanceOf(IntegerLiteral::class)
-        ->and($int->value)
-        ->toBe($val);
-}
-
-function testFloat($float, $val): void
-{
-    expect($float)
-        ->toBeInstanceOf(FloatLiteral::class)
-        ->and($float->value)
-        ->toBe($val);
-}
-
-function testBoolean($bool, $val): void
-{
-    expect($bool)
-        ->toBeInstanceOf(BooleanLiteral::class)
-        ->and($bool->value)
-        ->toBe($val);
-}
-
-/**
- * @throws Exception
- */
-function testLiteralExpression(Expression $expression, mixed $expected): void
-{
-    match (gettype($expected)) {
-        'string' => testString($expression, $expected),
-        'integer' => testInteger($expression, $expected),
-        'double' => testFloat($expression, $expected),
-        'boolean' => testBoolean($expression, $expected),
-        'NULL' => expect($expression)->toBeInstanceOf(NullLiteral::class),
-        default => throw new Exception("Type {$expected} is not handled. Got: {$expected}"),
-    };
-}
-
-test('parse variable', function () {
-    $input = '{{ $userName }}';
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var VariableExpression $var */
-    $var = $stmt->expression;
-
-    testVariable($var, 'userName');
-
-    expect($var->tokenLiteral())
-        ->toBe('userName', "Variable must have token literal 'userName', got: '{$var->tokenLiteral()}'")
-        ->and($var->string())
-        ->toBe('$userName', "Variable must have string representation '\$userName', got: '{$var->string()}'");
-});
-
-test('parse html', function () {
-    $input = '<div class="nice"></div>';
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var HtmlStatement $stmt */
-    $stmt = $program->statements[0];
-
-    expect($stmt->string())->toBe('<div class="nice"></div>');
-});
-
-test('parse boolean literal', function (string $input, string $expect) {
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var BooleanLiteral $prefix */
-    $prefix = $stmt->expression;
-
-    expect($prefix)
-        ->toBeInstanceOf(BooleanLiteral::class)
-        ->and($prefix->string())
-        ->toBe($expect);
-})->with(function () {
-    return [
-        ['{{ true }}', 'true'],
-        ['{{ false }}', 'false'],
-    ];
-});
-
-test('parse if statement', function () {
-    $input = <<<HTML
-    {{ if true }}
-        <h1>I'm not a pro, but it's only a matter of time</h1>
-    {{ end }}
-    HTML;
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var IfStatement $if */
-    $if = $program->statements[0];
-
-    expect($if->consequence->string())
-        ->toBe("\n    <h1>I'm not a pro, but it's only a matter of time</h1>\n")
-        ->and($if->condition->string())->toBe('true')
-        ->and($if->alternative)->toBeNull();
-});
-
-test('parse nested if statements', function () {
-    $input = <<<HTML
-    {{ if \$uses_php }}You are a cool{{ if \$male }}guy{{ end }}{{ end }}
-    HTML;
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var IfStatement $if */
-    $if = $program->statements[0];
-
-    testVariable($if->condition, 'uses_php');
-
-    expect($if->consequence->statements)
-        ->toHaveCount(2, 'Consequence must contain 2 statements')
-        ->and($if->consequence->statements[0])
-        ->toBeInstanceOf(HtmlStatement::class)
-        ->and($if->consequence->statements[1])
-        ->toBeInstanceOf(IfStatement::class)
-        ->and($if->alternative)->toBeNull();
-
-    /** @var IfStatement $if */
-    $if = $if->consequence->statements[1];
-
-    expect($if->consequence->statements)
-        ->toHaveCount(1, 'Consequence must contain 1 statement')
-        ->and($if->consequence->statements[0])
-        ->toBeInstanceOf(HtmlStatement::class)
-        ->and($if->consequence->statements[0]->string())
-        ->toBe('guy')
-        ->and($if->alternative)->toBeNull();
-
-    testVariable($if->condition, 'male');
-});
-
-test('parse else statement', function () {
-    $input = <<<HTML
-    {{ if \$underAge }}<span>You are too young to be here</span>{{ else }}<span>You can drink beer</span>{{ end }}
-    HTML;
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var IfStatement $if */
-    $if = $program->statements[0];
-
-    testVariable($if->condition, 'underAge');
-
-    expect($if->consequence->string())
-        ->toBe("<span>You are too young to be here</span>")
-        ->and($if->alternative->string())
-        ->toBe("<span>You can drink beer</span>");
-});
-
-test('parse integer literal', function () {
-    $input = '{{ 5 }}';
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    testInteger($stmt->expression, 5);
-});
-
-test('parse float literal', function () {
-    $input = '{{ 1.40123 }}';
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    testFloat($stmt->expression, 1.40123);
-});
-
-test('parse loop statement', function () {
-    $input = <<<HTML
-    {{ loop \$fr, 5 }}<li><a href="#">Link - {{ \$index }}</a></li>{{ end }}
-    HTML;
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var LoopStatement $loop */
-    $loop = $program->statements[0];
-
-    testVariable($loop->from, 'fr');
-    testInteger($loop->to, 5);
-
-    expect($loop->body->statements)->toHaveCount(3, 'Loop body must contain 3 statements');
-
-    /** @var array<int,HtmlStatement|ExpressionStatement> $stmts */
-    $stmts = $loop->body->statements;
-
-    testVariable($stmts[1]->expression, 'index');
-
-    expect($stmts[0]->string())
-        ->toBe('<li><a href="#">Link - ')
-        ->and($stmts[2]->string())
-        ->toBe("</a></li>");
-});
-
-test('parse strings', function () {
-    $input = "{{ 'hello' }}";
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    testString($stmt->expression, 'hello');
-});
-
-test('parse infix expressions', function (string $inp, mixed $left, string $operator, mixed $right) {
-    $lexer = new Lexer($inp);
-    $parser = new CoreParser($lexer);
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var InfixExpression $infix */
-    $infix = $stmt->expression;
-
-    expect($infix)
-        ->toBeInstanceOf(InfixExpression::class)
-        ->and($infix->operator)
-        ->toBe($operator);
-
-    testLiteralExpression($infix->left, $left);
-    testLiteralExpression($infix->right, $right);
-})->with(function () {
-    return [
-        ['{{ 5 + 3 }}', 5, '+', 3],
-        ['{{ 123 - 23 }}', 123, '-', 23],
-        ['{{ 46 * 7 }}', 46, '*', 7],
-        ['{{ 89 / 1 }}', 89, '/', 1],
-        ['{{ 22 % 2 }}', 22, '%', 2],
-        ['{{ "nice" . "cool" }}', "nice", '.', "cool"],
-    ];
-});
-
-test('parse string concatenation', function () {
-    $input = "{{ 'Serhii' . ' ' . 'Cho' }}";
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var InfixExpression $infix */
-    $infix = $stmt->expression;
-
-    testString($infix->right, 'Cho');
-    expect($infix->operator)->toBe('.');
-
-    /** @var InfixExpression $infix */
-    $infix = $infix->left;
-
-    expect($infix)->toBeInstanceOf(InfixExpression::class);
-
-    testString($infix->left, 'Serhii');
-    testString($infix->right, ' ');
-});
-
-test('parse ternary expression', function () {
-    $input = "{{ \$hasContainer ? 'container' : '' }}";
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var TernaryExpression $ternary */
-    $ternary = $stmt->expression;
-
-    expect($ternary)->toBeInstanceOf(TernaryExpression::class);
-
-    testVariable($ternary->condition, 'hasContainer');
-    testString($ternary->consequence, 'container');
-    testString($ternary->alternative, '');
-});
-
-test('parse prefix expressions', function (string $input, string $operator, $expect) {
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var PrefixExpression $prefix */
-    $prefix = $stmt->expression;
-
-    expect($prefix)
-        ->toBeInstanceOf(PrefixExpression::class)
-        ->and($prefix->operator)
-        ->toBe($operator)
-        ->and($prefix->right->value ?? '')
-        ->toBe($expect);
-})->with(function () {
-    return [
-        ['{{ -4 }}', '-', 4],
-        ['{{ -284 }}', '-', 284],
-        ['{{ !true }}', '!', true],
-        ['{{ !false }}', '!', false],
-    ];
-});
-
-test('parse null literal', function () {
-    $input = '{{ null }}';
-
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    /** @var ExpressionStatement $stmt */
-    $stmt = $program->statements[0];
-
-    /** @var NullLiteral $null */
-    $null = $stmt->expression;
-
-    expect($null)
-        ->toBeInstanceOf(NullLiteral::class)
-        ->and($null->token->literal)
-        ->toBe('null');
-});
-
-test('operator precedence parsing', function (string $input, string $expect) {
-    $lexer = new Lexer($input);
-    $parser = new CoreParser($lexer);
-
-    $program = $parser->parseProgram();
-
-    checkForErrors($parser, $program->statements, 1);
-
-    $actual = $program->string();
-
-    expect($actual)->toBe($expect, "Expected '{$expect}', got '{$actual}'");
-})->with(function () {
-    return [
-        ['{{ !-1 }}', '(!(-1))'],
-        ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
-        ['{{ !true ? 1 : true ? 3 : 5 }}', '((!true) ? 1 : (true ? 3 : 5))'],
-    ];
-});
