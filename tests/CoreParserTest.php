@@ -26,16 +26,15 @@ use Serhii\GoodbyeHtml\Lexer\Lexer;
 
 class CoreParserTest extends TestCase
 {
+    /**
+     * @throws CoreParserException
+     */
     private function createProgram(string $input): Program
     {
         $lexer = new Lexer($input);
         $parser = new CoreParser($lexer);
 
-        try {
-            $program = $parser->parseProgram();
-        } catch (CoreParserException $e) {
-            $this->fail($e->getMessage());
-        }
+        $program = $parser->parseProgram();
 
         $this->assertOneStatement($parser, $program->statements);
 

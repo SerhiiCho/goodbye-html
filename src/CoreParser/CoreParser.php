@@ -157,11 +157,7 @@ class CoreParser
         }
 
         throw new CoreParserException(
-            sprintf(
-                "expected next token to be %s, got %s instead",
-                $token->value,
-                $this->peekToken->type->value,
-            )
+            ParserError::expectNextTokenToBeDifferent($token, $this->peekToken),
         );
     }
 
@@ -219,9 +215,7 @@ class CoreParser
         $prefix = $this->prefixParseFns[$this->curToken->type->value] ?? null;
 
         if ($prefix === null) {
-            throw new CoreParserException(
-                sprintf('no prefix parse function for character "%s" found', $this->curToken->literal)
-            );
+            throw new CoreParserException(ParserError::noPrefixParseFunction($this->curToken));
         }
 
         $leftExp = $prefix();
