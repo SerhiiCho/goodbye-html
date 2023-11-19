@@ -21,28 +21,22 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Serhii\\Tests\\": "tests"
+            "Serhii\\GoodbyeHtml\\": "tests"
         }
     },
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "phpunit/phpunit": "^11.0@dev"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0@dev",
-        "laravel/pint": "dev-main",
-        "pestphp/pest": "2.x-dev",
-        "phpstan/phpstan": "1.11.x-dev"
+        "laravel/pint": "dev-main"
     },
     "scripts": {
-        "test": "./vendor/bin/pest",
+        "test": "./vendor/bin/phpunit",
         "pint": "./vendor/bin/pint",
-        "cover": "./vendor/bin/pest --coverage --min=80",
+        "cover": "./vendor/bin/phpunit --coverage --min=80",
         "stan": "./vendor/bin/phpstan analyse",
         "check": ["@test", "@pint", "@stan", "@cover"]
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
     }
 }
