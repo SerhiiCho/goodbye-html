@@ -22,6 +22,15 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 
 class EvaluatorTest extends TestCase
 {
+    private function testEval(string $input, ?Env $env = null): Obj|null
+    {
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+        $program = $parser->parseProgram();
+
+        return (new Evaluator())->eval($program, $env ?? new Env());
+    }
+
     #[DataProvider('providerForTestEvalIntegerExpression')]
     public function testEvalIntegerExpression(string $input, string $expected): void
     {
@@ -288,15 +297,6 @@ class EvaluatorTest extends TestCase
             ],
             // todo: add test for infix expression like 4 + "hello" and so on
         ];
-    }
-
-    private function testEval(string $input, ?Env $env = null): Obj|null
-    {
-        $lexer = new Lexer($input);
-        $parser = new CoreParser($lexer);
-        $program = $parser->parseProgram();
-
-        return (new Evaluator())->eval($program, $env ?? new Env());
     }
 
     public function testEvalNull(): void

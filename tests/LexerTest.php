@@ -36,27 +36,25 @@ class LexerTest extends TestCase
     public function testLexingStrings(): void
     {
         $input = <<<HTML
-        <div>
-            <h2>{{ 'Hello world!' }}</h2>
-            <h3>{{ "Good luck!" }}</h3>
-            <h4>{{ "Good \"luck!\"" }}</h4>
-        </div>
+        {{ 'Hello world!' }}
+        {{ "Good luck!" }}
+        {{ "Good \"luck!\"" . ' Anna' }}
         HTML;
 
         $this->tokenizeString($input, [
-            new Token(TokenType::HTML, "<div>\n    <h2>"),
             new Token(TokenType::LBRACES, "{{"),
             new Token(TokenType::STR, "Hello world!"),
             new Token(TokenType::RBRACES, "}}"),
-            new Token(TokenType::HTML, "</h2>\n    <h3>"),
+            new Token(TokenType::HTML, "\n"),
             new Token(TokenType::LBRACES, "{{"),
             new Token(TokenType::STR, "Good luck!"),
             new Token(TokenType::RBRACES, "}}"),
-            new Token(TokenType::HTML, "</h3>\n    <h4>"),
+            new Token(TokenType::HTML, "\n"),
             new Token(TokenType::LBRACES, "{{"),
             new Token(TokenType::STR, 'Good "luck!"'),
+            new Token(TokenType::PERIOD, "."),
+            new Token(TokenType::STR, " Anna"),
             new Token(TokenType::RBRACES, "}}"),
-            new Token(TokenType::HTML, "</h4>\n</div>"),
             new Token(TokenType::EOF, ""),
         ]);
     }
@@ -246,7 +244,7 @@ class LexerTest extends TestCase
         ]);
     }
 
-    public function testLexingTernaryExpressionInsideHtmlAttributes()
+    public function testLexingTernaryExpressionInsideHtmlAttributes(): void
     {
         $input = <<<HTML
         <h3 class="{{ true ? 'main-page' : 'secondary-page' }}">Hello world!</h3>
@@ -332,7 +330,7 @@ class LexerTest extends TestCase
     public function testLexingIllegalTokens(): void
     {
         $input = <<<HTML
-        {{ 2.3.4 @ $ ^ & }}
+        {{ 2.3.4 @ $ ^ & ( ) | ~ ` }}
         HTML;
 
         $this->tokenizeString($input, [
@@ -342,6 +340,11 @@ class LexerTest extends TestCase
             new Token(TokenType::ILLEGAL, "$"),
             new Token(TokenType::ILLEGAL, "^"),
             new Token(TokenType::ILLEGAL, "&"),
+            new Token(TokenType::ILLEGAL, "("),
+            new Token(TokenType::ILLEGAL, ")"),
+            new Token(TokenType::ILLEGAL, "|"),
+            new Token(TokenType::ILLEGAL, "~"),
+            new Token(TokenType::ILLEGAL, "`"),
             new Token(TokenType::RBRACES, "}}"),
             new Token(TokenType::EOF, ""),
         ]);

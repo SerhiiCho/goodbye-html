@@ -26,6 +26,54 @@ use Serhii\GoodbyeHtml\Lexer\Lexer;
 
 class CoreParserTest extends TestCase
 {
+    private function createProgram(string $input): Program
+    {
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        try {
+            $program = $parser->parseProgram();
+        } catch (CoreParserException $e) {
+            $this->fail($e->getMessage());
+        }
+
+        $this->assertOneStatement($parser, $program->statements);
+
+        return $program;
+    }
+
+    /**
+     * @param Statement[] $stmt
+     */
+    private function assertOneStatement(CoreParser $parser, array $stmt): void
+    {
+        $this->assertCount(1, $stmt, "Program must contain 1 statements");
+    }
+
+    private static function testVariable($var, string $val): void
+    {
+        self::assertInstanceOf(VariableExpression::class, $var);
+        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
+    }
+
+    private static function testString($str, string $val): void
+    {
+        self::assertInstanceOf(StringLiteral::class, $str);
+        self::assertSame($val, $str->value, "String must have value '{$val}', got: '{$str->value}'");
+    }
+
+    private static function testInteger($int, $val): void
+    {
+        self::assertInstanceOf(IntegerLiteral::class, $int);
+        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
+    }
+
+    private static function testFloat($float, $val): void
+    {
+        self::assertInstanceOf(FloatLiteral::class, $float);
+        self::assertSame($val, $float->value, "Float must have value '{$val}', got: '{$float->value}'");
+    }
+
     public function testParsingVariables(): void
     {
         $input = '{{ $userName }}';
@@ -86,31 +134,6 @@ class CoreParserTest extends TestCase
         $this->assertSame("\n    <h1>I'm not a pro, but it's only a matter of time</h1>\n", $if->consequence->string());
         $this->assertSame('true', $if->condition->string());
         $this->assertNull($if->alternative);
-    }
-
-    #[DataProvider('providerForTestParsingInfixExpressions')]
-    public function testParsingInfixExpressions(string $input, mixed $left, string $operator, mixed $right): void
-    {
-        /** @var ExpressionStatement $stmt */
-        $stmt = $this->createProgram($input)->statements[0];
-
-        /** @var InfixExpression $infix */
-        $infix = $stmt->expression;
-
-        $this->assertInstanceOf(InfixExpression::class, $infix);
-        $this->assertSame($operator, $infix->operator);
-    }
-
-    public static function providerForTestParsingInfixExpressions(): array
-    {
-        return [
-            ['{{ 5 + 3 }}', 5, '+', 3],
-            ['{{ 123 - 23 }}', 123, '-', 23],
-            ['{{ 46 * 7 }}', 46, '*', 7],
-            ['{{ 89 / 1 }}', 89, '/', 1],
-            ['{{ 22 % 2 }}', 22, '%', 2],
-            ['{{ "nice" . "cool" }}', "nice", '.', "cool"],
-        ];
     }
 
     public function testParsingNestedIfStatement(): void
@@ -211,6 +234,31 @@ class CoreParserTest extends TestCase
         $this->testString($str, 'hello');
     }
 
+    #[DataProvider('providerForTestParsingInfixExpressions')]
+    public function testParsingInfixExpressions(string $input, mixed $left, string $operator, mixed $right): void
+    {
+        /** @var ExpressionStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        /** @var InfixExpression $infix */
+        $infix = $stmt->expression;
+
+        $this->assertInstanceOf(InfixExpression::class, $infix);
+        $this->assertSame($operator, $infix->operator);
+    }
+
+    public static function providerForTestParsingInfixExpressions(): array
+    {
+        return [
+            ['{{ 5 + 3 }}', 5, '+', 3],
+            ['{{ 123 - 23 }}', 123, '-', 23],
+            ['{{ 46 * 7 }}', 46, '*', 7],
+            ['{{ 89 / 1 }}', 89, '/', 1],
+            ['{{ 22 % 2 }}', 22, '%', 2],
+            ['{{ "nice" . "cool" }}', "nice", '.', "cool"],
+        ];
+    }
+
     public function testParsingTernaryExpression(): void
     {
         $input = "{{ \$hasContainer ? 'container' : '' }}";
@@ -226,6 +274,34 @@ class CoreParserTest extends TestCase
         $this->testVariable($ternary->condition, 'hasContainer');
         $this->testString($ternary->consequence, 'container');
         $this->testString($ternary->alternative, '');
+    }
+    
+    public function testParsingStringConcatenation(): void
+    {
+        $input = "{{ 'Serhii' . ' ' . 'Cho' }}";
+
+        $lexer = new Lexer($input);
+        $parser = new CoreParser($lexer);
+
+        $program = $parser->parseProgram();
+
+        /** @var ExpressionStatement $stmt */
+        $stmt = $program->statements[0];
+
+        /** @var InfixExpression $infix */
+        $infix = $stmt->expression;
+
+        $this->testString($infix->right, 'Cho');
+        $this->assertSame('.', $infix->operator);
+
+        /** @var InfixExpression $infix */
+        $infix = $infix->left;
+
+        $this->assertInstanceOf(InfixExpression::class, $infix);
+
+        $this->testString($infix->left, 'Serhii');
+        $this->testString($infix->right, ' ');
+        $this->assertSame('.', $infix->operator);
     }
 
     #[DataProvider('providerForTestPrefixExpressions')]
@@ -249,38 +325,6 @@ class CoreParserTest extends TestCase
             ['{{ !true }}', '!', false],
             ['{{ !false }}', '!', true],
         ];
-    }
-
-    /**
-     * @param Statement[] $stmt
-     */
-    private function assertOneStatement(CoreParser $parser, array $stmt): void
-    {
-        $this->assertCount(1, $stmt, "Program must contain 1 statements");
-    }
-
-    private static function testVariable($var, string $val): void
-    {
-        self::assertInstanceOf(VariableExpression::class, $var);
-        self::assertSame($val, $var->value, "Variable must have value '{$val}', got: '{$var->value}'");
-    }
-
-    private static function testString($str, string $val): void
-    {
-        self::assertInstanceOf(StringLiteral::class, $str);
-        self::assertSame($val, $str->value, "String must have value '{$val}', got: '{$str->value}'");
-    }
-
-    private static function testInteger($int, $val): void
-    {
-        self::assertInstanceOf(IntegerLiteral::class, $int);
-        self::assertSame($val, $int->value, "Integer must have value '{$val}', got: '{$int->value}'");
-    }
-
-    private static function testFloat($float, $val): void
-    {
-        self::assertInstanceOf(FloatLiteral::class, $float);
-        self::assertSame($val, $float->value, "Float must have value '{$val}', got: '{$float->value}'");
     }
 
     public function testParsingNull(): void
@@ -312,21 +356,5 @@ class CoreParserTest extends TestCase
             ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
             ['{{ !true ? 1 : true ? 3 : 5 }}', '((!true) ? 1 : (true ? 3 : 5))'],
         ];
-    }
-
-    private function createProgram(string $input): Program
-    {
-        $lexer = new Lexer($input);
-        $parser = new CoreParser($lexer);
-
-        try {
-            $program = $parser->parseProgram();
-        } catch (CoreParserException $e) {
-            $this->fail($e->getMessage());
-        }
-
-        $this->assertOneStatement($parser, $program->statements);
-
-        return $program;
     }
 }

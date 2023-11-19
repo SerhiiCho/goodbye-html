@@ -9,6 +9,7 @@
 - Added **CS Fixer** code style fixer
 - Bug fixes in the `Parser.php` class related to readonly properties being set later in the code
 - Improved error handling
+- Changed tests back to PHPUnit from Pest, because Pest is kinda sucks and doesn't work as I want. It lacks of error descriptive error messages when tests fail. It's hard to debug. So, I decided to go back to PHPUnit
 
 ----
 
