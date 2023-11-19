@@ -202,7 +202,7 @@ class LexerTest extends TestCase
     public function testLexingElseIfStatements(): void
     {
         $input = <<<HTML
-        {{if true}}1{{elseif 2}}2{{else if 3}}3{{end}}
+        {{if true}}1{{else if 2}}2{{elseif 3}}3{{end}}
         HTML;
 
         $this->tokenizeString($input, [
@@ -217,7 +217,7 @@ class LexerTest extends TestCase
             new Token(TokenType::RBRACES, '}}'),
             new Token(TokenType::HTML, "2"),
             new Token(TokenType::LBRACES, '{{'),
-            new Token(TokenType::ELSEIF, "else if"),
+            new Token(TokenType::ELSEIF, "elseif"),
             new Token(TokenType::INT, "3"),
             new Token(TokenType::RBRACES, '}}'),
             new Token(TokenType::HTML, "3"),

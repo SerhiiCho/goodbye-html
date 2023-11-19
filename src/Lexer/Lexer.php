@@ -191,7 +191,18 @@ class Lexer
             $this->advanceChar();
         }
 
-        return substr($this->input, $position, $this->position - $position);
+        $result = substr($this->input, $position, $this->position - $position);
+
+        // Handle case when identifier is "else if"
+        if ($result === 'else' && $this->peekChar() === 'i') {
+            $this->advanceChar(); // skip " "
+            $result .= $this->char; // add "i"
+            $this->advanceChar(); // skip "i"
+            $result .= $this->char; // add "f"
+            $this->advanceChar(); // skip "f"
+        }
+
+        return $result;
     }
 
     private function readNumber(): string
