@@ -144,8 +144,8 @@ class EvaluatorTest extends TestCase
         ];
     }
 
-    #[DataProvider('providerForTestEvalIfExpression')]
-    public function testEvalIfExpression(string $input, string $expected, ?Env $env = null): void
+    #[DataProvider('providerForTestEvalIfStatement')]
+    public function testEvalIfStatement(string $input, string $expected, ?Env $env = null): void
     {
         $evaluated = $this->testEval($input, $env);
 
@@ -156,7 +156,7 @@ class EvaluatorTest extends TestCase
         $this->assertSame($expected, $evaluated->value());
     }
 
-    public static function providerForTestEvalIfExpression(): array
+    public static function providerForTestEvalIfStatement(): array
     {
         return [
             [
@@ -240,8 +240,8 @@ class EvaluatorTest extends TestCase
         $this->assertSame($input, $evaluated->value());
     }
 
-    #[DataProvider('providerForTestEvalLoopExpression')]
-    public function testEvalLoopExpression(string $input, string $expected, ?Env $env = null): void
+    #[DataProvider('providerForTestEvalLoopStatement')]
+    public function testEvalLoopStatement(string $input, string $expected, ?Env $env = null): void
     {
         $evaluated = $this->testEval($input, $env);
 
@@ -252,7 +252,7 @@ class EvaluatorTest extends TestCase
         $this->assertSame($expected, $evaluated->value());
     }
 
-    public static function providerForTestEvalLoopExpression(): array
+    public static function providerForTestEvalLoopStatement(): array
     {
         return [
             [
