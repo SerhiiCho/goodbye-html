@@ -156,11 +156,11 @@ readonly class Evaluator
         $isTrue = $condition->value();
 
         if ($isTrue) {
-            return $this->eval($node->consequence, $env);
+            return $this->eval($node->block, $env);
         }
 
         // Evaluate else if statements
-        foreach ($node->elseIfs as $elseIf) {
+        foreach ($node->elseIfBlocks as $elseIf) {
             $condition = $this->eval($elseIf->condition, $env);
 
             if ($condition instanceof ErrorObj) {
@@ -170,12 +170,12 @@ readonly class Evaluator
             $isTrue = $condition->value();
 
             if ($isTrue) {
-                return $this->eval($elseIf->consequence, $env);
+                return $this->eval($elseIf->block, $env);
             }
         }
 
-        if ($node->alternative !== null) {
-            return $this->eval($node->alternative, $env);
+        if ($node->elseBlock !== null) {
+            return $this->eval($node->elseBlock, $env);
         }
 
         return new NullObj();

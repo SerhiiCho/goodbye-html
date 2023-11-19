@@ -136,9 +136,9 @@ class CoreParserTest extends TestCase
         /** @var IfStatement $if */
         $if = $this->createProgram($input)->statements[0];
 
-        $this->assertSame("\n    <h1>I'm not a pro, but it's only a matter of time</h1>\n", $if->consequence->string());
+        $this->assertSame("\n    <h1>I'm not a pro, but it's only a matter of time</h1>\n", $if->block->string());
         $this->assertSame('true', $if->condition->string());
-        $this->assertNull($if->alternative);
+        $this->assertNull($if->elseBlock);
     }
 
     public function testParsingNestedIfStatement(): void
@@ -152,18 +152,18 @@ class CoreParserTest extends TestCase
 
         self::testVariable($if->condition, 'uses_php');
 
-        $this->assertCount(2, $if->consequence->statements, 'Consequence must contain 2 statements');
-        $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
-        $this->assertInstanceOf(IfStatement::class, $if->consequence->statements[1]);
-        $this->assertNull($if->alternative);
+        $this->assertCount(2, $if->block->statements, 'Consequence must contain 2 statements');
+        $this->assertInstanceOf(HtmlStatement::class, $if->block->statements[0]);
+        $this->assertInstanceOf(IfStatement::class, $if->block->statements[1]);
+        $this->assertNull($if->elseBlock);
 
         /** @var IfStatement $if */
-        $if = $if->consequence->statements[1];
+        $if = $if->block->statements[1];
 
-        $this->assertCount(1, $if->consequence->statements, 'Consequence must contain 1 statement');
-        $this->assertInstanceOf(HtmlStatement::class, $if->consequence->statements[0]);
-        $this->assertSame('guy', $if->consequence->statements[0]->string());
-        $this->assertNull($if->alternative);
+        $this->assertCount(1, $if->block->statements, 'Consequence must contain 1 statement');
+        $this->assertInstanceOf(HtmlStatement::class, $if->block->statements[0]);
+        $this->assertSame('guy', $if->block->statements[0]->string());
+        $this->assertNull($if->elseBlock);
 
         self::testVariable($if->condition, 'male');
     }
@@ -179,8 +179,8 @@ class CoreParserTest extends TestCase
 
         self::testVariable($if->condition, 'underAge');
 
-        $this->assertSame("<span>You are too young to be here</span>", $if->consequence->string());
-        $this->assertSame("<span>You can drink beer</span>", $if->alternative->string());
+        $this->assertSame("<span>You are too young to be here</span>", $if->block->string());
+        $this->assertSame("<span>You can drink beer</span>", $if->elseBlock->string());
     }
 
     public function testParsingElseIfStatement(): void
@@ -196,22 +196,22 @@ class CoreParserTest extends TestCase
 
         self::testBoolean($if->condition, false);
 
-        $this->assertCount(2, $if->elseIfs, 'ElseIfs must contain 2 statements');
+        $this->assertCount(2, $if->elseIfBlocks, 'ElseIfs must contain 2 statements');
 
         /** @var IfStatement $elseIf */
-        $elseIf = $if->elseIfs[0];
+        $elseIf = $if->elseIfBlocks[0];
 
         self::testBoolean($elseIf->condition, false);
-        $this->assertSame('2', $elseIf->consequence->string());
+        $this->assertSame('2', $elseIf->block->string());
 
         /** @var IfStatement $elseIf */
-        $elseIf = $if->elseIfs[1];
+        $elseIf = $if->elseIfBlocks[1];
 
         self::testBoolean($elseIf->condition, true);
-        $this->assertSame('3', $elseIf->consequence->string());
+        $this->assertSame('3', $elseIf->block->string());
 
-        $this->assertNotNull($if->alternative, 'Alternative must not be null');
-        $this->assertSame('4', $if->alternative->string());
+        $this->assertNotNull($if->elseBlock, 'Alternative must not be null');
+        $this->assertSame('4', $if->elseBlock->string());
     }
 
     public function testParsingIntegerLiteral(): void

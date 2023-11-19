@@ -328,9 +328,8 @@ class CoreParser
 
             $elseIfs[] = new IfStatement(
                 token: $this->curToken,
-                condition: $this->parseExpression(Precedence::LOWEST),
-                consequence: $this->parseBlockStatement(),
-                alternative: null,
+                condition: $this->parseExpression(Precedence::LOWEST), block: $this->parseBlockStatement(),
+                elseBlock: null,
             );
         }
 
@@ -344,10 +343,9 @@ class CoreParser
 
         return new IfStatement(
             token: $this->curToken,
-            condition: $condition,
-            consequence: $consequence,
-            alternative: $alternative,
-            elseIfs: $elseIfs,
+            condition: $condition, block: $consequence,
+            elseBlock: $alternative,
+            elseIfBlocks: $elseIfs,
         );
     }
 
