@@ -21,6 +21,7 @@ use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\Program;
 use Serhii\GoodbyeHtml\Ast\Statements\Statement;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
+use Serhii\GoodbyeHtml\CoreParser\ParserError;
 use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
 use Serhii\GoodbyeHtml\Lexer\Lexer;
 
@@ -391,5 +392,13 @@ class CoreParserTest extends TestCase
             ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
             ['{{ !true ? 1 : true ? 3 : 5 }}', '((!true) ? 1 : (true ? 3 : 5))'],
         ];
+    }
+
+    public function testWhenParsingIfStatementWithElseBlockBeforeElseIfBlockGivesError(): void
+    {
+        $this->expectException(CoreParserException::class);
+        $this->expectExceptionMessage(ParserError::elseIfBlockWrongPlace());
+
+        $this->createProgram("{{ if true }}1{{ else }}2{{ elseif true }}3{{ end }}");
     }
 }

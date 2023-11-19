@@ -29,4 +29,12 @@ abstract class ParserError
             $peek->type->value,
         );
     }
+
+    public static function elseIfBlockWrongPlace(): string
+    {
+        return sprintf(
+            '%s Wrong placement of the "elseif" block! "elseif" block must be placed after "if" or "elseif" block',
+            self::PREFIX,
+        );
+    }
 }

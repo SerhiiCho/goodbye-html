@@ -336,6 +336,10 @@ class CoreParser
             $elseBlock = $this->parseBlockStatement();
         }
 
+        if ($this->peekTokenIs(TokenType::ELSEIF)) {
+            throw new CoreParserException(ParserError::elseIfBlockWrongPlace());
+        }
+
         return new IfStatement(
             token: $this->curToken,
             condition: $condition,
