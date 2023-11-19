@@ -380,19 +380,21 @@ class CoreParser
     {
         $this->nextToken(); // skip "?"
 
-        $consequence = $this->parseExpression(Precedence::TERNARY);
+        $trueExpression = $this->parseExpression(Precedence::TERNARY);
 
         $this->expectPeek(TokenType::COLON);
 
         $this->nextToken(); // skip ":"
 
-        $alternative = $this->parseExpression(Precedence::LOWEST);
+        $falseExpression = $this->parseExpression(Precedence::LOWEST);
 
-        $this->nextToken(); // skip alternative
+        $this->nextToken(); // skip falseExpression
 
         return new TernaryExpression(
             token: $this->curToken,
-            condition: $left, trueExpression: $consequence, falseExpression: $alternative,
+            condition: $left,
+            trueExpression: $trueExpression,
+            falseExpression: $falseExpression,
         );
     }
 
