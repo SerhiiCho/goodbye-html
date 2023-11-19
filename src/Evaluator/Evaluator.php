@@ -113,7 +113,7 @@ readonly class Evaluator
         $leftValue = $left->value();
         $rightValue = $right->value();
 
-        if ($left instanceof StringObj || $right instanceof StringObj) {
+        if ($operator === '.' && ($left instanceof StringObj || $right instanceof StringObj)) {
             return new StringObj($left->value() . $right->value());
         }
 
