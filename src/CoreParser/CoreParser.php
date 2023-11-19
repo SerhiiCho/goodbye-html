@@ -317,18 +317,19 @@ class CoreParser
 
         $this->nextToken(); // skip "}}"
 
-        $consequence = $this->parseBlockStatement();
+        $ifBlock = $this->parseBlockStatement();
 
-        $alternative = null;
-        $elseIfs = [];
+        $elseBlock = null;
+        $elseIfBlocks = [];
 
         while ($this->peekTokenIs(TokenType::ELSEIF)) {
             $this->nextToken(); // skip "{{"
             $this->nextToken(); // skip "elseif"
 
-            $elseIfs[] = new IfStatement(
+            $elseIfBlocks[] = new IfStatement(
                 token: $this->curToken,
-                condition: $this->parseExpression(Precedence::LOWEST), block: $this->parseBlockStatement(),
+                condition: $this->parseExpression(Precedence::LOWEST),
+                block: $this->parseBlockStatement(),
                 elseBlock: null,
             );
         }
@@ -338,14 +339,15 @@ class CoreParser
             $this->nextToken(); // skip "else"
             $this->nextToken(); // skip "}}"
 
-            $alternative = $this->parseBlockStatement();
+            $elseBlock = $this->parseBlockStatement();
         }
 
         return new IfStatement(
             token: $this->curToken,
-            condition: $condition, block: $consequence,
-            elseBlock: $alternative,
-            elseIfBlocks: $elseIfs,
+            condition: $condition,
+            block: $ifBlock,
+            elseBlock: $elseBlock,
+            elseIfBlocks: $elseIfBlocks,
         );
     }
 

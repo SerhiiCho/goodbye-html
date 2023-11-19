@@ -28,9 +28,13 @@ readonly class IfStatement implements Statement
 
     public function string(): string
     {
-        $result = sprintf("{{ if %s }}\n", $this->condition->string());
+        $result = sprintf("{{ %s %s }}\n", $this->tokenLiteral(), $this->condition->string());
 
         $result .= $this->block->string();
+
+        foreach ($this->elseIfBlocks as $elseIfBlock) {
+            $result .= $elseIfBlock->string();
+        }
 
         if ($this->elseBlock) {
             $result .= "{{ else }}\n";
