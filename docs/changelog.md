@@ -2,6 +2,12 @@
 
 ----
 
+## v2.6.0 (2023-11-20)
+
+- Added `elseif` statements to a BNF grammar
+
+----
+
 ## v2.5.0 (2023-11-19)
 
 - Added support for `elseif (<expression>)` and `else if (<expression>)` statements like we have in PHP. You can use them like this: `{{ if true }}<h1>True</h1>{{ elseif false }}<h1>False</h1>{{ else }}<h1>Something else</h1>{{ endif }}`
