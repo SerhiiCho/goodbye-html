@@ -126,7 +126,7 @@ class LexerTest extends TestCase
         ]);
     }
 
-    public function testLexingIfExpressions(): void
+    public function testLexingIfStatements(): void
     {
         $input = <<<HTML
         {{ if true }}
@@ -147,7 +147,7 @@ class LexerTest extends TestCase
         ]);
     }
 
-    public function testLexingLoopExpressions(): void
+    public function testLexingLoopStatements(): void
     {
         $input = <<<HTML
         <ul>
@@ -174,7 +174,7 @@ class LexerTest extends TestCase
         ]);
     }
 
-    public function testLexingIfElseExpressions(): void
+    public function testLexingIfElseStatements(): void
     {
         $input = <<<HTML
         <h3>{{if true}}Main page{{else}}404{{end}}</h3>
