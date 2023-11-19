@@ -2,7 +2,7 @@
 
 ----
 
-## v2.5.0 (2023-11-18)
+## v2.5.0 (2023-11-19)
 
 - Added support for `elseif (<expression>)` and `else if (<expression>)` statements like we have in PHP. You can use them like this: `{{ if true }}<h1>True</h1>{{ elseif false }}<h1>False</h1>{{ else }}<h1>Something else</h1>{{ endif }}`
 - Added **PHP Stan** static analysis tool
