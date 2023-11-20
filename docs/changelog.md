@@ -5,6 +5,7 @@
 ## v2.6.0 (2023-11-20)
 
 - Added `elseif` statements to a BNF grammar
+- Added `.gitattributes` file to ignore HTML files in `tests/files` directory
 
 ----
 
