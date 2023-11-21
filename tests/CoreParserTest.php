@@ -14,6 +14,7 @@ use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Statements\AssignStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
@@ -80,7 +81,7 @@ class CoreParserTest extends TestCase
         self::assertSame($val, $bool->value, "Boolean must have value '{$val}', got: '{$bool->value}'");
     }
 
-    public function testParsingVariables(): void
+    public function testParsingVariable(): void
     {
         $input = '{{ $userName }}';
 
@@ -248,7 +249,7 @@ class CoreParserTest extends TestCase
 
         $this->assertCount(3, $loop->body->statements, 'Loop body must contain 3 statements');
 
-        /** @var array<int,HtmlStatement|ExpressionStatement> $stmts */
+        /** @var list<HtmlStatement|ExpressionStatement> $stmts */
         $stmts = $loop->body->statements;
 
         $this->testVariable($stmts[1]->expression, 'index');
@@ -264,7 +265,7 @@ class CoreParserTest extends TestCase
         /** @var ExpressionStatement $stmt */
         $stmt = $this->createProgram($input)->statements[0];
 
-        /** @var StringLiteral $var */
+        /** @var StringLiteral $str */
         $str = $stmt->expression;
 
         $this->testString($str, 'hello');
@@ -400,5 +401,17 @@ class CoreParserTest extends TestCase
         $this->expectExceptionMessage(ParserError::elseIfBlockWrongPlace());
 
         $this->createProgram("{{ if true }}1{{ else }}2{{ elseif true }}3{{ end }}");
+    }
+
+    public function testParsingAssignStatement(): void
+    {
+        $input = "{{ \$herName = 'Anna' }}";
+
+        /** @var AssignStatement $stmt */
+        $stmt = $this->createProgram($input)->statements[0];
+
+        $this->testVariable($stmt->variable, 'herName');
+        $this->testString($stmt->value, 'Anna');
+        $this->assertSame("{{ \$herName = 'Anna' }}", $stmt->string());
     }
 }

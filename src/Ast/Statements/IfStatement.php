@@ -10,7 +10,7 @@ use Serhii\GoodbyeHtml\Token\Token;
 readonly class IfStatement implements Statement
 {
     /**
-     * @param array<int,IfStatement> $elseIfBlocks
+     * @param list<IfStatement> $elseIfBlocks
      */
     public function __construct(
         public Token $token,

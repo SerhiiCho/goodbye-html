@@ -14,6 +14,7 @@ use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\Node;
+use Serhii\GoodbyeHtml\Ast\Statements\AssignStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
@@ -47,6 +48,7 @@ readonly class Evaluator
             BlockStatement::class => $this->evalBlockStatement($node, $env),
             LoopStatement::class => $this->evalLoopStatement($node, $env),
             ExpressionStatement::class => $this->eval($node->expression, $env),
+            AssignStatement::class => $this->evalAssignStatement($node, $env),
             PrefixExpression::class => $this->evalPrefixExpression($node, $env),
             InfixExpression::class => $this->evalInfixExpression($node, $env),
             VariableExpression::class => $this->evalVariableExpression($node, $env),
@@ -154,6 +156,7 @@ readonly class Evaluator
         }
 
         $isTrue = $condition->value();
+        $env = Env::newEnclosedEnv($env);
 
         if ($isTrue) {
             return $this->eval($node->block, $env);
@@ -230,6 +233,8 @@ readonly class Evaluator
             return EvalError::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $to);
         }
 
+        $env = Env::newEnclosedEnv($env);
+
         for ($i = $from->value; $i <= $to->value; $i++) {
             $env->set('index', new IntegerObj($i));
 
@@ -243,6 +248,19 @@ readonly class Evaluator
         }
 
         return new HtmlObj($html);
+    }
+
+    private function evalAssignStatement(AssignStatement $node, Env $env): Obj
+    {
+        $value = $this->eval($node->value, $env);
+
+        if ($value instanceof ErrorObj) {
+            return $value;
+        }
+
+        $env->set($node->variable->value, $value);
+
+        return new NullObj();
     }
 
     private function evalMinusPrefixOperatorExpression(Obj $right): Obj

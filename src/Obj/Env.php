@@ -7,7 +7,7 @@ namespace Serhii\GoodbyeHtml\Obj;
 class Env
 {
     /**
-     * @param array<string,Obj> $store
+     * @param array<string, Obj> $store
      */
     public function __construct(
         private array $store = [],
@@ -15,7 +15,6 @@ class Env
     ) {
     }
 
-    // todo: it's going to be used in the next version when I implement scopes
     public static function newEnclosedEnv(Env $outer): self
     {
         return new self([], $outer);
@@ -36,7 +35,7 @@ class Env
     }
 
     /**
-     * @param array<string,mixed> $arr
+     * @param array<string, Obj> $arr
      */
     public static function fromArray(array $arr): self
     {

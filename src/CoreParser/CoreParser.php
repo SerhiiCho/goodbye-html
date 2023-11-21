@@ -15,6 +15,7 @@ use Serhii\GoodbyeHtml\Ast\Literals\FloatLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\IntegerLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
+use Serhii\GoodbyeHtml\Ast\Statements\AssignStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
@@ -49,12 +50,12 @@ class CoreParser
     private Token $peekToken;
 
     /**
-     * @var array<string,Closure>
+     * @var array<string, Closure(): Expression>
      */
     private array $prefixParseFns = [];
 
     /**
-     * @var array<string,Closure>
+     * @var array<string, Closure(Expression): Expression>
      */
     private array $infixParseFns = [];
 
@@ -183,8 +184,30 @@ class CoreParser
         return match ($this->curToken->type) {
             TokenType::IF => $this->parseIfStatement(),
             TokenType::LOOP => $this->parseLoopStatement(),
+            TokenType::VAR => $this->parseAssignStatement(),
             default => $this->parseExpressionStatement(),
         };
+    }
+
+    private function parseAssignStatement(): Statement
+    {
+        if (!$this->peekTokenIs(TokenType::ASSIGN)) {
+            return $this->parseExpressionStatement();
+        }
+
+        $token = $this->curToken;
+
+        $variable = $this->parseVariableExpression();
+
+        $this->expectPeek(TokenType::ASSIGN); // skip variable
+
+        $this->nextToken(); // skip "="
+
+        return new AssignStatement(
+            token: $token,
+            variable: $variable,
+            value: $this->parseExpression(Precedence::LOWEST),
+        );
     }
 
     private function parseHtmlStatement(): HtmlStatement
@@ -238,7 +261,7 @@ class CoreParser
         return $leftExp;
     }
 
-    private function parseVariableExpression(): Expression
+    private function parseVariableExpression(): VariableExpression
     {
         return new VariableExpression(
             $this->curToken,

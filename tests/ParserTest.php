@@ -30,6 +30,7 @@ class ParserTest extends TestCase
             ['ternary', ['hasContainer' => true]],
             ['readme', ['title' => 'Title of the document', 'uses_php_3_years' => true, 'show_container' => false]],
             ['types', ['weight' => 61.5, 'eyeColor' => null, 'smart' => true, 'tall' => false]],
+            ['scopes', ['amountOfPeople' => 4]],
         ];
     }
 

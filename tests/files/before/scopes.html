@@ -1,0 +1,17 @@
+<section>
+    {{ $first = true }}
+    {{ $name = "Anna" }}
+    {{ $person = "person" }}
+
+    {{ if $first }}
+        {{ $second = true }}
+
+        {{ if $second }}
+            {{ $areSad = false }}
+
+            <p>Me and {{ $name }} are {{ $areSad ? 'sad' : 'happy' }}!</p>
+        {{ end }}
+    {{ end }}
+
+    <ul>{{ loop 1, $amountOfPeople }}<li>{{ $index }} {{ $person }}</li>{{ end }}</ul>
+</section>

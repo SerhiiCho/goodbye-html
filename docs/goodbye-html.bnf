@@ -59,6 +59,10 @@
 <loop-statement>
     ::= "{{" "loop" <expression> "," <expression> "}}" <block-statement>* "{{" "end" "}}"
 
+<else-if-statement>
+    ::= "{{" "else" "if" <expression> "}}" <block-statement>*
+
 <if-statement>
     ::= "{{" "if" <expression> "}}" <block-statement>* "{{" "end" "}}"
     | "{{" "if" <expression> "}}" <block-statement>* "{{" "else" "}}" <block-statement>* "{{" "end" "}}"
+    | "{{" "if" <expression> "}}" <block-statement>* <else-if-statement>* "{{" "end" "}}"
