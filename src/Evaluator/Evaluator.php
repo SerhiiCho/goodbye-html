@@ -156,6 +156,7 @@ readonly class Evaluator
         }
 
         $isTrue = $condition->value();
+        $env = Env::newEnclosedEnv($env);
 
         if ($isTrue) {
             return $this->eval($node->block, $env);

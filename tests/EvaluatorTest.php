@@ -270,19 +270,6 @@ class EvaluatorTest extends TestCase
         ];
     }
 
-    public function testLoopIndexVariableIsUndefinedOutOfLoop(): void
-    {
-        $input = '{{ loop 1, 2 }}{{ $index }}{{ end }}{{ $index }}';
-
-        $expect = EvalError::variableIsUndefined(
-            new VariableExpression(new Token(TokenType::VAR, 'index'), 'index')
-        )->message;
-
-        $evaluated = $this->testEval($input);
-
-        $this->assertSame($expect, $evaluated->value());
-    }
-
     #[DataProvider('providerForTestErrorHandling')]
     public function testErrorHandling(string $input, string $expectMessage): void
     {
@@ -389,6 +376,30 @@ class EvaluatorTest extends TestCase
             ['{{ $herName = "Anna" }}{{ $herName }}', 'Anna'],
             ['{{ $his_age = 33 }}<h1>{{ $his_age }}</h1>', '<h1>33</h1>'],
             ['{{ $lang = "PHP" }}{{ $lang="Go" }}{{ $lang }}', 'Go'], // test overriding
+            ['{{ if true }}{{ $platform = "Mac" }}{{ $platform }}{{ end }}', 'Mac'],
+            ['{{ $platform = "Linux" }}{{ if true }}{{ $platform }}{{ end }}', 'Linux'],
+        ];
+    }
+
+    #[DataProvider('providerForTestVariableIsUndefinedOutOfScopes')]
+    public function testVariableIsUndefinedOutOfScopes(string $input, string $varName): void
+    {
+        $expect = EvalError::variableIsUndefined(
+            new VariableExpression(new Token(TokenType::VAR, $varName), $varName)
+        )->message;
+
+        $evaluated = $this->testEval($input);
+
+        $this->assertSame($expect, $evaluated->value());
+    }
+
+    public static function providerForTestVariableIsUndefinedOutOfScopes(): array
+    {
+        return [
+            ['{{ if true }}{{ $name = "Anna" }}{{ end }}{{ $name }}', 'name'],
+            ['{{ if false }}{{ else }}{{ $age = 33 }}{{ end }}{{ $age }}', 'age'],
+            ['{{ loop 0, 1 }}{{ $index }}{{ end }}{{ $index }}', 'index'],
+            ['{{ loop -1, 3 }}{{ $age = 33 }}{{ end }}{{ $age }}', 'age'],
         ];
     }
 }
