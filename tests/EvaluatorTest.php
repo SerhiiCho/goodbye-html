@@ -270,6 +270,19 @@ class EvaluatorTest extends TestCase
         ];
     }
 
+    public function testLoopIndexVariableIsUndefinedOutOfLoop(): void
+    {
+        $input = '{{ loop 1, 2 }}{{ $index }}{{ end }}{{ $index }}';
+
+        $expect = EvalError::variableIsUndefined(
+            new VariableExpression(new Token(TokenType::VAR, 'index'), 'index')
+        )->message;
+
+        $evaluated = $this->testEval($input);
+
+        $this->assertSame($expect, $evaluated->value());
+    }
+
     #[DataProvider('providerForTestErrorHandling')]
     public function testErrorHandling(string $input, string $expectMessage): void
     {

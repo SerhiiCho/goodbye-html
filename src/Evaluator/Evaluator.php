@@ -232,6 +232,8 @@ readonly class Evaluator
             return EvalError::wrongArgumentType('loop', ObjType::INTEGER_OBJ, $to);
         }
 
+        $env = Env::newEnclosedEnv($env);
+
         for ($i = $from->value; $i <= $to->value; $i++) {
             $env->set('index', new IntegerObj($i));
 
