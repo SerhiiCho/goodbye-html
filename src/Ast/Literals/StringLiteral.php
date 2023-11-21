@@ -20,6 +20,6 @@ readonly class StringLiteral implements Expression
 
     public function string(): string
     {
-        return '"' . $this->value . '"';
+        return sprintf("'%s'", $this->value);
     }
 }
