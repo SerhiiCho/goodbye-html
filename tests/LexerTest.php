@@ -398,7 +398,7 @@ class LexerTest extends TestCase
     public function testLexingInfixExpressions(): void
     {
         $input = <<<HTML
-        {{ 4 + 5 - 2 * 3 / 4 % 2 }}
+        {{ 4 + 5 - 2 * 3 / 4 % 2 = 5 }}
         HTML;
 
         $this->tokenizeString($input, [
@@ -414,6 +414,8 @@ class LexerTest extends TestCase
             new Token(TokenType::INT, "4"),
             new Token(TokenType::MODULO, "%"),
             new Token(TokenType::INT, "2"),
+            new Token(TokenType::ASSIGN, "="),
+            new Token(TokenType::INT, "5"),
             new Token(TokenType::RBRACES, "}}"),
             new Token(TokenType::EOF, ""),
         ]);

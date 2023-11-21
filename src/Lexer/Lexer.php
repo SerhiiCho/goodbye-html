@@ -65,6 +65,7 @@ class Lexer
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
             '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
             '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
+            '=' => $this->createTokenAndAdvanceChar(TokenType::ASSIGN),
             default => false,
         };
 

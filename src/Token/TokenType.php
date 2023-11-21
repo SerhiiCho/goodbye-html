@@ -28,6 +28,7 @@ enum TokenType: string
     case MODULO = '%';
     case PERIOD = '.';
     case BANG = "!";
+    case ASSIGN = '=';
 
     // Delimiters
     case LBRACES = '{{';
