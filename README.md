@@ -22,6 +22,9 @@ This package is not for creating a full-featured template engine. It's just a si
 
 ## What Goodbye HTML has?
 - [x] Variables
+    - [x] Assigning variables
+    - [x] Using variables
+    - [x] Printing variables
 - [x] If/Else-If/Else statements
 - [x] Ternary expressions
 - [x] Loops
@@ -157,6 +160,7 @@ Infix operators are used to perform math operations or string concatenation. For
 | Divide        | /                | 6 / 3              | int, float                 |
 | Modulo        | %                | 5 % 2              | int, float                 |
 | Concatenate   | .                | 'Hello' . ' world' | string                     |
+| Assigning     | =                | {{ $a = 5 }}       | all the types              |
 
 ## All the available syntax in html/text file
 
