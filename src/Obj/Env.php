@@ -15,7 +15,6 @@ class Env
     ) {
     }
 
-    // todo: it's going to be used in the next version when I implement scopes
     public static function newEnclosedEnv(Env $outer): self
     {
         return new self([], $outer);
