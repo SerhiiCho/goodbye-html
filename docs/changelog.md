@@ -2,7 +2,7 @@
 
 ----
 
-## v2.6.0 (2023-11-20)
+## v2.6.0 (2023-11-21)
 
 - Added `elseif` statements to a BNF grammar
 - Added `.gitattributes` file to ignore HTML files in `tests/files` directory
