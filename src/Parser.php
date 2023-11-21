@@ -25,7 +25,7 @@ class Parser
 
     /**
      * @param string $file_path Absolute file path or the file content itself
-     * @param array<string,mixed>|null $variables Associative array ['var_name' => 'will be inserted']
+     * @param array<string, mixed>|null $variables Associative array ['var_name' => 'will be inserted']
      */
     public function __construct(
         private readonly string $file_path,

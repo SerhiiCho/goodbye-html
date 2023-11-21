@@ -248,7 +248,7 @@ class CoreParserTest extends TestCase
 
         $this->assertCount(3, $loop->body->statements, 'Loop body must contain 3 statements');
 
-        /** @var array<int,HtmlStatement|ExpressionStatement> $stmts */
+        /** @var list<HtmlStatement|ExpressionStatement> $stmts */
         $stmts = $loop->body->statements;
 
         $this->testVariable($stmts[1]->expression, 'index');

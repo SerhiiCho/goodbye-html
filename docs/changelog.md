@@ -6,6 +6,7 @@
 
 - Added `elseif` statements to a BNF grammar
 - Added `.gitattributes` file to ignore HTML files in `tests/files` directory
+- Updated code to level 9 of the PHP Stan static analysis tool
 
 ----
 

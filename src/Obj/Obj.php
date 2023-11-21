@@ -17,9 +17,7 @@ abstract readonly class Obj
      */
     public static function fromNative(mixed $value, string $name): self
     {
-        $type = gettype($value);
-
-        switch ($type) {
+        switch (gettype($value)) {
             case 'string':
                 return new StringObj($value);
             case 'integer':
@@ -31,6 +29,7 @@ abstract readonly class Obj
             case 'NULL':
                 return new NullObj();
             default:
+                $type = gettype($value);
                 $msg = sprintf('[PARSER_ERROR] Provided variable "%s" has unsupported type "%s"', $name, $type);
                 throw new ParserException($msg);
         }

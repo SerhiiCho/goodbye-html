@@ -49,12 +49,12 @@ class CoreParser
     private Token $peekToken;
 
     /**
-     * @var array<string,Closure>
+     * @var array<string, Closure(): Expression>
      */
     private array $prefixParseFns = [];
 
     /**
-     * @var array<string,Closure>
+     * @var array<string, Closure(Expression): Expression>
      */
     private array $infixParseFns = [];
 
