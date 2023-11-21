@@ -7,12 +7,14 @@
 - Added `elseif` statements to a BNF grammar
 - Added `.gitattributes` file to ignore HTML files in `tests/files` directory
 - Updated code to level 9 of the PHP Stan static analysis tool
+- Fixed typo in the change log file
+- Added variable declaration statement support. Now you can declare variables like this: `{{ $name = 'Anna' }}`. Variable declaration is a statement, and must be surrounded with curly braces.
 
 ----
 
 ## v2.5.0 (2023-11-19)
 
-- Added support for `elseif (<expression>)` and `else if (<expression>)` statements like we have in PHP. You can use them like this: `{{ if true }}<h1>True</h1>{{ elseif false }}<h1>False</h1>{{ else }}<h1>Something else</h1>{{ endif }}`
+- Added support for `elseif (<expression>)` and `else if (<expression>)` statements like we have in PHP. You can use them like this: `{{ if true }}<h1>True</h1>{{ elseif false }}<h1>False</h1>{{ else }}<h1>Something else</h1>{{ end }}`
 - Added **PHP Stan** static analysis tool
 - Added **CS Fixer** code style fixer
 - 🐛 Bug fixes in the `Parser.php` class related to readonly properties being set later in the code
