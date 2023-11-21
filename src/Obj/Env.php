@@ -15,11 +15,6 @@ class Env
     ) {
     }
 
-    public static function newEnclosedEnv(Env $outer): self
-    {
-        return new self([], $outer);
-    }
-
     public function get(string $key): Obj|null
     {
         if (array_key_exists($key, $this->store)) {
