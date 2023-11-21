@@ -357,4 +357,25 @@ class EvaluatorTest extends TestCase
             ["{{ 'She\'s ' . 25 }}", "She's 25"],
         ];
     }
+
+    #[DataProvider('providerForTestAssignStatement')]
+    public function testAssignStatement(string $input, string $output): void
+    {
+        $evaluated = $this->testEval($input);
+
+        if ($evaluated instanceof ErrorObj) {
+            $this->fail($evaluated->message);
+        }
+
+        $this->assertSame($output, $evaluated->value());
+    }
+
+    public static function providerForTestAssignStatement(): array
+    {
+        return [
+            ['{{ $herName = "Anna" }}{{ $herName }}', 'Anna'],
+            ['{{ $his_age = 33 }}<h1>{{ $his_age }}</h1>', '<h1>33</h1>'],
+            ['{{ $lang = "PHP" }}{{ $lang="Go" }}{{ $lang }}', 'Go'], // test overriding
+        ];
+    }
 }
