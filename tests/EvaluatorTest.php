@@ -308,15 +308,15 @@ class EvaluatorTest extends TestCase
             ],
             [
                 '{{ 5 + "hello" }}',
-                EvalError::infixExpressionMustBeBetweenNumbers('right', '+', new StringObj('hello'))->message,
+                EvalError::operatorNotAllowed('+', new StringObj('hello'))->message,
             ],
             [
                 '{{ "nice" - 24 }}',
-                EvalError::infixExpressionMustBeBetweenNumbers('left', '-', new StringObj('nice'))->message,
+                EvalError::operatorNotAllowed('-', new StringObj('nice'))->message,
             ],
             [
                 '{{ false / true }}',
-                EvalError::infixExpressionMustBeBetweenNumbers('left', '/', new BooleanObj(false))->message,
+                EvalError::operatorNotAllowed('/', new BooleanObj(false))->message,
             ],
         ];
     }
