@@ -287,7 +287,7 @@ Infix operators are used to perform math operations or string concatenation. For
 ```html
 <!-- With strings -->
 <section class="container">
-    {{ $show_main_title ? '<h1>Main title</h1>' : '<h2>Secondary</h2>' }}
+    {{ 23 === 23 ? '<h1>Main title</h1>' : '<h2>Secondary</h2>' }}
 </section>
 ```
 
