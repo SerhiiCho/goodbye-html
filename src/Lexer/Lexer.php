@@ -82,7 +82,7 @@ class Lexer
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
             '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
             '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
-            '=' => $this->createTokenAndAdvanceChar(TokenType::ASSIGN),
+            '=' => $this->createEqualToken(),
             default => false,
         };
 
@@ -120,6 +120,24 @@ class Lexer
     private function isVariableStart(): bool
     {
         return $this->char === '$' && $this->isLetter($this->peekChar());
+    }
+
+    private function createEqualToken(): Token
+    {
+        // Handle assign
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::ASSIGN);
+        }
+
+        $this->advanceChar(); // skip first "="
+
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::EQ, '==');
+        }
+
+        $this->advanceChar(); // skip second "="
+
+        return $this->createTokenAndAdvanceChar(TokenType::STRONG_EQ, '===');
     }
 
     private function createTokenAndAdvanceChar(TokenType $type, ?string $char = null): Token

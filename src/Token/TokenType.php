@@ -30,6 +30,16 @@ enum TokenType: string
     case BANG = "!";
     case ASSIGN = '=';
 
+    // Comparison operators
+    case EQ = '==';
+    case NOT_EQ = '!=';
+    case STRONG_EQ = '===';
+    case STRONG_NOT_EQ = '!==';
+    case LT = '<';
+    case GT = '>';
+    case LT_EQ = '<=';
+    case GT_EQ = '>=';
+
     // Delimiters
     case LBRACES = '{{';
     case RBRACES = '}}';
