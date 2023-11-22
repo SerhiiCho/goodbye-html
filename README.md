@@ -294,7 +294,16 @@ Loop takes 2 integer arguments. The first argument is from what number start loo
 </div>
 ```
 
+#### Assigning statements
+
+You can assign values to variables inside your text files using curly braces. For example if you want to assign value 5 to variable `$a`, you can do it like this `{{ $a = 5 }}`. You can also use prefix operators to change the value of the variable. For example if you want to assign value false to variable `$is_smoking`, you can do it like this `{{ $is_smoking = !true }}`.
+
+```html
+<div>{{ $age = 33 }}</div>
+```
+
 ## Getting started
+
 ```bash
 $ composer require serhii/goodbye-html
 ```

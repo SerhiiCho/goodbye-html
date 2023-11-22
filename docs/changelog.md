@@ -2,6 +2,14 @@
 
 ----
 
+## v2.7.0 (2023-11-22)
+
+- Added more tests to make sure that everything works as expected
+- Added more info to the `README.md` file
+- Added added assign statement to the BNF grammar
+
+----
+
 ## v2.6.0 (2023-11-21)
 
 - Added `elseif` statements to a BNF grammar
