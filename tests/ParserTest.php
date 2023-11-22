@@ -55,8 +55,14 @@ class ParserTest extends TestCase
             'cats' => null,
             'name' => 'Elliot',
             'movie' => 'Mr. Robot',
-        ]);
+        ], ParserOption::PARSE_TEXT);
 
         $this->assertSame($expect, $parser->parseHtml());
+    }
+
+    public function testParserReturnsEmptyStringWithEmptyFilePath(): void
+    {
+        $parser = new Parser('');
+        $this->assertEmpty($parser->parseHtml());
     }
 }

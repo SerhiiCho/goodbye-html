@@ -11,10 +11,30 @@ class Lexer
 {
     private const LAST_CHAR = 'ø';
 
-    private readonly string $input;
+    /**
+     * The position of the current character in the input (points to current char)
+     *
+     * @var int<0, max>
+     */
     private int $position = 0;
+
+    /**
+     * The position of the next character in the input (points to next char)
+     *
+     * @var int<0, max>
+     */
     private int $nextPosition = 0;
+
+    private readonly string $input;
+
+    /**
+     * The current character under examination
+     */
     private string $char = '';
+
+    /**
+     * Tells us whether we are in HTML or in embedded code
+     */
     private bool $isHtml = true;
 
     public function __construct(string $input)
@@ -74,7 +94,7 @@ class Lexer
         }
 
         if ($this->isVariableStart()) {
-            $this->advanceChar();
+            $this->advanceChar(); // skip "$"
             return new Token(TokenType::VAR, $this->readIdentifier());
         }
 
@@ -147,12 +167,16 @@ class Lexer
         ++$this->nextPosition;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function peekChar(): string
     {
         if ($this->nextPosition >= strlen($this->input)) {
             return self::LAST_CHAR;
         }
 
+        /** @var non-empty-string */
         return $this->input[$this->nextPosition];
     }
 
@@ -184,6 +208,9 @@ class Lexer
         return preg_match('/[0-9.]/', $number) === 1;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function readIdentifier(): string
     {
         $position = $this->position;
@@ -192,6 +219,7 @@ class Lexer
             $this->advanceChar();
         }
 
+        /** @var non-empty-string $result */
         $result = substr($this->input, $position, $this->position - $position);
 
         // Handle case when identifier is "else if"
@@ -206,6 +234,9 @@ class Lexer
         return $result;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function readNumber(): string
     {
         $position = $this->position;
@@ -214,6 +245,7 @@ class Lexer
             $this->advanceChar();
         }
 
+        /** @var non-empty-string */
         return substr($this->input, $position, $this->position - $position);
     }
 

@@ -310,6 +310,10 @@ class CoreParser
 
         $right = $this->parseExpression(Precedence::PREFIX);
 
+        if ($operator === '') {
+            throw new CoreParserException(ParserError::prefixOperatorNotFound());
+        }
+
         return new PrefixExpression($token, $operator, $right);
     }
 

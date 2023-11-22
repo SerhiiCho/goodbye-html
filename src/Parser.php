@@ -24,12 +24,14 @@ class Parser
     private string $html_content;
 
     /**
-     * @param string $file_path Absolute file path or the file content itself
-     * @param array<string, mixed>|null $variables Associative array ['var_name' => 'will be inserted']
+     * @param string $file_path Absolute file path
+     * @param array<non-empty-string, int|string|bool|float|null>|null $variables
+     * @param ParserOption|null $options
      */
     public function __construct(
         private readonly string $file_path,
         private readonly array|null $variables = null,
+        private readonly ParserOption|null $options = null,
     ) {
         $this->html_content = '';
     }
@@ -45,6 +47,10 @@ class Parser
      */
     public function parseHtml(): string
     {
+        if ($this->file_path === '') {
+            return '';
+        }
+
         $this->setHtmlContent();
 
         if (!$this->hasVariables()) {
@@ -69,7 +75,7 @@ class Parser
      */
     private function setHtmlContent(): void
     {
-        if (!str_starts_with($this->file_path, '/')) {
+        if ($this->options && $this->options === ParserOption::PARSE_TEXT) {
             $this->html_content = $this->file_path;
             return;
         }

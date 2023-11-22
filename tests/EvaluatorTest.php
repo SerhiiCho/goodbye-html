@@ -75,6 +75,8 @@ class EvaluatorTest extends TestCase
             ['{{ 3.425 }}', '3.425'],
             ['{{ 1.9 }}', '1.9'],
             ['{{ -3.34 }}', '-3.34'],
+            ['{{ !5.5 }}', ''],
+            ['{{ !0.0 }}', '1'],
         ];
     }
 
@@ -97,6 +99,10 @@ class EvaluatorTest extends TestCase
             ['{{ false }}', ''], // in PHP false to string is ''
             ['{{ !true }}', ''],
             ['{{ !false }}', '1'],
+            ['{{ !!true }}', '1'],
+            ['{{ !!false }}', ''],
+            ['{{ !!!true }}', ''],
+            ['{{ !!!false }}', '1'],
         ];
     }
 
@@ -377,7 +383,9 @@ class EvaluatorTest extends TestCase
             ['{{ $his_age = 33 }}<h1>{{ $his_age }}</h1>', '<h1>33</h1>'],
             ['{{ $lang = "PHP" }}{{ $lang="Go" }}{{ $lang }}', 'Go'], // test overriding
             ['{{ if true }}{{ $platform = "Mac" }}{{ $platform }}{{ end }}', 'Mac'],
-            ['{{ $platform = "Linux" }}{{ if true }}{{ $platform }}{{ end }}', 'Linux'],
+            ['{{ $platform = "Linux" . " platform" }}{{ if true }}{{ $platform }}{{ end }}', 'Linux platform'],
+            ['{{ $sum = 22 + 8 }}{{ $sum }}', '30'],
+            ['{{ $isGood = !true }}{{ $isGood ? "Good" : "Bad" }}', 'Bad'],
         ];
     }
 
@@ -400,6 +408,15 @@ class EvaluatorTest extends TestCase
             ['{{ if false }}{{ else }}{{ $age = 33 }}{{ end }}{{ $age }}', 'age'],
             ['{{ loop 0, 1 }}{{ $index }}{{ end }}{{ $index }}', 'index'],
             ['{{ loop -1, 3 }}{{ $age = 33 }}{{ end }}{{ $age }}', 'age'],
+            [
+                <<<HTML
+                {{ if true }}
+                    {{ if true }} {{ \$var = 3 }} {{ end }}
+                    {{ \$var }}
+                {{ end }}
+                HTML,
+                'var'
+            ],
         ];
     }
 }
