@@ -75,6 +75,8 @@ class EvaluatorTest extends TestCase
             ['{{ 3.425 }}', '3.425'],
             ['{{ 1.9 }}', '1.9'],
             ['{{ -3.34 }}', '-3.34'],
+            ['{{ !5.5 }}', ''],
+            ['{{ !0.0 }}', '1'],
         ];
     }
 
@@ -97,6 +99,10 @@ class EvaluatorTest extends TestCase
             ['{{ false }}', ''], // in PHP false to string is ''
             ['{{ !true }}', ''],
             ['{{ !false }}', '1'],
+            ['{{ !!true }}', '1'],
+            ['{{ !!false }}', ''],
+            ['{{ !!!true }}', ''],
+            ['{{ !!!false }}', '1'],
         ];
     }
 
