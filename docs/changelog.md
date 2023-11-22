@@ -7,6 +7,7 @@
 - Added more tests to make sure that everything works as expected
 - Added more info to the `README.md` file
 - Added added assign statement to the BNF grammar
+- Added a third parameter to a `Parser.php` which excepts `ParserOption` ENUM
 
 ----
 

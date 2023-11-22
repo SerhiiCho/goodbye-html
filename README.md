@@ -50,7 +50,7 @@ $variables = [
     'show_container' => false,
 ];
 
-// Absolute file path or file content as a string
+// Absolute file path to a text file
 $file_path = __DIR__ . '/hello.html';
 
 $parser = new Parser($file_path, $variables);
@@ -110,7 +110,8 @@ Parsed HTML to a PHP string
 </body>
 </html>
 ```
-## Same example but for WordPress shortcode
+
+### Same example but for WordPress shortcode
 
 ```php
 use Serhii\GoodbyeHtml\Parser;
@@ -125,6 +126,21 @@ function shortcode_callback() {
     ]);
     return $parser->parseHtml();
 }
+```
+
+## Options
+
+The instance of `Parser` class takes the third argument as a `ParserOption` enum. You can pass it to the constructor of the `Parser` class as a third argument. For now, it has only a single options:
+
+#### `ParserOption::PARSE_TEXT`
+If you pass this option, the parser, instead of getting the content of the provided file path, will parse the provided string. This option is useful when you want to parse a string instead of a file.
+
+```php
+$parser = new Parser('<div>{{ $title }}</div>', [
+    'title' => 'Hello world'
+], ParserOption::PARSE_TEXT);
+
+// output: <div>Hello world</div>
 ```
 
 ## Supported types
