@@ -25,8 +25,6 @@ class Lexer
      */
     private int $nextPosition = 0;
 
-    private readonly string $input;
-
     /**
      * The current character under examination
      */
@@ -37,9 +35,8 @@ class Lexer
      */
     private bool $isHtml = true;
 
-    public function __construct(string $input)
+    public function __construct(private readonly string $input)
     {
-        $this->input = $input;
         $this->advanceChar();
     }
 
