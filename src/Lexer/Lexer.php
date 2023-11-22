@@ -11,10 +11,30 @@ class Lexer
 {
     private const LAST_CHAR = 'ø';
 
-    private readonly string $input;
+    /**
+     * The position of the current character in the input (points to current char)
+     *
+     * @var int<0, max>
+     */
     private int $position = 0;
+
+    /**
+     * The position of the next character in the input (points to next char)
+     *
+     * @var int<0, max>
+     */
     private int $nextPosition = 0;
+
+    private readonly string $input;
+
+    /**
+     * The current character under examination
+     */
     private string $char = '';
+
+    /**
+     * Tells us whether we are in HTML or in embedded code
+     */
     private bool $isHtml = true;
 
     public function __construct(string $input)
