@@ -31,10 +31,14 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 class CoreParser
 {
     private const PRECEDENCES = [
-        // TokenType::EQUAL->value => Precedence::EQUALS,
-        // TokenType::NOT_EQUAL->value => Precedence::EQUALS,
-        // TokenType::LESS_THAN->value => Precedence::LESS_GREATER,
-        // TokenType::GREATER_THAN->value => Precedence::LESS_GREATER,
+        TokenType::EQ->value => Precedence::EQUALS,
+        TokenType::NOT_EQ->value => Precedence::EQUALS,
+        TokenType::STRONG_EQ->value => Precedence::EQUALS,
+        TokenType::STRONG_NOT_EQ->value => Precedence::EQUALS,
+        TokenType::LTHAN->value => Precedence::LESS_GREATER,
+        TokenType::GTHAN->value => Precedence::LESS_GREATER,
+        TokenType::LTHAN_EQ->value => Precedence::LESS_GREATER,
+        TokenType::GTHAN_EQ->value => Precedence::LESS_GREATER,
         TokenType::QUESTION->value => Precedence::TERNARY,
         TokenType::PERIOD->value => Precedence::SUM,
         TokenType::PLUS->value => Precedence::SUM,
@@ -86,6 +90,14 @@ class CoreParser
         $this->registerInfix(TokenType::SLASH, fn ($l) => $this->parseInfixExpression($l));
         $this->registerInfix(TokenType::ASTERISK, fn ($l) => $this->parseInfixExpression($l));
         $this->registerInfix(TokenType::MODULO, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::EQ, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::STRONG_EQ, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::NOT_EQ, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::STRONG_NOT_EQ, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::LTHAN, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::GTHAN, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::LTHAN_EQ, fn ($l) => $this->parseInfixExpression($l));
+        $this->registerInfix(TokenType::GTHAN_EQ, fn ($l) => $this->parseInfixExpression($l));
     }
 
     /**
