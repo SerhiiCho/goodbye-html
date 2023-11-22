@@ -113,8 +113,24 @@ readonly class Evaluator
         $leftValue = $left->value();
         $rightValue = $right->value();
 
-        if ($operator === '.' && ($left instanceof StringObj || $right instanceof StringObj)) {
+        if ('.' === $operator && ($left instanceof StringObj || $right instanceof StringObj)) {
             return new StringObj($left->value() . $right->value());
+        }
+
+        $result = match($operator) {
+            '>' => new BooleanObj($leftValue > $rightValue),
+            '<' => new BooleanObj($leftValue < $rightValue),
+            '>=' => new BooleanObj($leftValue >= $rightValue),
+            '<=' => new BooleanObj($leftValue <= $rightValue),
+            '==' => new BooleanObj($leftValue == $rightValue),
+            '!=' => new BooleanObj($leftValue != $rightValue),
+            '===' => new BooleanObj($leftValue === $rightValue),
+            '!==' => new BooleanObj($leftValue !== $rightValue),
+            default => false,
+        };
+
+        if ($result) {
+            return $result;
         }
 
         if (!is_numeric($leftValue)) {
@@ -177,7 +193,7 @@ readonly class Evaluator
             }
         }
 
-        if ($node->elseBlock !== null) {
+        if (null !== $node->elseBlock) {
             return $this->eval($node->elseBlock, $env);
         }
 
