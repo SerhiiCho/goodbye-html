@@ -25,6 +25,15 @@ This package is not for creating a full-featured template engine. It's just a si
     - [x] Assigning variables
     - [x] Using variables
     - [x] Printing variables
+- [x] Comparison operators
+    - [x] Equal (==)
+    - [x] Not equal (!=)
+    - [x] Strong equal (===)
+    - [x] Strong not equal (!==)
+    - [x] Greater than (>)
+    - [x] Less than (<)
+    - [x] Greater than or equal (>=)
+    - [x] Less than or equal (<=)
 - [x] If/Else-If/Else statements
 - [x] Ternary expressions
 - [x] Loops
@@ -168,15 +177,23 @@ Prefix operators are used to change the value of the variable. For example if yo
 
 Infix operators are used to perform math operations or string concatenation. For example if you have a variable `$age` and you want to add 1 to it, you can use `+` infix operator to add 1 to the variable. Or if you have a variable `$first_name` and you want to concatenate it with `$last_name`, you can use `.` infix operator to concatenate these 2 variables.
 
-| Operator name | Operator literal | Example            | Supported types for prefix |
-|---------------|------------------|--------------------|----------------------------|
-| Plus          | +                | 3 + 4              | int, float                 |
-| Minus         | -                | 5 - 4              | int, float                 |
-| Multiply      | *                | 3 * 4              | int, float                 |
-| Divide        | /                | 6 / 3              | int, float                 |
-| Modulo        | %                | 5 % 2              | int, float                 |
-| Concatenate   | .                | 'Hello' . ' world' | string                     |
-| Assigning     | =                | {{ $a = 5 }}       | all the types              |
+| Operator name    | Operator literal | Example            | Supported types for prefix |
+|------------------|------------------|--------------------|----------------------------|
+| Plus             | +                | 3 + 4              | int, float                 |
+| Minus            | -                | 5 - 4              | int, float                 |
+| Multiply         | *                | 3 * 4              | int, float                 |
+| Divide           | /                | 6 / 3              | int, float                 |
+| Modulo           | %                | 5 % 2              | int, float                 |
+| Concatenate      | .                | 'Hello' . ' world' | string                     |
+| Assigning        | =                | {{ $a = 5 }}       | all the types              |
+| Equal            | ==               | 5 == 5             | all the types              |
+| Not equal        | !=               | 5 != 4             | all the types              |
+| Strong equal     | ===              | 5 === 5            | all the types              |
+| Strong not equal | !==              | 5 !== 4            | all the types              |
+| Greater than     | >                | 5 > 4              | int, float                 |
+| Less than        | <                | 5 < 4              | int, float                 |
+| Greater or equal | >=               | 5 >= 4             | int, float                 |
+| Less or equal    | <=               | 5 <= 4             | int, float                 |
 
 ## All the available syntax in html/text file
 
