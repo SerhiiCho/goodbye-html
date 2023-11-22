@@ -5,6 +5,7 @@
 ## v2.8.0 (2023-11-22)
 
 - Added support for comparison operators like `==`, `===`, `!==`, `!=`, `<`, `>`, `<=`, `>=`. Now you can use them like this: `{{ if 1 == 1 }}`, `{{ if 1 === 1 }}`, `{{ if 1 !== 1 }}`, `{{ if 1 != 1 }}`, `{{ if 1 < 1 }}`, `{{ if 1 > 1 }}`, `{{ if 1 <= 1 }}`, `{{ if 1 >= 1 }}`
+- Improved error handling for operators
 
 ----
 
