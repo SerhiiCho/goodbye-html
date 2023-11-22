@@ -11,6 +11,9 @@ abstract class ParserError
 {
     private const PREFIX = '[PARSER_ERROR]:';
 
+    /**
+     * @return non-empty-string
+     */
     public static function noPrefixParseFunction(Token $token): string
     {
         return sprintf(
@@ -20,6 +23,9 @@ abstract class ParserError
         );
     }
 
+    /**
+     * @return non-empty-string
+     */
     public static function expectNextTokenToBeDifferent(TokenType $token, Token $peek): string
     {
         return sprintf(
@@ -30,11 +36,22 @@ abstract class ParserError
         );
     }
 
+    /**
+     * @return non-empty-string
+     */
     public static function elseIfBlockWrongPlace(): string
     {
         return sprintf(
             '%s Wrong placement of the "elseif" block! "elseif" block must be placed after "if" or "elseif" block',
             self::PREFIX,
         );
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    public static function prefixOperatorNotFound(): string
+    {
+        return sprintf('%s prefix operator not found', self::PREFIX);
     }
 }

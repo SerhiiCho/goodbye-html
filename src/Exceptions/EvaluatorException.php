@@ -8,4 +8,11 @@ use Exception;
 
 class EvaluatorException extends Exception
 {
+    /**
+     * @param non-empty-string $message
+     */
+    public function __construct(string $message)
+    {
+        parent::__construct($message);
+    }
 }

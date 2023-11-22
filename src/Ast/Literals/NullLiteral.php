@@ -20,6 +20,6 @@ readonly class NullLiteral implements Expression
 
     public function string(): string
     {
-        return '';
+        return 'null';
     }
 }

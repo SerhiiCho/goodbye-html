@@ -74,7 +74,7 @@ class Lexer
         }
 
         if ($this->isVariableStart()) {
-            $this->advanceChar();
+            $this->advanceChar(); // skip "$"
             return new Token(TokenType::VAR, $this->readIdentifier());
         }
 
@@ -147,12 +147,16 @@ class Lexer
         ++$this->nextPosition;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function peekChar(): string
     {
         if ($this->nextPosition >= strlen($this->input)) {
             return self::LAST_CHAR;
         }
 
+        /** @var non-empty-string */
         return $this->input[$this->nextPosition];
     }
 
@@ -184,6 +188,9 @@ class Lexer
         return preg_match('/[0-9.]/', $number) === 1;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function readIdentifier(): string
     {
         $position = $this->position;
@@ -192,6 +199,7 @@ class Lexer
             $this->advanceChar();
         }
 
+        /** @var non-empty-string $result */
         $result = substr($this->input, $position, $this->position - $position);
 
         // Handle case when identifier is "else if"
@@ -206,6 +214,9 @@ class Lexer
         return $result;
     }
 
+    /**
+     * @return non-empty-string
+     */
     private function readNumber(): string
     {
         $position = $this->position;
@@ -214,6 +225,7 @@ class Lexer
             $this->advanceChar();
         }
 
+        /** @var non-empty-string */
         return substr($this->input, $position, $this->position - $position);
     }
 

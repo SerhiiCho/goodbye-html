@@ -8,6 +8,9 @@ use Serhii\GoodbyeHtml\Token\Token;
 
 readonly class PrefixExpression implements Expression
 {
+    /**
+     * @param non-empty-string $operator
+     */
     public function __construct(
         public Token $token,
         public string $operator,
@@ -20,6 +23,9 @@ readonly class PrefixExpression implements Expression
         return $this->token->literal;
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function string(): string
     {
         return sprintf('(%s%s)', $this->operator, $this->right->string());

@@ -59,4 +59,10 @@ class ParserTest extends TestCase
 
         $this->assertSame($expect, $parser->parseHtml());
     }
+
+    public function testParserReturnsEmptyStringWithEmptyFilePath(): void
+    {
+        $parser = new Parser('');
+        $this->assertEmpty($parser->parseHtml());
+    }
 }

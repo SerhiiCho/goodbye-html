@@ -25,7 +25,7 @@ class Parser
 
     /**
      * @param string $file_path Absolute file path or the file content itself
-     * @param array<string, mixed>|null $variables Associative array ['var_name' => 'will be inserted']
+     * @param array<non-empty-string, int|string|bool|float|null>|null $variables
      */
     public function __construct(
         private readonly string $file_path,
@@ -45,6 +45,10 @@ class Parser
      */
     public function parseHtml(): string
     {
+        if ($this->file_path === '') {
+            return '';
+        }
+
         $this->setHtmlContent();
 
         if (!$this->hasVariables()) {
