@@ -25,8 +25,6 @@ class Lexer
      */
     private int $nextPosition = 0;
 
-    private readonly string $input;
-
     /**
      * The current character under examination
      */
@@ -37,9 +35,8 @@ class Lexer
      */
     private bool $isHtml = true;
 
-    public function __construct(string $input)
+    public function __construct(private readonly string $input)
     {
-        $this->input = $input;
         $this->advanceChar();
     }
 
@@ -83,9 +80,11 @@ class Lexer
             ',' => $this->createTokenAndAdvanceChar(TokenType::COMMA),
             '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
-            '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
             '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
-            '=' => $this->createTokenAndAdvanceChar(TokenType::ASSIGN),
+            '<' => $this->createLessThanComparisonToken(),
+            '>' => $this->createGreaterThanComparisonToken(),
+            '!' => $this->createNegationToken(),
+            '=' => $this->createEqualToken(),
             default => false,
         };
 
@@ -123,6 +122,63 @@ class Lexer
     private function isVariableStart(): bool
     {
         return $this->char === '$' && $this->isLetter($this->peekChar());
+    }
+
+    private function createLessThanComparisonToken(): Token
+    {
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::LTHAN);
+        }
+
+        $this->advanceChar(); // skip "<"
+
+        return $this->createTokenAndAdvanceChar(TokenType::LTHAN_EQ, '<=');
+    }
+
+    private function createGreaterThanComparisonToken(): Token
+    {
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::GTHAN);
+        }
+
+        $this->advanceChar(); // skip ">"
+
+        return $this->createTokenAndAdvanceChar(TokenType::GTHAN_EQ, '>=');
+    }
+
+    private function createNegationToken(): Token
+    {
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::BANG);
+        }
+
+        $this->advanceChar(); // skip "!"
+
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::NOT_EQ, '!=');
+        }
+
+        $this->advanceChar(); // skip first "="
+
+        return $this->createTokenAndAdvanceChar(TokenType::STRONG_NOT_EQ, '!==');
+    }
+
+    private function createEqualToken(): Token
+    {
+        // Handle assign
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::ASSIGN);
+        }
+
+        $this->advanceChar(); // skip first "="
+
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::EQ, '==');
+        }
+
+        $this->advanceChar(); // skip second "="
+
+        return $this->createTokenAndAdvanceChar(TokenType::STRONG_EQ, '===');
     }
 
     private function createTokenAndAdvanceChar(TokenType $type, ?string $char = null): Token

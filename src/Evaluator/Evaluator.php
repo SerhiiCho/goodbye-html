@@ -105,33 +105,72 @@ readonly class Evaluator
             return $left;
         }
 
-        return $this->calculateBinaryExpression($left, $right, $node->operator);
+        return $this->handleInfixExpressionResult($left, $right, $node->operator);
     }
 
-    private function calculateBinaryExpression(Obj $left, Obj $right, string $operator): Obj
+    private function handleInfixExpressionResult(Obj $left, Obj $right, string $operator): Obj
     {
         $leftValue = $left->value();
         $rightValue = $right->value();
 
-        if ($operator === '.' && ($left instanceof StringObj || $right instanceof StringObj)) {
-            return new StringObj($left->value() . $right->value());
+        if (is_string($leftValue) || is_string($rightValue)) {
+            return $this->evalStringInfixExpressions($left, $right, $operator);
         }
 
-        if (!is_numeric($leftValue)) {
-            return EvalError::infixExpressionMustBeBetweenNumbers('left', $operator, $left);
-        }
+        $leftIsNum = $left instanceof IntegerObj || $left instanceof FloatObj;
+        $rightIsNum = $right instanceof IntegerObj || $right instanceof FloatObj;
 
-        if (!is_numeric($rightValue)) {
-            return EvalError::infixExpressionMustBeBetweenNumbers('right', $operator, $right);
+        if ($leftIsNum && $rightIsNum) {
+            return $this->evalIntegerInfixExpressions($left, $right, $operator);
         }
 
         return match ($operator) {
-            '+' => $this->numberObject($leftValue + $rightValue),
-            '-' => $this->numberObject($leftValue - $rightValue),
-            '*' => $this->numberObject($leftValue * $rightValue),
-            '/' => $this->numberObject($leftValue / $rightValue),
-            '%' => $this->numberObject($leftValue % $rightValue),
+            '==' => new BooleanObj($leftValue == $rightValue),
+            '!=' => new BooleanObj($leftValue != $rightValue),
+            '===' => new BooleanObj($leftValue === $rightValue),
+            '!==' => new BooleanObj($leftValue !== $rightValue),
             default => EvalError::operatorNotAllowed($operator, $right),
+        };
+    }
+
+    private function evalStringInfixExpressions(Obj $left, Obj $right, string $operator): Obj
+    {
+        $leftVal = $left->value();
+        $rightVal = $right->value();
+
+        return match ($operator) {
+            '==' => new BooleanObj($leftVal == $rightVal),
+            '!=' => new BooleanObj($leftVal != $rightVal),
+            '===' => new BooleanObj($leftVal === $rightVal),
+            '!==' => new BooleanObj($leftVal !== $rightVal),
+            '.' => new StringObj($leftVal . $rightVal),
+            default => EvalError::operatorNotAllowed($operator, is_string($leftVal) ? $left : $right),
+        };
+    }
+
+    private function evalIntegerInfixExpressions(
+        IntegerObj|FloatObj $left,
+        IntegerObj|FloatObj $right,
+        string $operator,
+    ): Obj {
+        $leftVal = $left->value();
+        $rightVal = $right->value();
+
+        return match ($operator) {
+            '+' => $this->numberObject($leftVal + $rightVal),
+            '-' => $this->numberObject($leftVal - $rightVal),
+            '*' => $this->numberObject($leftVal * $rightVal),
+            '/' => $this->numberObject($leftVal / $rightVal),
+            '%' => $this->numberObject($leftVal % $rightVal),
+            '>' => new BooleanObj($leftVal > $rightVal),
+            '<' => new BooleanObj($leftVal < $rightVal),
+            '>=' => new BooleanObj($leftVal >= $rightVal),
+            '<=' => new BooleanObj($leftVal <= $rightVal),
+            '==' => new BooleanObj($leftVal === $rightVal),
+            '!=' => new BooleanObj($leftVal !== $rightVal),
+            '===' => new BooleanObj($leftVal === $rightVal),
+            '!==' => new BooleanObj($leftVal !== $rightVal),
+            default => EvalError::operatorNotAllowed($operator, $left),
         };
     }
 
@@ -177,7 +216,7 @@ readonly class Evaluator
             }
         }
 
-        if ($node->elseBlock !== null) {
+        if (null !== $node->elseBlock) {
             return $this->eval($node->elseBlock, $env);
         }
 

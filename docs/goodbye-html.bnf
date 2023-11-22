@@ -35,7 +35,7 @@
 
 <ternary-expression> ::= <expression> "?" <expression> ":" <expression>
 
-<infix-operator> ::= "+" | "-" | "*" | "/" | "%"
+<infix-operator> ::= "+" | "-" | "*" | "/" | "%" | "==" | "!=" | ">" | "<" | ">=" | "<=" | "===" | "!=="
 
 <infix-expression> ::= <expression> <infix-operator> <expression>
 

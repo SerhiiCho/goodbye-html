@@ -308,15 +308,15 @@ class EvaluatorTest extends TestCase
             ],
             [
                 '{{ 5 + "hello" }}',
-                EvalError::infixExpressionMustBeBetweenNumbers('right', '+', new StringObj('hello'))->message,
+                EvalError::operatorNotAllowed('+', new StringObj('hello'))->message,
             ],
             [
                 '{{ "nice" - 24 }}',
-                EvalError::infixExpressionMustBeBetweenNumbers('left', '-', new StringObj('nice'))->message,
+                EvalError::operatorNotAllowed('-', new StringObj('nice'))->message,
             ],
             [
                 '{{ false / true }}',
-                EvalError::infixExpressionMustBeBetweenNumbers('left', '/', new BooleanObj(false))->message,
+                EvalError::operatorNotAllowed('/', new BooleanObj(false))->message,
             ],
         ];
     }
@@ -361,6 +361,22 @@ class EvaluatorTest extends TestCase
             ["{{ 5 + 10 / 2 }}", '10'],
             ["{{ 'anna ' . 'is pretty' }}", 'anna is pretty'],
             ["{{ 'She\'s ' . 25 }}", "She's 25"],
+            ["{{ 23 == '23' }}", '1'],
+            ["{{ 23 == 23 }}", '1'],
+            ["{{ 23 != 21 }}", '1'],
+            ["{{ 21 != 21 }}", ''],
+            ["{{ 23 === '23' }}", ''],
+            ["{{ 23 === 23 }}", '1'],
+            ["{{ false !== true }}", '1'],
+            ["{{ false === true }}", ''],
+            ["{{ true === true }}", '1'],
+            ["{{ 1 > 2 }}", ''],
+            ["{{ 2 > 1 }}", '1'],
+            ["{{ 1 >= 1 }}", '1'],
+            ["{{ 1 <= 1 }}", '1'],
+            ["{{ 1 < 2 }}", '1'],
+            ["{{ 3 < 2 }}", ''],
+            ["{{ -3 < -2 }}", '1'],
         ];
     }
 

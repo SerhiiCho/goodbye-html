@@ -36,7 +36,7 @@
     },
     "scripts": {
         "test": "./vendor/bin/phpunit --order-by=random",
-        "pint": "./vendor/bin/pint",
+        "pint": "./vendor/bin/pint --test",
         "stan": "./vendor/bin/phpstan analyse",
         "cs": "./vendor/bin/phpcs src --colors -p",
         "check": ["@test", "@pint", "@stan", "@cs"]

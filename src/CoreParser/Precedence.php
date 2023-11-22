@@ -7,8 +7,8 @@ namespace Serhii\GoodbyeHtml\CoreParser;
 enum Precedence: int
 {
     case LOWEST = 0;
-    case EQUALS = 1; // == and ===
-    case TERNARY = 2; // a ? b : c
+    case TERNARY = 1; // a ? b : c
+    case EQUALS = 2; // == and ===
     case LESS_GREATER = 3; // > or <
     case SUM = 4; // +
     case PRODUCT = 5; // *

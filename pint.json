@@ -3,7 +3,7 @@
     "rules": {
         "is_null": true,
         "declare_strict_types": true,
-        "strict_comparison": true,
+        "strict_comparison": false,
         "no_unused_imports": true,
         "explicit_string_variable": true,
         "native_function_casing": true,
