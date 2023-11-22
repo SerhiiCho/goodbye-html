@@ -80,8 +80,10 @@ class Lexer
             ',' => $this->createTokenAndAdvanceChar(TokenType::COMMA),
             '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
-            '!' => $this->createTokenAndAdvanceChar(TokenType::BANG),
             '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
+            '<' => $this->createLessThanComparisonToken(),
+            '>' => $this->createGreaterThanComparisonToken(),
+            '!' => $this->createNegationToken(),
             '=' => $this->createEqualToken(),
             default => false,
         };
@@ -120,6 +122,45 @@ class Lexer
     private function isVariableStart(): bool
     {
         return $this->char === '$' && $this->isLetter($this->peekChar());
+    }
+
+    private function createLessThanComparisonToken(): Token
+    {
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::LT);
+        }
+
+        $this->advanceChar(); // skip "<"
+
+        return $this->createTokenAndAdvanceChar(TokenType::LT_EQ, '<=');
+    }
+
+    private function createGreaterThanComparisonToken(): Token
+    {
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::GT);
+        }
+
+        $this->advanceChar(); // skip ">"
+
+        return $this->createTokenAndAdvanceChar(TokenType::GT_EQ, '>=');
+    }
+
+    private function createNegationToken(): Token
+    {
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::BANG);
+        }
+
+        $this->advanceChar(); // skip "!"
+
+        if ($this->peekChar() !== '=') {
+            return $this->createTokenAndAdvanceChar(TokenType::NOT_EQ, '!=');
+        }
+
+        $this->advanceChar(); // skip first "="
+
+        return $this->createTokenAndAdvanceChar(TokenType::STRONG_NOT_EQ, '!==');
     }
 
     private function createEqualToken(): Token
