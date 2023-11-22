@@ -127,23 +127,23 @@ class Lexer
     private function createLessThanComparisonToken(): Token
     {
         if ($this->peekChar() !== '=') {
-            return $this->createTokenAndAdvanceChar(TokenType::LT);
+            return $this->createTokenAndAdvanceChar(TokenType::LTHAN);
         }
 
         $this->advanceChar(); // skip "<"
 
-        return $this->createTokenAndAdvanceChar(TokenType::LT_EQ, '<=');
+        return $this->createTokenAndAdvanceChar(TokenType::LTHAN_EQ, '<=');
     }
 
     private function createGreaterThanComparisonToken(): Token
     {
         if ($this->peekChar() !== '=') {
-            return $this->createTokenAndAdvanceChar(TokenType::GT);
+            return $this->createTokenAndAdvanceChar(TokenType::GTHAN);
         }
 
         $this->advanceChar(); // skip ">"
 
-        return $this->createTokenAndAdvanceChar(TokenType::GT_EQ, '>=');
+        return $this->createTokenAndAdvanceChar(TokenType::GTHAN_EQ, '>=');
     }
 
     private function createNegationToken(): Token

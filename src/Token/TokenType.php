@@ -35,10 +35,10 @@ enum TokenType: string
     case NOT_EQ = '!=';
     case STRONG_EQ = '===';
     case STRONG_NOT_EQ = '!==';
-    case LT = '<';
-    case GT = '>';
-    case LT_EQ = '<=';
-    case GT_EQ = '>=';
+    case LTHAN = '<';
+    case GTHAN = '>';
+    case LTHAN_EQ = '<=';
+    case GTHAN_EQ = '>=';
 
     // Delimiters
     case LBRACES = '{{';
