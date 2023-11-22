@@ -31,6 +31,7 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 class CoreParser
 {
     private const PRECEDENCES = [
+        TokenType::QUESTION->value => Precedence::TERNARY,
         TokenType::EQ->value => Precedence::EQUALS,
         TokenType::NOT_EQ->value => Precedence::EQUALS,
         TokenType::STRONG_EQ->value => Precedence::EQUALS,
@@ -39,7 +40,6 @@ class CoreParser
         TokenType::GTHAN->value => Precedence::LESS_GREATER,
         TokenType::LTHAN_EQ->value => Precedence::LESS_GREATER,
         TokenType::GTHAN_EQ->value => Precedence::LESS_GREATER,
-        TokenType::QUESTION->value => Precedence::TERNARY,
         TokenType::PERIOD->value => Precedence::SUM,
         TokenType::PLUS->value => Precedence::SUM,
         TokenType::MINUS->value => Precedence::SUM,

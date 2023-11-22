@@ -400,6 +400,7 @@ class CoreParserTest extends TestCase
             ['{{ !-1 }}', '(!(-1))'],
             ['{{ !true ? 1 : 2 }}', '((!true) ? 1 : 2)'],
             ['{{ !true ? 1 : true ? 3 : 5 }}', '((!true) ? 1 : (true ? 3 : 5))'],
+            ["{{ 5 + 5 === 2 * 5 ? 'Yes' : 'No' }}", "(((5 + 5) === (2 * 5)) ? 'Yes' : 'No')"],
         ];
     }
 
