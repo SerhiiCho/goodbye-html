@@ -64,9 +64,13 @@ class Lexer
             return new Token(TokenType::RBRACES, '}}');
         }
 
-        return $this->isHtml
-            ? $this->readHtmlToken()
-            : $this->readEmbeddedCodeToken();
+        if ($this->isHtml) {
+            $token = new Token(TokenType::HTML, $this->readHtml());
+            $this->advanceChar();
+            return $token;
+        }
+
+        return $this->readEmbeddedCodeToken();
     }
 
     private function readEmbeddedCodeToken(): Token
@@ -196,19 +200,6 @@ class Lexer
         }
 
         return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INT;
-    }
-
-    private function readHtmlToken(): Token
-    {
-        if ($this->char === self::LAST_CHAR) {
-            $token = new Token(TokenType::EOF, 'EOF');
-        } else {
-            $token = new Token(TokenType::HTML, $this->readHtml());
-        }
-
-        $this->advanceChar();
-
-        return $token;
     }
 
     private function advanceChar(): void
