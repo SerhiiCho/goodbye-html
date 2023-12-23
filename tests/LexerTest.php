@@ -359,7 +359,7 @@ class LexerTest extends TestCase
     public function testLexingIllegalTokens(): void
     {
         $input = <<<HTML
-        {{ 2.3.4 @ $ ^ & ( ) | ~ ` }}
+        {{ 2.3.4 @ $ ^ & | ~ ` }}
         HTML;
 
         $this->tokenizeString($input, [
@@ -369,8 +369,6 @@ class LexerTest extends TestCase
             new Token(TokenType::ILLEGAL, "$"),
             new Token(TokenType::ILLEGAL, "^"),
             new Token(TokenType::ILLEGAL, "&"),
-            new Token(TokenType::ILLEGAL, "("),
-            new Token(TokenType::ILLEGAL, ")"),
             new Token(TokenType::ILLEGAL, "|"),
             new Token(TokenType::ILLEGAL, "~"),
             new Token(TokenType::ILLEGAL, "`"),
@@ -424,6 +422,34 @@ class LexerTest extends TestCase
             new Token(TokenType::GTHAN, ">"),
             new Token(TokenType::LTHAN_EQ, "<="),
             new Token(TokenType::GTHAN_EQ, ">="),
+            new Token(TokenType::RBRACES, "}}"),
+            new Token(TokenType::EOF, ""),
+        ]);
+    }
+
+    public function testLexingGroupedExpressions(): void
+    {
+        $input = <<<HTML
+        {{ (4 + 5) * ((3 - 2) / 2) }}
+        HTML;
+
+        $this->tokenizeString($input, [
+            new Token(TokenType::LBRACES, "{{"),
+            new Token(TokenType::LPAREN, "("),
+            new Token(TokenType::INT, "4"),
+            new Token(TokenType::PLUS, "+"),
+            new Token(TokenType::INT, "5"),
+            new Token(TokenType::RPAREN, ")"),
+            new Token(TokenType::ASTERISK, "*"),
+            new Token(TokenType::LPAREN, "("),
+            new Token(TokenType::LPAREN, "("),
+            new Token(TokenType::INT, "3"),
+            new Token(TokenType::MINUS, "-"),
+            new Token(TokenType::INT, "2"),
+            new Token(TokenType::RPAREN, ")"),
+            new Token(TokenType::SLASH, "/"),
+            new Token(TokenType::INT, "2"),
+            new Token(TokenType::RPAREN, ")"),
             new Token(TokenType::RBRACES, "}}"),
             new Token(TokenType::EOF, ""),
         ]);

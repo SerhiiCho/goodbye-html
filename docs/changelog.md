@@ -2,6 +2,13 @@
 
 ----
 
+## v2.9.0 (2023-11-25)
+
+- Simplified Lexer code
+- Add support for grouped expressions. Now you can use them like this: `{{ (1 + 2) * 3 }}`
+
+----
+
 ## v2.8.0 (2023-11-22)
 
 - Added support for comparison operators like `==`, `===`, `!==`, `!=`, `<`, `>`, `<=`, `>=`. Now you can use them like this: `{{ if 1 == 1 }}`, `{{ if 1 === 1 }}`, `{{ if 1 !== 1 }}`, `{{ if 1 != 1 }}`, `{{ if 1 < 1 }}`, `{{ if 1 > 1 }}`, `{{ if 1 <= 1 }}`, `{{ if 1 >= 1 }}`

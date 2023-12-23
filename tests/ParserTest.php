@@ -42,6 +42,7 @@ class ParserTest extends TestCase
         He has {{ \$cats ? \$cats : 'no' }} cats.
         He is {{ !false ? 'funny' : 'not funny' }}.
         {{ \$name . ' and ' . 'Shayla' . ' are from the movie ' . \$movie . '!' }}
+        <small>{{ (((5 + 1) * 2)) }}</small>
         TEXT;
 
         $expect = <<<TEXT
@@ -49,6 +50,7 @@ class ParserTest extends TestCase
         He has no cats.
         He is funny.
         Elliot and Shayla are from the movie Mr. Robot!
+        <small>12</small>
         TEXT;
 
         $parser = new Parser($input, [

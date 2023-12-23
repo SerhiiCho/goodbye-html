@@ -64,9 +64,13 @@ class Lexer
             return new Token(TokenType::RBRACES, '}}');
         }
 
-        return $this->isHtml
-            ? $this->readHtmlToken()
-            : $this->readEmbeddedCodeToken();
+        if ($this->isHtml) {
+            $token = new Token(TokenType::HTML, $this->readHtml());
+            $this->advanceChar();
+            return $token;
+        }
+
+        return $this->readEmbeddedCodeToken();
     }
 
     private function readEmbeddedCodeToken(): Token
@@ -81,6 +85,8 @@ class Lexer
             '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
             '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
+            '(' => $this->createTokenAndAdvanceChar(TokenType::LPAREN),
+            ')' => $this->createTokenAndAdvanceChar(TokenType::RPAREN),
             '<' => $this->createLessThanComparisonToken(),
             '>' => $this->createGreaterThanComparisonToken(),
             '!' => $this->createNegationToken(),
@@ -196,19 +202,6 @@ class Lexer
         }
 
         return str_contains($num, '.') ? TokenType::FLOAT : TokenType::INT;
-    }
-
-    private function readHtmlToken(): Token
-    {
-        if ($this->char === self::LAST_CHAR) {
-            $token = new Token(TokenType::EOF, 'EOF');
-        } else {
-            $token = new Token(TokenType::HTML, $this->readHtml());
-        }
-
-        $this->advanceChar();
-
-        return $token;
     }
 
     private function advanceChar(): void
@@ -342,7 +335,7 @@ class Lexer
     {
         $quote = $this->char;
 
-        $this->advanceChar();
+        $this->advanceChar(); // skip first quote
 
         if ($this->char === $quote) {
             return '';

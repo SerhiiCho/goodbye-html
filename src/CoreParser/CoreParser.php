@@ -30,6 +30,23 @@ use Serhii\GoodbyeHtml\Token\TokenType;
 
 class CoreParser
 {
+    private const INFIX_TOKENS = [
+        TokenType::PERIOD,
+        TokenType::PLUS,
+        TokenType::MINUS,
+        TokenType::SLASH,
+        TokenType::ASTERISK,
+        TokenType::MODULO,
+        TokenType::EQ,
+        TokenType::STRONG_EQ,
+        TokenType::NOT_EQ,
+        TokenType::STRONG_NOT_EQ,
+        TokenType::LTHAN,
+        TokenType::GTHAN,
+        TokenType::LTHAN_EQ,
+        TokenType::GTHAN_EQ,
+    ];
+
     private const PRECEDENCES = [
         TokenType::QUESTION->value => Precedence::TERNARY,
         TokenType::EQ->value => Precedence::EQUALS,
@@ -81,23 +98,14 @@ class CoreParser
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBooleanLiteral());
         $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBooleanLiteral());
         $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
+        $this->registerPrefix(TokenType::LPAREN, fn () => $this->parseGroupedExpression());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION, fn ($l) => $this->parseTernaryExpression($l));
-        $this->registerInfix(TokenType::PERIOD, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::PLUS, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::MINUS, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::SLASH, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::ASTERISK, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::MODULO, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::EQ, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::STRONG_EQ, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::NOT_EQ, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::STRONG_NOT_EQ, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::LTHAN, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::GTHAN, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::LTHAN_EQ, fn ($l) => $this->parseInfixExpression($l));
-        $this->registerInfix(TokenType::GTHAN_EQ, fn ($l) => $this->parseInfixExpression($l));
+
+        foreach (self::INFIX_TOKENS as $tok) {
+            $this->registerInfix($tok, fn ($l) => $this->parseInfixExpression($l));
+        }
     }
 
     /**
@@ -327,6 +335,20 @@ class CoreParser
         }
 
         return new PrefixExpression($token, $operator, $right);
+    }
+
+    /**
+     * @throws CoreParserException
+     */
+    private function parseGroupedExpression(): Expression
+    {
+        $this->nextToken(); // skip "("
+
+        $exp = $this->parseExpression(Precedence::LOWEST);
+
+        $this->expectPeek(TokenType::RPAREN);
+
+        return $exp;
     }
 
     private function parseBooleanLiteral(): Expression

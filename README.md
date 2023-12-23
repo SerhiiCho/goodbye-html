@@ -35,7 +35,9 @@ This package is not for creating a full-featured template engine. It's just a si
     - [x] Greater than or equal (>=)
     - [x] Less than or equal (<=)
 - [x] If/Else-If/Else statements
-- [x] Ternary expressions
+- [x] Expressions
+  - Ternary Expressions (true ? 'yes' : 'no')
+  - Grouped Expressions ((3 + 4) * 5)
 - [x] Loops
 - [x] Prefix operators
     - Negation operator (!)
