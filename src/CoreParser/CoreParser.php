@@ -98,6 +98,7 @@ class CoreParser
         $this->registerPrefix(TokenType::TRUE, fn () => $this->parseBooleanLiteral());
         $this->registerPrefix(TokenType::FALSE, fn () => $this->parseBooleanLiteral());
         $this->registerPrefix(TokenType::MINUS, fn () => $this->parsePrefixExpression());
+        $this->registerPrefix(TokenType::LPAREN, fn () => $this->parseGroupedExpression());
 
         // Infix operators
         $this->registerInfix(TokenType::QUESTION, fn ($l) => $this->parseTernaryExpression($l));
@@ -334,6 +335,20 @@ class CoreParser
         }
 
         return new PrefixExpression($token, $operator, $right);
+    }
+
+    /**
+     * @throws CoreParserException
+     */
+    private function parseGroupedExpression(): Expression
+    {
+        $this->nextToken(); // skip "("
+
+        $exp = $this->parseExpression(Precedence::LOWEST);
+
+        $this->expectPeek(TokenType::RPAREN);
+
+        return $exp;
     }
 
     private function parseBooleanLiteral(): Expression
