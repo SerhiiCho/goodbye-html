@@ -5,6 +5,7 @@
 ## v2.9.0 (2023-11-25)
 
 - Simplified Lexer code
+- Add support for grouped expressions. Now you can use them like this: `{{ (1 + 2) * 3 }}`
 
 ----
 
