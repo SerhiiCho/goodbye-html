@@ -333,7 +333,7 @@ class Lexer
     {
         $quote = $this->char;
 
-        $this->advanceChar();
+        $this->advanceChar(); // skip first quote
 
         if ($this->char === $quote) {
             return '';
