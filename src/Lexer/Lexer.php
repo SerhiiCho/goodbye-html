@@ -85,6 +85,8 @@ class Lexer
             '?' => $this->createTokenAndAdvanceChar(TokenType::QUESTION),
             ':' => $this->createTokenAndAdvanceChar(TokenType::COLON),
             '.' => $this->createTokenAndAdvanceChar(TokenType::PERIOD),
+            '(' => $this->createTokenAndAdvanceChar(TokenType::LPAREN),
+            ')' => $this->createTokenAndAdvanceChar(TokenType::RPAREN),
             '<' => $this->createLessThanComparisonToken(),
             '>' => $this->createGreaterThanComparisonToken(),
             '!' => $this->createNegationToken(),

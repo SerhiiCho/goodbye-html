@@ -46,6 +46,8 @@ enum TokenType: string
     case QUESTION = '?';
     case COLON = ':';
     case COMMA = ',';
+    case LPAREN = '(';
+    case RPAREN = ')';
 
     // Keywords
     case IF = 'IF';
