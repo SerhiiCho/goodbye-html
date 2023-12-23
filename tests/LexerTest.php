@@ -359,7 +359,7 @@ class LexerTest extends TestCase
     public function testLexingIllegalTokens(): void
     {
         $input = <<<HTML
-        {{ 2.3.4 @ $ ^ & ( ) | ~ ` }}
+        {{ 2.3.4 @ $ ^ & | ~ ` }}
         HTML;
 
         $this->tokenizeString($input, [
@@ -369,8 +369,6 @@ class LexerTest extends TestCase
             new Token(TokenType::ILLEGAL, "$"),
             new Token(TokenType::ILLEGAL, "^"),
             new Token(TokenType::ILLEGAL, "&"),
-            new Token(TokenType::ILLEGAL, "("),
-            new Token(TokenType::ILLEGAL, ")"),
             new Token(TokenType::ILLEGAL, "|"),
             new Token(TokenType::ILLEGAL, "~"),
             new Token(TokenType::ILLEGAL, "`"),
