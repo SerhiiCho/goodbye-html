@@ -20,6 +20,6 @@ readonly class ExpressionStatement implements Statement
 
     public function string(): string
     {
-        return $this->expression->string();
+        return sprintf('{{ %s }}', $this->expression->string());
     }
 }

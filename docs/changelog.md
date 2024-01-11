@@ -5,6 +5,7 @@
 ## v2.9.2 (2024-01-11)
 
 - Added more tests to `EvaluatorTest.php` for checking if/elseif/else statements logic
+- Fixed wrong printing of the expression statement when calling a `String()` method on it
 
 ----
 
