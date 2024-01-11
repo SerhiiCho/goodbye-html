@@ -17,6 +17,7 @@ use Serhii\GoodbyeHtml\Ast\Literals\NullLiteral;
 use Serhii\GoodbyeHtml\Ast\Literals\StringLiteral;
 use Serhii\GoodbyeHtml\Ast\Statements\AssignStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\BlockStatement;
+use Serhii\GoodbyeHtml\Ast\Statements\ElseIfStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\ExpressionStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
@@ -381,11 +382,10 @@ class CoreParser
             $this->nextToken(); // skip "{{"
             $this->nextToken(); // skip "elseif"
 
-            $elseIfBlocks[] = new IfStatement(
+            $elseIfBlocks[] = new ElseIfStatement(
                 token: $this->curToken,
                 condition: $this->parseExpression(Precedence::LOWEST),
                 block: $this->parseBlockStatement(),
-                elseBlock: null,
             );
         }
 
