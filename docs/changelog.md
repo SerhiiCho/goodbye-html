@@ -2,6 +2,12 @@
 
 ----
 
+## v2.9.2 (2024-01-11)
+
+- Added more tests to `EvaluatorTest.php` for checking if/elseif/else statements logic
+
+----
+
 ## v2.9.1 (2024-01-11)
 
 - Inlined one in CoreParserTest.php because it was used only in one place
