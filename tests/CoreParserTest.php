@@ -38,17 +38,9 @@ class CoreParserTest extends TestCase
 
         $program = $parser->parseProgram();
 
-        $this->assertOneStatement($parser, $program->statements);
+        $this->assertCount(1, $program->statements, 'Program must contain 1 statements');
 
         return $program;
-    }
-
-    /**
-     * @param Statement[] $stmt
-     */
-    private function assertOneStatement(CoreParser $parser, array $stmt): void
-    {
-        $this->assertCount(1, $stmt, "Program must contain 1 statements");
     }
 
     private static function testVariable($var, string $val): void

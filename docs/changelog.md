@@ -2,6 +2,12 @@
 
 ----
 
+## v2.9.1 (2024-01-11)
+
+- Inlined one in CoreParserTest.php because it was used only in one place
+
+----
+
 ## v2.9.0 (2023-12-23)
 
 - Simplified Lexer code
