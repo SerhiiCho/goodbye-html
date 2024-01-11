@@ -10,7 +10,7 @@ use Serhii\GoodbyeHtml\Token\Token;
 readonly class IfStatement implements Statement
 {
     /**
-     * @param list<IfStatement> $elseIfBlocks
+     * @param list<ElseIfStatement> $elseIfBlocks
      */
     public function __construct(
         public Token $token,
@@ -28,7 +28,7 @@ readonly class IfStatement implements Statement
 
     public function string(): string
     {
-        $result = sprintf("{{ %s %s }}\n", $this->tokenLiteral(), $this->condition->string());
+        $result = sprintf("{{ if %s }}", $this->condition->string());
 
         $result .= $this->block->string();
 
@@ -37,8 +37,7 @@ readonly class IfStatement implements Statement
         }
 
         if ($this->elseBlock) {
-            $result .= "{{ else }}\n";
-
+            $result .= "{{ else }}";
             $result .= $this->elseBlock->string();
         }
 

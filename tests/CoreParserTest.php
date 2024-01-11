@@ -20,7 +20,6 @@ use Serhii\GoodbyeHtml\Ast\Statements\HtmlStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\IfStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\LoopStatement;
 use Serhii\GoodbyeHtml\Ast\Statements\Program;
-use Serhii\GoodbyeHtml\Ast\Statements\Statement;
 use Serhii\GoodbyeHtml\CoreParser\CoreParser;
 use Serhii\GoodbyeHtml\CoreParser\ParserError;
 use Serhii\GoodbyeHtml\Exceptions\CoreParserException;
@@ -38,17 +37,9 @@ class CoreParserTest extends TestCase
 
         $program = $parser->parseProgram();
 
-        $this->assertOneStatement($parser, $program->statements);
+        $this->assertCount(1, $program->statements, 'Program must contain 1 statements');
 
         return $program;
-    }
-
-    /**
-     * @param Statement[] $stmt
-     */
-    private function assertOneStatement(CoreParser $parser, array $stmt): void
-    {
-        $this->assertCount(1, $stmt, "Program must contain 1 statements");
     }
 
     private static function testVariable($var, string $val): void
@@ -429,5 +420,24 @@ class CoreParserTest extends TestCase
         $this->testVariable($stmt->variable, 'herName');
         $this->testString($stmt->value, 'Anna');
         $this->assertSame("{{ \$herName = 'Anna' }}", $stmt->string());
+    }
+
+    public function testIfStatementIsPrintedCorrectly(): void
+    {
+        $input = <<<HTML
+        {{ if true }}
+            Is true
+        {{ else if false }}
+            Is false
+        {{ else if true }}
+            Is true again
+        {{ else }}
+            Else is here
+        {{ end }}
+        HTML;
+
+        $expect = $input . "\n";
+
+        $this->assertSame($expect, $this->createProgram($input)->string());
     }
 }
