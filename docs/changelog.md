@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.9.3 (2024-01-12)
+
+- Moved `phpunit` from "require" to "require-dev" in `composer.json` file
+
+----
+
 ## v2.9.2 (2024-01-12)
 
 - Added more tests to `EvaluatorTest.php` for checking if/elseif/else statements logic
