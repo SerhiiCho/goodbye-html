@@ -5,7 +5,7 @@
     <a href="https://github.com/SerhiiCho/goodbye-html/blob/master/LICENSE.md"><img alt="GitHub" src="https://img.shields.io/github/license/SerhiiCho/goodbye-html"></a>
 </p>
 
-A very simple package for separating PHP logic from HTML or any other text. It allows you to insert **variables**, **if/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file.
+A very simple package for separating PHP logic from HTML or any other text. It allows you to insert **variables**, **if/elseif/else statements**, **loops** and **ternary operators** into any text file and dynamically get parsed content of this file.
 
 - [📝 Release notes](https://github.com/SerhiiCho/goodbye-html/blob/main/docs/changelog.md)
 - [✏️ BNF grammar](https://github.com/SerhiiCho/goodbye-html/blob/main/docs/goodbye-html.bnf)
@@ -15,7 +15,7 @@ A very simple package for separating PHP logic from HTML or any other text. It a
 - ✅ 8.3
 
 ## What is it for?
-This package is useful when you need to separate PHP logic from HTML or any other text. For example if you need to send an email with some dynamic content, you can create a template file with HTML and insert variables, if/else statements, loops and ternary operators into it. Then you can pass this file to the parser and get parsed content of this file as a string. Then you can use this string as a content of your email.
+This package is useful when you need to separate PHP logic from HTML or any other text. For example if you need to send an email with some dynamic content, you can create a template file with HTML and insert variables, if/elseif/else statements, loops and ternary operators into it. Then you can pass this file to the parser and get parsed content of this file as a string. Then you can use this string as a content of your email.
 
 ## What is it not for?
 This package is not for creating a full-featured template engine. It's just a simple parser that allows you to insert some PHP logic into any text file. It's not for creating a full-featured template engine like [Twig](https://twig.symfony.com/), [Blade](https://laravel.com/docs/8.x/blade) or [Latte](https://latte.nette.org/en/). If you need a full-featured template engine, you should use one of the mentioned above.
