@@ -194,6 +194,8 @@ class EvaluatorTest extends TestCase
             ['{{ if false }}1{{ elseif true }}2{{ else if false }}3{{ else }}4{{ end }}', '2'],
             ['{{ if false }}1{{ elseif false }}2{{ else if true }}3{{ else }}4{{ end }}', '3'],
             ['{{ if false }}1{{ elseif false }}2{{ else if false }}3{{ else }}4{{ end }}', '4'],
+            ['{{ if false }}1{{ elseif false }}2{{ else if false }}3{{ else if true }}4{{ end }}', '4'],
+            ['{{ if false }}1{{ elseif true }}2{{ else if true }}3{{ else if true }}4{{ end }}', '2'],
         ];
     }
 
