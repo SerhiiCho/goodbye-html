@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.9.4 (2024-01-22)
+
+- Add comment description to the case in `ParserOption` ENUM
+
+----
+
 ## v2.9.3 (2024-01-12)
 
 - Moved `phpunit` from "require" to "require-dev" in `composer.json` file
