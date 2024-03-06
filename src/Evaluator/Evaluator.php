@@ -166,10 +166,8 @@ readonly class Evaluator
             '<' => new BooleanObj($leftVal < $rightVal),
             '>=' => new BooleanObj($leftVal >= $rightVal),
             '<=' => new BooleanObj($leftVal <= $rightVal),
-            '==' => new BooleanObj($leftVal === $rightVal),
-            '!=' => new BooleanObj($leftVal !== $rightVal),
-            '===' => new BooleanObj($leftVal === $rightVal),
-            '!==' => new BooleanObj($leftVal !== $rightVal),
+            '==', '===' => new BooleanObj($leftVal === $rightVal),
+            '!=', '!==' => new BooleanObj($leftVal !== $rightVal),
             default => EvalError::operatorNotAllowed($operator, $left),
         };
     }
