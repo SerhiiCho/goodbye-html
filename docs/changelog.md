@@ -1,5 +1,9 @@
 # Release Notes
 
+## v2.9.5 (2024-03-06)
+
+- Refactored match statement in `Evaluator.php` file
+
 ## v2.9.4 (2024-01-22)
 
 - Add comment description to the case in `ParserOption` ENUM
@@ -32,7 +36,7 @@
 
 - Added more tests to make sure that everything works as expected
 - Added more info to the `README.md` file
-- Added added assign statement to the BNF grammar
+- Added assign statement to the BNF grammar
 - Added a third parameter to a `Parser.php` which excepts `ParserOption` ENUM
 
 ## v2.6.0 (2023-11-21)
